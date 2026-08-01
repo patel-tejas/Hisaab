@@ -427,7 +427,7 @@ export default function BrokerPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1 flex items-center gap-3">
+                <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
                     <Link2 className="h-8 w-8 text-cyan-400" /> Broker Connections
                 </h1>
                 <p className="text-sm text-muted-foreground">Connect your trading account to auto-import trades</p>

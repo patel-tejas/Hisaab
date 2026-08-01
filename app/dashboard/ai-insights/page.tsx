@@ -403,7 +403,7 @@ export default function AiInsightsPage() {
         return (
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-2 flex items-center gap-3">
                         <Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach
                     </h1>
                     <p className="text-muted-foreground">Deep performance analysis powered by Groq Llama AI</p>
@@ -436,7 +436,7 @@ export default function AiInsightsPage() {
     if (loading) {
         return (
             <div className="space-y-5 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach</h1></div>
                 <Card className="glass-card relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-violet-500 animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
@@ -454,7 +454,7 @@ export default function AiInsightsPage() {
     if (error) {
         return (
             <div className="space-y-5 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach</h1></div>
                 <Card className="glass-card p-8 text-center">
                     <AlertTriangle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate insights</p>
@@ -481,7 +481,7 @@ export default function AiInsightsPage() {
             {/* Header */}
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
                         <Brain className="h-8 w-8 text-violet-400" /> AI Trading Coach
                     </h1>
                     <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground">

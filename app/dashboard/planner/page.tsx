@@ -95,7 +95,7 @@ export default function DailyPlannerPage() {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-2 flex items-center gap-3">
                         <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
                     </h1>
                     <p className="text-muted-foreground">{todayName}</p>
@@ -128,7 +128,7 @@ export default function DailyPlannerPage() {
     if (loading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-amber-500 animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
@@ -146,7 +146,7 @@ export default function DailyPlannerPage() {
     if (error) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
                 <Card className="p-8 text-center">
                     <AlertTriangle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate plan</p>
@@ -169,7 +169,7 @@ export default function DailyPlannerPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
                         <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
                     </h1>
                     <p className="text-sm text-muted-foreground">{todayName}</p>

@@ -28,7 +28,7 @@ export default function ToolsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Trading Tools</h1>
+        <h1 className="font-display text-2xl tracking-tight text-foreground">Trading Tools</h1>
         <p className="text-muted-foreground mt-1">Calculators and utilities to help with your trading decisions.</p>
       </div>
 

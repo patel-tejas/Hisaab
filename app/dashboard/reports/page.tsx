@@ -398,7 +398,7 @@ export default function ReportsPage() {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Analytics & Reports</h1>
+          <h1 className="font-display text-2xl tracking-tight text-foreground">Analytics & Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">{filteredTrades.length} trades in the last {rangeLabel.toLowerCase()}</p>
         </div>
         <div className="flex gap-2">
