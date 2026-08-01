@@ -50,9 +50,12 @@ export default function DashboardPage() {
   const today = format(new Date(), "EEEE, d MMMM yyyy");
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <MarketTicker />
+    <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="-mx-4 -mt-4 md:-mx-6 md:-mt-6">
+        <MarketTicker />
+      </div>
 
+      <div className="space-y-6 pt-6">
       {/* Greeting */}
       <div>
         <h1 className="mb-2 font-display text-3xl tracking-tight text-foreground md:text-4xl">
@@ -122,6 +125,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <TopTrades trades={data.topTrades} />
         <RecentActivity trades={data.recentTrades} />
+      </div>
       </div>
     </div>
   );
