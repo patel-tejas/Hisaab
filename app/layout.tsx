@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Toaster } from "sonner"
+import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/next"
 import { Plus_Jakarta_Sans, Instrument_Serif, Manrope, Roboto_Mono } from "next/font/google"
 import "./globals.css"
@@ -57,7 +57,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster richColors position="top-center" />
+          <Toaster richColors position="top-center" closeButton />
           {children}
           <Analytics />
         </ThemeProvider>

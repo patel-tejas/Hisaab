@@ -1,43 +1,32 @@
-
 "use client"
 
 import type React from "react"
 import { useState } from "react"
-import { Sidebar } from "@/components/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 import { Header } from "@/components/header"
 import { AddTradeModal } from "@/components/add-trade-modal"
-import { SidebarProvider, useSidebar } from "@/lib/sidebar-context"
 import { AuthProvider } from "@/lib/auth-context"
-import { cn } from "@/lib/utils"
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar"
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const [isAddTradeOpen, setIsAddTradeOpen] = useState(false)
-  const { collapsed } = useSidebar()
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative selection:bg-indigo-500/30 font-sans transition-colors duration-300">
-
-      {/* Ambient Background Effects (Dark Mode Only) */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden dark:block hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/5 blur-[100px] animate-pulse"></div>
-      </div>
-
-      <Sidebar />
-
-      <div className={cn(
-        "relative z-10 pr-6 py-4 min-h-screen flex flex-col transition-all duration-300 ease-in-out",
-        collapsed ? "pl-[104px]" : "pl-72"
-      )}>
+    <SidebarProvider className="h-svh max-h-svh min-h-0 overflow-hidden">
+      <AppSidebar />
+      <SidebarInset className="h-svh max-h-svh min-h-0 overflow-hidden md:h-[calc(100svh-1rem)] md:max-h-[calc(100svh-1rem)]">
         <Header onNewTrade={() => setIsAddTradeOpen(true)} />
-
-        <main className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {children}
-        </main>
-      </div>
-
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <div className="animate-in fade-in slide-in-from-bottom-4 p-4 duration-700 md:p-6">
+            {children}
+          </div>
+        </div>
+      </SidebarInset>
       <AddTradeModal open={isAddTradeOpen} onOpenChange={setIsAddTradeOpen} />
-    </div>
+    </SidebarProvider>
   )
 }
 
@@ -48,9 +37,9 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthProvider>
-      <SidebarProvider>
+      <div className="h-svh max-h-svh overflow-hidden bg-background text-foreground selection:bg-primary/30 font-sans">
         <DashboardContent>{children}</DashboardContent>
-      </SidebarProvider>
+      </div>
     </AuthProvider>
   )
 }

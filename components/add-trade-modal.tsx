@@ -77,7 +77,15 @@ export function AddTradeModal({
     if (!open) return;
     fetch("/api/strategies")
       .then((res) => res.json())
-      .then((list: string[]) => setStrategies(list));
+      .then((data) => {
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.strategies)
+            ? data.strategies
+            : [];
+        setStrategies(list);
+      })
+      .catch(() => setStrategies([]));
   }, [open]);
 
   useEffect(() => {
@@ -357,7 +365,7 @@ export function AddTradeModal({
                       <SelectValue placeholder="Choose strategy" />
                     </SelectTrigger>
                     <SelectContent>
-                      {strategies.map((s) => (
+                      {(Array.isArray(strategies) ? strategies : []).map((s) => (
                         <SelectItem key={s} value={s}>{s}</SelectItem>
                       ))}
                       <div className="border-t my-1" />
