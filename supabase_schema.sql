@@ -57,6 +57,9 @@ CREATE TABLE IF NOT EXISTS public.trades (
 -- Partial index for broker_order_id deduplication per user
 CREATE UNIQUE INDEX IF NOT EXISTS idx_trades_user_broker_order ON public.trades(user_id, broker_order_id) WHERE broker_order_id IS NOT NULL;
 
+-- Index for user trade history / AI insights queries
+CREATE INDEX IF NOT EXISTS idx_trades_user_date ON public.trades (user_id, trade_date DESC);
+
 -- 4. Create Trade Mistakes Table (Normalized 1NF join table)
 CREATE TABLE IF NOT EXISTS public.trade_mistakes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -84,6 +87,24 @@ CREATE TABLE IF NOT EXISTS public.broker_connections (
     UNIQUE(user_id, broker)
 );
 
+-- 7. Create AI Insights Table (one latest analysis per user)
+CREATE TABLE IF NOT EXISTS public.ai_insights (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    metrics JSONB NOT NULL DEFAULT '{}'::jsonb,
+    model TEXT,
+    trade_count INTEGER NOT NULL DEFAULT 0,
+    data_from DATE,
+    data_to DATE,
+    trades_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_insights_user_updated ON public.ai_insights (user_id, updated_at DESC);
+
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ==========================================
@@ -94,6 +115,7 @@ ALTER TABLE public.trades ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trade_mistakes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trade_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.broker_connections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_insights ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -139,6 +161,12 @@ CREATE POLICY "Users can view own broker connections" ON public.broker_connectio
 CREATE POLICY "Users can insert own broker connections" ON public.broker_connections FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own broker connections" ON public.broker_connections FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own broker connections" ON public.broker_connections FOR DELETE USING (auth.uid() = user_id);
+
+-- AI Insights Policies
+CREATE POLICY "Users can view own ai insights" ON public.ai_insights FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own ai insights" ON public.ai_insights FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own ai insights" ON public.ai_insights FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own ai insights" ON public.ai_insights FOR DELETE USING (auth.uid() = user_id);
 
 -- Trigger to automatically create public.profiles entry when a new user signs up via Supabase Auth
 CREATE OR REPLACE FUNCTION public.handle_new_user()

@@ -88,15 +88,24 @@ function CustomTooltip({ active, payload, label }: any) {
 
 function StatCard({ label, value, sub, icon: Icon, color }: { label: string; value: string; sub?: string; icon: any; color: string }) {
   return (
-    <Card className="p-4 glass-card relative overflow-hidden group">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-          <p className={cn("text-2xl font-bold mt-1", color)}>{value}</p>
-          {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+    <Card className="glass-card relative gap-1 overflow-hidden px-5 py-5 group">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className={cn("mt-1 text-2xl font-bold", color)}>{value}</p>
+          {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
         </div>
-        <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center", color.includes("emerald") ? "bg-emerald-500/10" : color.includes("rose") ? "bg-rose-500/10" : "bg-primary/10")}>
-          <Icon className="h-4 w-4" />
+        <div
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-lg",
+            color.includes("emerald")
+              ? "bg-emerald-500/10 text-emerald-500"
+              : color.includes("rose")
+                ? "bg-rose-500/10 text-rose-500"
+                : "bg-primary/10 text-primary"
+          )}
+        >
+          <Icon className="size-5" />
         </div>
       </div>
     </Card>
@@ -408,7 +417,7 @@ export default function ReportsPage() {
                 "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
                 activeTab === tab.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}>
-                <tab.icon className="h-4 w-4" />
+                <tab.icon className="size-5" />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}

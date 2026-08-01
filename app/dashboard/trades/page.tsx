@@ -280,39 +280,39 @@ export default function TradesPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {/* Net P&L */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Net P&L</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Net P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", netPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
             {netPnl >= 0 ? "+" : ""}₹{netPnl.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Realized Profit</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Realized Profit</p>
         </Card>
 
         {/* Brokerage */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Charges</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Charges</p>
           <div className="mt-2 text-2xl font-bold text-amber-500">
             ₹{totalBrokerage.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Est. Brokerage & Taxes</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Est. Brokerage & Taxes</p>
         </Card>
 
         {/* Total Trades */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Trades</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total Trades</p>
           <div className="mt-2 text-2xl font-bold text-foreground">{filteredTrades.length}</div>
-          <p className="text-[10px] text-muted-foreground mt-1">{winCount} Wins • {lossCount} Losses</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">{winCount} Wins • {lossCount} Losses</p>
         </Card>
 
         {/* Gross P&L */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Gross P&L</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gross P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", totalPnl >= 0 ? "text-emerald-500/80" : "text-rose-500/80")}>
             {totalPnl >= 0 ? "+" : ""}₹{totalPnl.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Before Charges</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Before Charges</p>
         </Card>
       </div>
 
