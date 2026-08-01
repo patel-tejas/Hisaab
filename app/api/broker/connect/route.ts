@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-import { db } from "@/lib/db";
-import User from "@/models/User";
-import { verifyUser } from "@/lib/verifyUser";
-import { encrypt, decrypt } from "@/lib/encryption";
+import { createClient } from "@/utils/supabase/server";
+import { encrypt } from "@/lib/encryption";
 
 /* ── POST: Save / Update broker connection ── */
 export async function POST(req: Request) {
     try {
-        await db();
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
         const { broker, clientId, accessToken } = await req.json();
 
@@ -36,34 +36,23 @@ export async function POST(req: Request) {
 
         const encryptedToken = encrypt(accessToken);
 
-        // Use direct collection update to bypass potential stale Mongoose schema strict mode
-        // Fetch current raw doc first to handle the array logic manually
-        const rawUser = await User.collection.findOne({ _id: new mongoose.Types.ObjectId(user.id) });
-        if (!rawUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+        // Upsert into broker_connections table
+        const { error: upsertError } = await supabase
+            .from("broker_connections")
+            .upsert(
+                {
+                    user_id: user.id,
+                    broker,
+                    client_id: clientId,
+                    access_token: encryptedToken,
+                    is_active: true,
+                },
+                { onConflict: "user_id,broker" }
+            );
 
-        let connections = (rawUser.brokerConnections || []) as any[];
-        const existingIdx = connections.findIndex((c: any) => c.broker === broker);
-
-        const newConnection = {
-            broker,
-            clientId,
-            accessToken: encryptedToken,
-            isActive: true,
-            lastSynced: existingIdx >= 0 ? connections[existingIdx].lastSynced : undefined
-        };
-
-        if (existingIdx >= 0) {
-            connections[existingIdx] = newConnection;
-        } else {
-            connections.push(newConnection);
+        if (upsertError) {
+            return NextResponse.json({ error: upsertError.message }, { status: 500 });
         }
-
-        await User.collection.updateOne(
-            { _id: new mongoose.Types.ObjectId(user.id) },
-            { $set: { brokerConnections: connections } }
-        );
-
-        console.log(`Updated broker connections for user ${user.id}:`, connections.map(c => c.broker));
 
         return NextResponse.json({ success: true, message: "Dhan broker connected successfully" });
     } catch (err: any) {
@@ -75,19 +64,24 @@ export async function POST(req: Request) {
 /* ── DELETE: Remove broker connection ── */
 export async function DELETE(req: Request) {
     try {
-        await db();
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
         const { broker } = await req.json();
 
-        const dbUser = await User.findById(user.id);
-        if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+        const { error: deleteError } = await supabase
+            .from("broker_connections")
+            .delete()
+            .eq("user_id", user.id)
+            .eq("broker", broker);
 
-        dbUser.brokerConnections = (dbUser.brokerConnections || []).filter(
-            (c: any) => c.broker !== broker
-        ) as any;
-        await dbUser.save();
+        if (deleteError) {
+            return NextResponse.json({ error: deleteError.message }, { status: 500 });
+        }
 
         return NextResponse.json({ success: true, message: "Broker disconnected" });
     } catch (err: any) {

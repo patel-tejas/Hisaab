@@ -1,39 +1,33 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import User from "@/models/User";
-import { verifyUser } from "@/lib/verifyUser";
-import bcrypt from "bcryptjs";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: Request) {
     try {
         const { currentPassword, newPassword } = await req.json();
 
-        if (!currentPassword || !newPassword) {
-            return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+        if (!newPassword) {
+            return NextResponse.json({ error: "New password is required" }, { status: 400 });
         }
 
         if (newPassword.length < 6) {
             return NextResponse.json({ error: "New password must be at least 6 characters" }, { status: 400 });
         }
 
-        await db();
-        const userData = await verifyUser();
-        if (!userData) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-        // Fetch full user logic with password
-        const user = await User.findById(userData.id).select("+password");
-        if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-        // Verify current password
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
-            return NextResponse.json({ error: "Incorrect current password" }, { status: 400 });
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Update password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword;
-        await user.save();
+        // Supabase Auth handles user password updates natively
+        const { error: updateError } = await supabase.auth.updateUser({
+            password: newPassword,
+        });
+
+        if (updateError) {
+            return NextResponse.json({ error: updateError.message }, { status: 400 });
+        }
 
         return NextResponse.json({ success: true, message: "Password updated successfully" });
     } catch (err: any) {

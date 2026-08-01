@@ -1,29 +1,35 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import User from "@/models/User";
-import { verifyUser } from "@/lib/verifyUser";
+import { createClient } from "@/utils/supabase/server";
 
 /* ── GET: Broker connection status ── */
 export async function GET() {
     try {
-        await db();
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-        const dbUser = await User.findById(user.id).lean();
-        if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
-        const brokers = (dbUser.brokerConnections || []).map((c: any) => ({
+        const { data: connections, error } = await supabase
+            .from("broker_connections")
+            .select("broker, client_id, is_active, last_synced")
+            .eq("user_id", user.id);
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        const brokers = (connections || []).map((c: any) => ({
             broker: c.broker,
-            clientId: c.clientId,
-            isActive: c.isActive,
-            lastSynced: c.lastSynced,
-            // Never expose the access token
+            clientId: c.client_id,
+            isActive: c.is_active,
+            lastSynced: c.last_synced,
         }));
 
         return NextResponse.json({ brokers });
     } catch (err: any) {
         console.error("Error in GET /api/broker/status:", err);
-        return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

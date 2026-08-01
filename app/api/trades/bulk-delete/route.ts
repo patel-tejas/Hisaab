@@ -1,36 +1,33 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import Trade from "@/models/Trade";
-import { verifyUser } from "@/lib/verifyUser";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: Request) {
     try {
-        await db();
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
         const { ids } = await req.json();
 
-        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        if (!Array.isArray(ids) || ids.length === 0) {
             return NextResponse.json({ error: "No trade IDs provided" }, { status: 400 });
         }
 
-        console.log("Bulk deleting trades for user:", user.id, "Count:", ids.length);
+        const { error: deleteError } = await supabase
+            .from("trades")
+            .delete()
+            .in("id", ids)
+            .eq("user_id", user.id);
 
-        const result = await Trade.deleteMany({
-            _id: { $in: ids },
-            user: user.id
-        });
+        if (deleteError) {
+            return NextResponse.json({ error: deleteError.message }, { status: 400 });
+        }
 
-        console.log("Deleted trades result:", result);
-
-        return NextResponse.json({
-            success: true,
-            message: `Successfully deleted ${result.deletedCount} trades`,
-            deletedCount: result.deletedCount
-        });
+        return NextResponse.json({ success: true, count: ids.length });
     } catch (err: any) {
-        console.error("Error bulk deleting trades:", err);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

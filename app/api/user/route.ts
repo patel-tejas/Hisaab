@@ -1,62 +1,38 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
-import { db } from "@/lib/db";
-import mongoose from "mongoose";
+import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(req: NextRequest) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("Hisaab_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: "Not authenticated" },
-        { status: 401 }
-      );
-    }
-
+export async function GET() {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET as string);
-      const { payload }: any = await jwtVerify(token, secret);
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-      await db();
-
-      // Use native driver to bypass Mongoose schema caching issues in dev mode
-      const usersCollection = mongoose.connection.collection("users");
-      const user = await usersCollection.findOne({ _id: new mongoose.Types.ObjectId(payload.id) });
-
-      if (!user) {
-        return NextResponse.json(
-          { success: false, error: "User not found" },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          username: user.username,
-          initials: (user.name || user.username)?.charAt(0).toUpperCase() || "U",
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-      });
-    } catch (err) {
-      console.error("Token verification error:", err);
-      return NextResponse.json(
-        { success: false, error: "Invalid token" },
-        { status: 401 }
-      );
+
+        // Fetch user profile from public.profiles table
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+        const name = profile?.name || user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
+        const email = user.email || profile?.email || "";
+        const username = profile?.username || user.user_metadata?.username || user.email?.split("@")[0];
+
+        return NextResponse.json({
+            success: true,
+            user: {
+                id: user.id,
+                name,
+                email,
+                username,
+                initials: name ? name.charAt(0).toUpperCase() : "U",
+            },
+        });
+    } catch (err: any) {
+        console.error("Fetch user error:", err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
-  } catch (error) {
-    console.error("User details fetch error:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch user details" },
-      { status: 500 }
-    );
-  }
 }
