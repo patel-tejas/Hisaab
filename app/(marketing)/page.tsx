@@ -1,222 +1,93 @@
 import Link from "next/link"
 import { LandingShell } from "@/components/marketing/landing-shell"
 import { SiteFooter } from "@/components/marketing/site-footer"
-
-const FEATURE_TILES = [
-  {
-    title: "Analytics",
-    description: "Equity curves, win rates, expectancy, and symbol breakdowns — clarity without noise.",
-    bg: "bg-iris-gleam",
-  },
-  {
-    title: "Psychology",
-    description: "Log emotion, confidence, and mistakes. See which mental states actually pay.",
-    bg: "bg-orchid-bloom",
-  },
-  {
-    title: "Calendar",
-    description: "A heatmap of every session so your best and worst days are impossible to miss.",
-    bg: "bg-periwinkle",
-  },
-  {
-    title: "Strategies",
-    description: "Compare setups side by side. Know what to repeat — and what to retire.",
-    bg: "bg-deep-iris",
-  },
-  {
-    title: "Forecast",
-    description: "AI insights that surface patterns in your journal, not generic market chatter.",
-    bg: "bg-cyan-signal",
-  },
-  {
-    title: "Broker sync",
-    description: "Connect Dhan and import fills automatically. Less typing, more reviewing.",
-    bg: "bg-pale-iris text-void",
-  },
-] as const
-
-const STEPS = [
-  {
-    step: "01",
-    title: "Log the trade",
-    description: "Symbol, prices, strategy, and state of mind — under thirty seconds when it matters.",
-  },
-  {
-    step: "02",
-    title: "See the pattern",
-    description: "Charts and psychology views reveal what your memory conveniently forgets.",
-  },
-  {
-    step: "03",
-    title: "Trade cleaner",
-    description: "Carry forward lessons into the next session. Consistency compounds.",
-  },
-] as const
+import { FeatureModules } from "@/components/marketing/feature-modules"
+import { ProcessSection } from "@/components/marketing/process-section"
+import { ProofSection } from "@/components/marketing/proof-section"
+import { IntegrationsSection } from "@/components/marketing/integrations-section"
+import { PricingSection } from "@/components/marketing/pricing-section"
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-obsidian text-cloud">
       <LandingShell>
-        {/* Chromatic feature tiles */}
-        <section id="features" className="bg-obsidian px-5 py-[80px] sm:px-8">
-          <div className="mx-auto max-w-[1200px]">
-            <p className="font-mono-label text-center text-[12px] font-medium uppercase tracking-[0.18em] text-ash">
-              Modules
-            </p>
-            <h2 className="mx-auto mt-4 max-w-[720px] text-center font-display text-display-sm text-pure">
-              Everything that belongs in a journal
-            </h2>
-            <p className="mx-auto mt-5 max-w-[480px] text-center font-marketing text-[18px] font-light text-ash">
-              Color marks the module. The rest of the interface stays quiet.
-            </p>
+        {/* Features + Process share one atmosphere so the seam dissolves */}
+        <div className="relative overflow-x-clip">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `
+                linear-gradient(180deg,
+                  #0f1011 0%,
+                  #11151c 18%,
+                  #0d1620 42%,
+                  #0a141c 68%,
+                  #090a0b 100%
+                )
+              `,
+            }}
+          />
 
-            <div className="mt-12 grid gap-[12px] sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURE_TILES.map((tile) => (
-                <article
-                  key={tile.title}
-                  className={`${tile.bg} flex min-h-[220px] flex-col justify-between rounded-[30px] p-8 transition-transform duration-200 hover:-translate-y-0.5`}
-                >
-                  <h3
-                    className={`font-display text-heading-lg ${
-                      tile.bg.includes("pale-iris") ? "text-void" : "text-pure"
-                    }`}
-                  >
-                    {tile.title}
-                  </h3>
-                  <p
-                    className={`mt-6 font-marketing text-[16px] leading-[1.5] ${
-                      tile.bg.includes("pale-iris") ? "text-void/80" : "text-pure/90"
-                    }`}
-                  >
-                    {tile.description}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+          <section
+            id="features"
+            className="relative flex min-h-[100svh] flex-col justify-center px-5 py-24 sm:px-8"
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-obsidian via-obsidian/80 to-transparent"
+            />
+            {/* Seam bloom — anchored to features bottom, spills into process */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[70vh] translate-y-[35%]"
+              style={{
+                background:
+                  "radial-gradient(ellipse 90% 60% at 50% 40%, rgba(0,179,221,0.16) 0%, rgba(30,80,110,0.1) 32%, rgba(15,20,28,0.04) 55%, transparent 75%)",
+              }}
+            />
 
-        {/* How it works */}
-        <section id="how-it-works" className="bg-abyss px-5 py-[80px] sm:px-8">
-          <div className="mx-auto max-w-[1200px]">
-            <p className="font-mono-label text-center text-[12px] font-medium uppercase tracking-[0.18em] text-ash">
-              Process
-            </p>
-            <h2 className="mx-auto mt-4 max-w-[640px] text-center font-display text-heading-lg text-pure sm:text-display-sm sm:leading-[1]">
-              From fill to feedback
-            </h2>
-
-            <div className="mt-12 grid gap-[12px] md:grid-cols-3">
-              {STEPS.map((item) => (
-                <article
-                  key={item.step}
-                  className="rounded-[16px] bg-graphite p-8 transition-colors duration-200 hover:bg-steel"
-                >
-                  <p className="font-mono-label text-[12px] font-medium uppercase tracking-[0.16em] text-ash">
-                    {item.step}
-                  </p>
-                  <h3 className="mt-4 font-display text-[28px] leading-[1.1] text-cloud">
-                    {item.title}
-                  </h3>
-                  <p className="mt-4 font-marketing text-[16px] font-light leading-[1.5] text-ash">
-                    {item.description}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Inverted silver proof */}
-        <section className="bg-obsidian px-5 py-[80px] sm:px-8">
-          <div className="mx-auto max-w-[1200px]">
-            <div className="rounded-[30px] bg-silver p-8 text-void sm:p-12">
-              <p className="font-mono-label text-[12px] font-medium uppercase tracking-[0.18em] text-void/60">
-                Early access
-              </p>
-              <h2 className="mt-4 max-w-[640px] font-display text-heading-lg sm:text-[56px] sm:leading-[0.95]">
-                Built for traders who review more than they refresh charts
+            <div className="relative z-[1] mx-auto w-full max-w-[1200px]">
+              <h2 className="mx-auto max-w-[720px] text-center font-display text-display-sm text-pure">
+                Everything that belongs in a journal
               </h2>
-              <p className="mt-5 max-w-[480px] font-marketing text-[16px] leading-[1.5] text-void/80">
-                Hisaab keeps the dashboard honest: P&amp;L, psychology, calendar heat, and strategy
-                splits — without turning journaling into another noisy terminal.
+              <p className="mx-auto mt-5 max-w-[480px] text-center font-marketing text-[18px] font-light text-ash">
+                Six modules. One quiet ledger.
               </p>
-              <div className="mt-10 grid gap-6 sm:grid-cols-3">
-                {[
-                  { value: "Dhan sync", label: "Broker import" },
-                  { value: "AI review", label: "Session insights" },
-                  { value: "₹0 now", label: "Early access" },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <p className="font-display text-[32px] leading-none">{stat.value}</p>
-                    <p className="mt-2 font-mono-label text-[11px] uppercase tracking-[0.16em] text-void/55">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
+
+              <FeatureModules />
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Pricing */}
-        <section id="pricing" className="bg-abyss px-5 py-[80px] sm:px-8">
-          <div className="mx-auto max-w-[720px] text-center">
-            <span className="inline-flex items-center rounded-full border border-pure/15 bg-pure/12 px-8 py-2.5 font-mono-label text-[12px] font-medium uppercase tracking-[0.18em] text-pure">
-              ₹0 for early access — limited time
-            </span>
-            <h2 className="mt-6 font-display text-display-sm text-pure">
-              Grab it while it&apos;s free
-            </h2>
-            <p className="mx-auto mt-5 max-w-[440px] font-marketing text-[18px] font-light text-ash">
-              Full journal, analytics, psychology, and Dhan sync. No card required while we&apos;re in
-              early access.
-            </p>
+          <ProcessSection />
+        </div>
 
-            <div className="mt-12 rounded-[30px] bg-graphite p-8 text-left sm:p-10">
-              <div className="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <h3 className="font-display text-[38px] leading-[0.9] text-pure">Early Access</h3>
-                  <p className="mt-2 font-marketing text-[16px] text-ash">All features. No limits.</p>
-                </div>
-                <p className="font-display text-[48px] leading-none text-pure">₹0</p>
-              </div>
+        <ProofSection />
 
-              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                {[
-                  "Unlimited trade entries",
-                  "Analytics & reports",
-                  "Psychology tracking",
-                  "Calendar heatmap",
-                  "Strategy comparison",
-                  "Dhan broker sync",
-                  "AI insights",
-                  "Chart screenshots",
-                ].map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-3 font-marketing text-[16px] text-cloud"
-                  >
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-pure" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+        <IntegrationsSection />
 
-              <Link
-                href="/sign-up"
-                className="mt-10 inline-flex w-full items-center justify-center gap-2 rounded-full bg-cyan-signal px-[18px] py-3 font-marketing text-[16px] text-void transition-opacity duration-200 hover:opacity-90 sm:w-auto"
-              >
-                Get started free
-                <span aria-hidden>→</span>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <PricingSection />
 
         {/* Closing CTA */}
-        <section className="bg-obsidian px-5 py-[100px] sm:px-8">
-          <div className="mx-auto max-w-[800px] text-center">
+        <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-5 py-24 sm:px-8">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-obsidian via-[#101318] to-[#0a0b0e]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 50% at 50% 55%, rgba(144,184,240,0.1) 0%, transparent 70%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-obsidian to-transparent"
+          />
+
+          <div className="relative z-[1] mx-auto max-w-[800px] text-center">
             <h2 className="font-display text-display-sm text-pure">
               Ready to trade with a cleaner ledger?
             </h2>

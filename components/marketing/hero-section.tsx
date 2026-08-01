@@ -65,9 +65,10 @@ export function HeroSection({
         </div>
       </div>
 
-      {/* Soft wash — same treatment for all scenes */}
+      {/* Soft wash + deep blend into the next full-viewport section */}
       <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-void/35 via-void/10 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[45%] bg-gradient-to-b from-transparent via-obsidian/65 to-obsidian" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[55%] bg-gradient-to-b from-transparent via-obsidian/55 to-obsidian" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-b from-transparent to-obsidian" />
 
       {/* Bigger centered hero */}
       <div
@@ -127,21 +128,19 @@ export function HeroSection({
       </div>
 
       {/* Scene switcher */}
-      <div className="absolute bottom-7 right-5 z-[3] flex flex-col items-center sm:bottom-9 sm:right-8">
+      <div className="absolute bottom-7 right-5 z-[3] sm:bottom-9 sm:right-8">
         <button
           type="button"
           onClick={() => onPeriodChange(nextHeroPeriod(period))}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-silver transition-colors duration-200 hover:text-pure"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-transparent bg-transparent text-silver backdrop-blur-0 transition-[background-color,border-color,box-shadow,transform,backdrop-filter,color] duration-200 ease-out hover:border-pure/15 hover:bg-pure/12 hover:text-pure hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:backdrop-blur-md active:scale-90 active:bg-pure/18"
           aria-label={`Switch background scene. Current: ${HERO_PERIOD_LABELS[period]}`}
           title={`${HERO_PERIOD_LABELS[period]} — tap to cycle`}
         >
           {period === "morning" && <SunIcon />}
+          {period === "afternoon" && <AfternoonIcon />}
           {period === "evening" && <SunsetIcon />}
           {period === "night" && <MoonIcon />}
         </button>
-        <p className="mt-1 font-mono-label text-[10px] font-medium uppercase tracking-[0.18em] text-silver/80">
-          {HERO_PERIOD_LABELS[period]}
-        </p>
       </div>
     </section>
   )
@@ -160,6 +159,30 @@ function SunIcon() {
           fill="currentColor"
         />
       ))}
+    </svg>
+  )
+}
+
+/** Bright midday sun — fuller disc, shorter rays */
+function AfternoonIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.4" />
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+        const rad = (deg * Math.PI) / 180
+        return (
+          <line
+            key={deg}
+            x1={12 + Math.cos(rad) * 6.2}
+            y1={12 + Math.sin(rad) * 6.2}
+            x2={12 + Math.cos(rad) * 8.4}
+            y2={12 + Math.sin(rad) * 8.4}
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        )
+      })}
     </svg>
   )
 }

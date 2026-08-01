@@ -13,6 +13,7 @@ type SiteHeaderProps = {
 const NAV = [
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it works" },
+  { href: "#integrations", label: "Integrations" },
   { href: "#pricing", label: "Pricing" },
 ] as const
 

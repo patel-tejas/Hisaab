@@ -278,6 +278,12 @@
   .animate-reveal-delay-2 {
     animation: marketing-reveal 2.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 0.3s both;
   }
+
+  .animate-orbit-float {
+    animation-name: orbit-float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
 }
 
 @keyframes marketing-reveal {
@@ -291,10 +297,21 @@
   }
 }
 
+@keyframes orbit-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-reveal,
   .animate-reveal-delay,
-  .animate-reveal-delay-2 {
+  .animate-reveal-delay-2,
+  .animate-orbit-float {
     animation: none;
   }
 }
