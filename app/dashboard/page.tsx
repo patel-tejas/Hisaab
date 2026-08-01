@@ -17,6 +17,7 @@ import { GoalTracker } from "@/components/goal-tracker";
 import { RevengeTrades } from "@/components/revenge-trades";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/auth-context";
+import { MarketTicker } from "@/components/market-ticker";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -50,11 +51,13 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <MarketTicker />
 
       {/* Greeting */}
       <div>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2">
-          {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+        <h1 className="mb-2 font-display text-3xl tracking-tight text-foreground md:text-4xl">
+          {greeting},{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
             {user?.name || "Pro Trader"}
           </span>
         </h1>

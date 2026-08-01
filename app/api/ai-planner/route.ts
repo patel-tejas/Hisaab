@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Groq } from "groq-sdk";
-import { db } from "@/lib/db";
-import Trade from "@/models/Trade";
-import { verifyUser } from "@/lib/verifyUser";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET() {
     try {
@@ -12,12 +10,41 @@ export async function GET() {
         }
 
         const groq = new Groq({ apiKey });
-        await db();
 
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-        const trades = await Trade.find({ user: user.id }).sort({ date: -1 }).lean();
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { data: rawTrades, error } = await supabase
+            .from("trades")
+            .select("*, trade_mistakes(mistake)")
+            .eq("user_id", user.id)
+            .order("trade_date", { ascending: false });
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        const trades = (rawTrades || []).map((t) => ({
+            ...t,
+            date: t.trade_date,
+            type: t.trade_type,
+            pnl: Number(t.pnl),
+            pnlPercent: Number(t.pnl_percent),
+            entryPrice: Number(t.entry_price),
+            exitPrice: Number(t.exit_price),
+            entryTime: t.entry_time,
+            exitTime: t.exit_time,
+            entryConfidence: Number(t.entry_confidence || 3),
+            satisfaction: Number(t.satisfaction || 3),
+            emotionalState: t.emotional_state,
+            strategy: t.strategy,
+            symbol: t.symbol,
+            mistakes: Array.isArray(t.trade_mistakes) ? t.trade_mistakes.map((m: any) => m.mistake) : [],
+        }));
 
         if (trades.length < 3) {
             return NextResponse.json({

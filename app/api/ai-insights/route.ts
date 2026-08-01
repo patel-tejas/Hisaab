@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Groq } from "groq-sdk";
-import { db } from "@/lib/db";
-import Trade from "@/models/Trade";
-import { verifyUser } from "@/lib/verifyUser";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(req: Request) {
     try {
@@ -16,12 +14,40 @@ export async function GET(req: Request) {
 
         const groq = new Groq({ apiKey });
 
-        await db();
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-        const user = await verifyUser();
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
-        const trades = await Trade.find({ user: user.id }).sort({ date: -1 }).lean();
+        const { data: rawTrades, error } = await supabase
+            .from("trades")
+            .select("*, trade_mistakes(mistake)")
+            .eq("user_id", user.id)
+            .order("trade_date", { ascending: false });
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        const trades = (rawTrades || []).map((t) => ({
+            ...t,
+            date: t.trade_date,
+            type: t.trade_type,
+            pnl: Number(t.pnl),
+            pnlPercent: Number(t.pnl_percent),
+            entryPrice: Number(t.entry_price),
+            exitPrice: Number(t.exit_price),
+            entryTime: t.entry_time,
+            exitTime: t.exit_time,
+            entryConfidence: Number(t.entry_confidence || 3),
+            satisfaction: Number(t.satisfaction || 3),
+            emotionalState: t.emotional_state,
+            strategy: t.strategy,
+            symbol: t.symbol,
+            mistakes: Array.isArray(t.trade_mistakes) ? t.trade_mistakes.map((m: any) => m.mistake) : [],
+        }));
 
         if (trades.length < 3) {
             return NextResponse.json({
@@ -93,10 +119,6 @@ export async function GET(req: Request) {
             } else break;
         }
 
-        // ═════════════════════════════════════════════
-        // NEW DEEP ANALYTICS
-        // ═════════════════════════════════════════════
-
         // 1️⃣ Confidence Calibration
         const confMap: Record<number, { count: number; wins: number; pnl: number }> = {};
         trades.forEach(t => {
@@ -107,7 +129,7 @@ export async function GET(req: Request) {
             if (t.pnl > 0) confMap[c].wins++;
         });
 
-        // 2️⃣ Loss Recovery — how many trades after a big loss to recover
+        // 2️⃣ Loss Recovery
         const losses = trades.filter(t => t.pnl < 0);
         const bigLossThreshold = losses.length > 0 ? Math.abs(losses.reduce((s, t) => s + t.pnl, 0) / losses.length) : 0;
         const recoveryData: number[] = [];
@@ -128,7 +150,7 @@ export async function GET(req: Request) {
         }
         const avgRecoveryTrades = recoveryData.length > 0 ? Math.round(recoveryData.reduce((s, v) => s + v, 0) / recoveryData.length * 10) / 10 : 0;
 
-        // 3️⃣ Overtrading — group by date, compare PnL on high vs low trade days
+        // 3️⃣ Overtrading
         const dateTradeMap: Record<string, { count: number; pnl: number; wins: number }> = {};
         trades.forEach(t => {
             const key = new Date(t.date).toDateString();
@@ -145,7 +167,7 @@ export async function GET(req: Request) {
         const lowDayAvgPnl = lowDays.length > 0 ? Math.round(lowDays.reduce((s, d) => s + d.pnl, 0) / lowDays.length) : 0;
         const highDayAvgPnl = highDays.length > 0 ? Math.round(highDays.reduce((s, d) => s + d.pnl, 0) / highDays.length) : 0;
 
-        // 4️⃣ Sequential Patterns — performance after N consecutive losses
+        // 4️⃣ Sequential Patterns
         const sortedTrades = [...trades].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         const afterLossStreak: Record<number, { wins: number; count: number }> = {};
         let lossStreak = 0;
@@ -159,21 +181,20 @@ export async function GET(req: Request) {
             else lossStreak = 0;
         }
 
-        // 5️⃣ What-If: cut all losses at the average loss size
+        // 5️⃣ What-If Scenarios
         const avgLoss = losses.length > 0 ? Math.round(losses.reduce((s, t) => s + t.pnl, 0) / losses.length) : 0;
         const whatIfCutLoss = trades.reduce((s, t) => s + (t.pnl < avgLoss ? avgLoss : t.pnl), 0);
-        // What-If: skip trades with confidence < 3
         const confAbove3 = trades.filter(t => (t.entryConfidence || 3) >= 3);
         const whatIfHighConf = confAbove3.reduce((s, t) => s + t.pnl, 0);
 
-        // 6️⃣ Trade Duration (entry to exit time)
+        // 6️⃣ Trade Duration
         const durations: { mins: number; pnl: number; win: boolean }[] = [];
         trades.forEach(t => {
             if (t.entryTime && t.exitTime) {
                 const [eh, em] = t.entryTime.split(":").map(Number);
                 const [xh, xm] = t.exitTime.split(":").map(Number);
                 let mins = (xh * 60 + xm) - (eh * 60 + em);
-                if (mins < 0) mins += 1440; // Handle overnight trades (assume next day)
+                if (mins < 0) mins += 1440;
                 if (mins > 0) durations.push({ mins, pnl: t.pnl, win: t.pnl > 0 });
             }
         });
@@ -182,7 +203,7 @@ export async function GET(req: Request) {
         const shortWR = shortTrades.length > 0 ? Math.round(shortTrades.filter(d => d.win).length / shortTrades.length * 100) : 0;
         const longWR = longTrades.length > 0 ? Math.round(longTrades.filter(d => d.win).length / longTrades.length * 100) : 0;
 
-        // 7️⃣ Satisfaction/Emotional Trend (last 20 trades)
+        // 7️⃣ Emotional Trend
         const last20 = sortedTrades.slice(-20);
         const first10 = last20.slice(0, 10);
         const second10 = last20.slice(-10);
@@ -193,13 +214,11 @@ export async function GET(req: Request) {
 
         // 8️⃣ Risk Metrics
         const pnlArray = sortedTrades.map(t => t.pnl);
-        const cumPnl: number[] = [];
         let running = 0;
         let maxVal = 0;
         let maxDrawdown = 0;
         pnlArray.forEach(p => {
             running += p;
-            cumPnl.push(running);
             if (running > maxVal) maxVal = running;
             const dd = maxVal - running;
             if (dd > maxDrawdown) maxDrawdown = dd;
@@ -218,7 +237,6 @@ export async function GET(req: Request) {
             });
         });
 
-        // ── Date range + trading days ──
         const tradeDates = trades.map(t => new Date(t.date));
         const earliestDate = new Date(Math.min(...tradeDates.map(d => d.getTime())));
         const latestDate = new Date(Math.max(...tradeDates.map(d => d.getTime())));
@@ -227,7 +245,6 @@ export async function GET(req: Request) {
         const thisMonthDays = new Set(thisMonth.map(t => new Date(t.date).toDateString())).size;
         const thisMonthDailyAvg = thisMonthDays > 0 ? Math.round(thisMonthPnl / thisMonthDays) : 0;
 
-        // ── Build data context for AI ──
         const lines: string[] = [];
         lines.push("=== TRADER PERFORMANCE DATA ===");
         lines.push("Total trades: " + trades.length);
@@ -327,7 +344,6 @@ export async function GET(req: Request) {
 
         const tradeDataContext = lines.join("\n");
 
-        // ── JSON structure for AI response ──
         const jsonStructure = JSON.stringify({
             overallSummary: "2-3 sentence performance summary, motivational but honest, mention numbers",
             strengths: ["strength 1", "strength 2", "strength 3"],

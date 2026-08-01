@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import User from "@/models/User";
-import { verifyUser } from "@/lib/verifyUser";
-import mongoose from "mongoose";
+import { createClient } from "@/utils/supabase/server";
 
 export async function PUT(req: Request) {
     try {
@@ -22,50 +19,59 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
         }
 
-        await db();
-        const userData = await verifyUser();
-        if (!userData) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-        // Check if email is being changed and if it's already taken
-        // Use native check to be safe
-        const usersCollection = mongoose.connection.collection("users");
-
-        // We need to fetch the current user first to check if email is different
-        const currentUser = await usersCollection.findOne({ _id: new mongoose.Types.ObjectId(userData.id) });
-        if (!currentUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-        if (email !== currentUser.email) {
-            const existingUser = await usersCollection.findOne({ email });
-            if (existingUser) {
-                return NextResponse.json({ error: "Email already in use" }, { status: 400 });
-            }
+        if (authError || !user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Check username uniqueness if changed
         const trimmedUsername = username.trim();
-        if (trimmedUsername !== currentUser.username) {
-            const existingUsername = await usersCollection.findOne({ username: trimmedUsername });
-            if (existingUsername) {
-                return NextResponse.json({ error: "Username already taken" }, { status: 400 });
-            }
+
+        // Check if username is taken by another user
+        const { data: existingUser } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("username", trimmedUsername)
+            .neq("id", user.id)
+            .maybeSingle();
+
+        if (existingUser) {
+            return NextResponse.json({ error: "Username already taken" }, { status: 400 });
         }
 
-        // Native Update
-        await usersCollection.updateOne(
-            { _id: new mongoose.Types.ObjectId(userData.id) },
-            { $set: { username: trimmedUsername, name, email } }
-        );
+        // Update public.profiles
+        const { data: updatedProfile, error: updateError } = await supabase
+            .from("profiles")
+            .upsert({
+                id: user.id,
+                username: trimmedUsername,
+                name,
+                email,
+                updated_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+        if (updateError) {
+            return NextResponse.json({ error: updateError.message }, { status: 500 });
+        }
+
+        // Update auth.users email if changed
+        if (email !== user.email) {
+            await supabase.auth.updateUser({ email });
+        }
 
         return NextResponse.json({
             success: true,
             message: "Profile updated successfully",
             user: {
-                id: currentUser._id,
-                name: name,
-                email: email,
-                username: trimmedUsername,
-                initials: name ? name.charAt(0).toUpperCase() : "U"
-            }
+                id: user.id,
+                name: updatedProfile.name,
+                email: updatedProfile.email,
+                username: updatedProfile.username,
+                initials: name ? name.charAt(0).toUpperCase() : "U",
+            },
         });
     } catch (err: any) {
         console.error("Profile update error:", err);

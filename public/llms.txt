@@ -1,0 +1,42 @@
+# Hisaab
+
+> Trading journal for serious process. Hisaab helps traders log fills, track psychology, review performance with analytics, sync from Indian brokers (Dhan live), and improve consistency without turning journaling into another noisy terminal.
+
+## Product
+
+- [Home](https://tradehisaab.com): Product overview — own every trade, review with clarity
+- [Sign in](https://tradehisaab.com/sign-in): Existing accounts and demo access
+- [Sign up](https://tradehisaab.com/sign-up): Create a free early-access account
+- [Demo](https://tradehisaab.com/sign-in): Try the seeded demo journal (see site for credentials)
+
+## Features
+
+- Trade journal: log symbol, prices, strategy, notes, and emotional state in under thirty seconds
+- Analytics: equity curves, win rates, expectancy, and symbol breakdowns
+- Psychology tracking: emotion, confidence, and mistake tags tied to outcomes
+- Calendar heatmap: daily session P&L at a glance
+- Strategy comparison: side-by-side setup performance
+- Broker sync: import trades from Dhan; more Indian brokers on the roadmap (Zerodha, Groww, Upstox, Angel One, Fyers)
+- AI insights: patterns from your own journal — not generic market chatter
+- Chart screenshots: attach context to reviews
+
+## Pricing
+
+- Early access Explorer plan is free (₹0) during launch — no card required
+- Full journal features available on early access
+
+## Integrations
+
+- Dhan: live broker import
+- Other Indian brokers: coming soon
+
+## Audience
+
+- Retail and active traders who want process over noise
+- People who already take trades and need an honest ledger, not another charting terminal
+
+## Not built for
+
+- Live order execution or broker order placement
+- Market predictions or tip services
+- Replacing a full brokerage platform
