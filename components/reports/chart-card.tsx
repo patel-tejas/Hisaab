@@ -1,5 +1,5 @@
 
-import { Maximize2 } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,7 +17,7 @@ export function ChartCard({ title, children, height = "h-[300px]", filters }: Ch
 
     return (
         <>
-            <Card className="p-5 flex flex-col h-full">
+            <Card className="p-5 flex flex-col h-full overflow-hidden">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold">{title}</h3>
                     <Button
@@ -31,7 +31,7 @@ export function ChartCard({ title, children, height = "h-[300px]", filters }: Ch
                     </Button>
                 </div>
 
-                <div className={`w-full ${height}`}>{children}</div>
+                <div className={`w-full ${height} overflow-hidden`}>{isExpanded ? null : children}</div>
             </Card>
 
             <ChartModal

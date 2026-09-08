@@ -298,7 +298,7 @@ export default function CalendarPage() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {weeklySummary.map((week, index) => (
-            <Card key={index} className="scale-in gap-1 bg-muted/50 px-4 py-4 shadow-sm">
+            <Card key={index} className="scale-in gap-1 bg-muted/50 px-5 py-5 shadow-sm">
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">{week.label}</h3>
 
               <div className="mb-2 flex items-baseline justify-between">

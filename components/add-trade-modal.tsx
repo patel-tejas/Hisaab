@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Info, Brain, RotateCcw, Save, Upload, X, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Info, Brain, RotateCcw, Save, Upload, X, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,11 +13,12 @@ import { emotionalStates, outcomes, mistakeOptions } from "@/lib/mock-data";
 import { AddStrategyModal } from "./add-strategy-modal";
 import { RichTextEditor } from "./rich-text-editor";
 import { supabase } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 const defaultSymbols = ["NIFTY 50", "BANKNIFTY", "SENSEX", "BTC", "ETH", "GOLD", "SILVER"];
 
 const defaultQuantities: Record<string, number> = {
-  "NIFTY 50": 75,
+  "NIFTY 50": 65,
   BANKNIFTY: 15,
   SENSEX: 20,
   BTC: 1,
@@ -62,6 +63,7 @@ export function AddTradeModal({
   const [lessonsLearned, setLessonsLearned] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const [entryConfidence, setEntryConfidence] = useState([8]);
   const [satisfaction, setSatisfaction] = useState([9]);
@@ -163,7 +165,7 @@ export function AddTradeModal({
 
       setImages((prev) => [...prev, data.publicUrl]);
     } catch (error: any) {
-      alert('Error uploading image: ' + error.message);
+      toast.error("Failed to upload image: " + error.message);
     } finally {
       setUploading(false);
     }
@@ -174,6 +176,15 @@ export function AddTradeModal({
   };
 
   async function handleSaveTrade() {
+    if (!symbol) return toast.error("Please select a symbol");
+    if (!date) return toast.error("Please select a date");
+    if (!entryPrice) return toast.error("Please enter an entry price");
+    if (!exitPrice) return toast.error("Please enter an exit price");
+    if (!quantity) return toast.error("Please enter a quantity");
+    if (!selectedStrategy) return toast.error("Please select a strategy");
+
+    setSaving(true);
+
     const pnl = (Number(exitPrice) - Number(entryPrice)) * Number(quantity);
     const pnlPercent = ((Number(exitPrice) - Number(entryPrice)) / Number(entryPrice)) * 100;
 
@@ -202,16 +213,27 @@ export function AddTradeModal({
       images,
     };
 
-    const res = await fetch("/api/trades", {
-      method: tradeToEdit ? "PUT" : "POST",
-      body: JSON.stringify(tradeToEdit ? { ...trade, _id: tradeToEdit._id } : trade),
-    });
+    try {
+      const res = await fetch("/api/trades", {
+        method: tradeToEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(tradeToEdit ? { ...trade, _id: tradeToEdit._id } : trade),
+      });
 
-    if (res.ok) {
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to save trade");
+      }
+
+      toast.success(tradeToEdit ? "Trade updated successfully" : "Trade saved successfully");
       onOpenChange(false);
       window.location.reload();
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong while saving the trade");
+    } finally {
+      setSaving(false);
     }
-    else alert("Trade could not be saved.");
   }
 
 
@@ -491,6 +513,7 @@ export function AddTradeModal({
             <Button
               variant="ghost"
               onClick={handleReset}
+              disabled={saving}
               className="text-muted-foreground hover:text-foreground rounded-lg"
             >
               <RotateCcw className="mr-2 h-5 w-5" /> Reset
@@ -500,15 +523,21 @@ export function AddTradeModal({
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                disabled={saving}
                 className="rounded-lg"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSaveTrade}
+                disabled={saving}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-lg shadow-primary/20 px-6 transition-all hover:scale-[1.02]"
               >
-                <Save className="mr-2 h-5 w-5" /> {tradeToEdit ? "Update Trade" : "Save Trade"}
+                {saving ? (
+                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Saving…</>
+                ) : (
+                  <><Save className="mr-2 h-5 w-5" /> {tradeToEdit ? "Update Trade" : "Save Trade"}</>
+                )}
               </Button>
             </div>
           </div>

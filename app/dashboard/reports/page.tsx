@@ -880,22 +880,22 @@ export default function ReportsPage() {
       {activeTab === "journal" && (
         <Card className="glass-card overflow-hidden">
           <div className="bg-muted/30 px-6 py-3 border-b border-border flex font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
-            <div className="w-28">Date</div>
-            <div className="w-24">Symbol</div>
-            <div className="w-24 text-right">P&L</div>
-            <div className="flex-1 px-4">Notes</div>
-            <div className="w-28">Emotion</div>
+            <div className="w-32 shrink-0">Date</div>
+            <div className="w-32 shrink-0">Symbol</div>
+            <div className="w-28 shrink-0 text-right">P&L</div>
+            <div className="flex-1 min-w-0 px-4">Notes</div>
+            <div className="w-32 shrink-0">Emotion</div>
           </div>
           <div className="divide-y divide-border/50 max-h-[600px] overflow-auto">
             {journalEntries.map((entry, i) => (
               <div key={i} className="px-6 py-4 flex items-start text-sm hover:bg-muted/20 transition-colors">
-                <div className="w-28 text-muted-foreground text-xs">{new Date(entry.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</div>
-                <div className="w-24 font-semibold text-foreground">{entry.symbol}</div>
-                <div className={cn("w-24 text-right font-semibold", entry.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                <div className="w-32 shrink-0 text-muted-foreground text-xs">{new Date(entry.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</div>
+                <div className="w-32 shrink-0 font-semibold text-foreground">{entry.symbol}</div>
+                <div className={cn("w-28 shrink-0 text-right font-semibold", entry.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
                   {entry.pnl >= 0 ? "+" : ""}₹{entry.pnl.toLocaleString("en-IN")}
                 </div>
-                <div className="flex-1 px-4 text-muted-foreground text-xs line-clamp-2">{entry.notes || "—"}</div>
-                <div className="w-28">
+                <div className="flex-1 min-w-0 px-4 text-muted-foreground text-xs line-clamp-2">{entry.notes || "—"}</div>
+                <div className="w-32 shrink-0">
                   <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-md text-[11px] font-medium">{entry.emotionalState || "Neutral"}</span>
                 </div>
               </div>

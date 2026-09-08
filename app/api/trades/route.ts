@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
+// Helper to map UI outcome values to DB-allowed values
+function mapOutcome(outcome: string): "success" | "failure" {
+    const failure = ["Mistake", "failure"];
+    return failure.includes(outcome) ? "failure" : "success";
+}
+
+// Helper to map DB outcome to UI label
+function mapOutcomeToLabel(outcome: string): string {
+    if (outcome === "failure") return "Mistake";
+    return "Full Success";
+}
+
 // Helper function to convert DB trade row + relations to JSON response format expected by UI
 export function mapTradeToResponse(t: any) {
     return {
@@ -21,7 +33,7 @@ export function mapTradeToResponse(t: any) {
         stopLoss: t.stop_loss ? Number(t.stop_loss) : undefined,
         target: t.target ? Number(t.target) : undefined,
         strategy: t.strategy,
-        outcome: t.outcome,
+        outcome: mapOutcomeToLabel(t.outcome),
         entryConfidence: t.entry_confidence || 3,
         satisfaction: t.satisfaction || 3,
         emotionalState: t.emotional_state || "",
@@ -93,7 +105,7 @@ export async function POST(req: Request) {
             stop_loss: tradeData.stopLoss || null,
             target: tradeData.target || null,
             strategy: tradeData.strategy,
-            outcome: tradeData.outcome,
+            outcome: mapOutcome(tradeData.outcome),
             entry_confidence: tradeData.entryConfidence || 3,
             satisfaction: tradeData.satisfaction || 3,
             emotional_state: tradeData.emotionalState || null,
@@ -179,7 +191,7 @@ export async function PUT(req: Request) {
             stop_loss: tradeData.stopLoss || null,
             target: tradeData.target || null,
             strategy: tradeData.strategy,
-            outcome: tradeData.outcome,
+            outcome: mapOutcome(tradeData.outcome),
             entry_confidence: tradeData.entryConfidence,
             satisfaction: tradeData.satisfaction,
             emotional_state: tradeData.emotionalState || null,
