@@ -46,7 +46,7 @@ function StatRow({
                 <span className="text-sm font-semibold text-foreground">{formatVal(thisMonth)}</span>
                 <span className="text-xs text-muted-foreground">vs {formatVal(lastMonth)}</span>
                 {isNeutral ? (
-                    <Minus className="h-3 w-3 text-muted-foreground" />
+                    <Minus className="h-5 w-5 text-muted-foreground" />
                 ) : (
                     <span
                         className={cn(
@@ -54,7 +54,7 @@ function StatRow({
                             isUp ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"
                         )}
                     >
-                        {isUp ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                        {isUp ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownRight className="h-5 w-5" />}
                         {fmt === "percent" ? `${Math.abs(diff)}pp` : Math.abs(diff).toLocaleString("en-IN")}
                     </span>
                 )}
@@ -78,7 +78,7 @@ export function MonthlyComparison({ comparison }: MonthlyComparisonProps) {
             <div className="flex items-center justify-between mb-4 relative z-10">
                 <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Calendar className="h-4 w-4 text-blue-500" />
+                        <Calendar className="h-5 w-5 text-blue-500" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-foreground">Monthly Comparison</h3>
@@ -98,11 +98,11 @@ export function MonthlyComparison({ comparison }: MonthlyComparisonProps) {
                     )}
                 >
                     {isPositive ? (
-                        <TrendingUp className="h-3.5 w-3.5" />
+                        <TrendingUp className="h-5 w-5" />
                     ) : pnlChange < 0 ? (
-                        <ArrowDownRight className="h-3.5 w-3.5" />
+                        <ArrowDownRight className="h-5 w-5" />
                     ) : (
-                        <Minus className="h-3.5 w-3.5" />
+                        <Minus className="h-5 w-5" />
                     )}
                     {pnlChange > 0 ? "+" : ""}
                     {pnlChange}%

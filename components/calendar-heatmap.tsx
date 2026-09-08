@@ -53,8 +53,8 @@ export function CalendarHeatmap({ data }: CalendarHeatmapProps) {
                 <p className="text-xs text-muted-foreground">Last 12 weeks</p>
             </div>
 
-            <div className="flex-1 flex items-center">
-                <div className="flex gap-1">
+            <div className="flex-1 flex items-center overflow-hidden">
+                <div className="flex gap-1 overflow-x-auto">
                     {/* Day labels */}
                     <div className="flex flex-col gap-1 mr-1">
                         {dayLabels.map((label, i) => (

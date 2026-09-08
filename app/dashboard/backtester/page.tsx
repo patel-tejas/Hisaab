@@ -143,7 +143,7 @@ export default function BacktesterPage() {
     if (isLoading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-indigo-500 animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
@@ -158,7 +158,7 @@ export default function BacktesterPage() {
     if (trades.length === 0) {
         return (
             <div className="space-y-6">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
                 <Card className="p-8 text-center">
                     <FlaskConical className="h-12 w-12 text-indigo-400 mx-auto mb-4" />
                     <p className="text-muted-foreground">Add some trades first to compare strategies.</p>
@@ -173,7 +173,7 @@ export default function BacktesterPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1 flex items-center gap-3">
+                <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
                     <FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester
                 </h1>
                 <p className="text-sm text-muted-foreground">Compare your strategies head-to-head with data</p>
@@ -255,7 +255,7 @@ export default function BacktesterPage() {
                         {/* Total P&L Bar Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <BarChart3 className="h-3.5 w-3.5" /> Total P&L by Strategy
+                                <BarChart3 className="h-5 w-5" /> Total P&L by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={pnlChartData} layout="vertical">
@@ -279,7 +279,7 @@ export default function BacktesterPage() {
                         {/* Win Rate Bar Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <Target className="h-3.5 w-3.5" /> Win Rate by Strategy
+                                <Target className="h-5 w-5" /> Win Rate by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={winRateChartData} layout="vertical">
@@ -299,7 +299,7 @@ export default function BacktesterPage() {
                         {/* Avg P&L Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-violet-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-3.5 w-3.5" /> Avg P&L Per Trade
+                                <TrendingUp className="h-5 w-5" /> Avg P&L Per Trade
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={avgPnlChartData} layout="vertical">
@@ -323,7 +323,7 @@ export default function BacktesterPage() {
                         {/* Cumulative P&L Line Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-3.5 w-3.5" /> Cumulative P&L Over Time
+                                <TrendingUp className="h-5 w-5" /> Cumulative P&L Over Time
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={cumulativeData}>

@@ -263,11 +263,11 @@ export default function CalendarPage() {
     <div className="space-y-6">
       {/* Monthly Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-5 fade-in">
+        <Card className="fade-in gap-1 px-5 py-5">
           <p className="text-xs text-muted-foreground">TOTAL P&L</p>
           <h2
             className={cn(
-              "text-2xl font-bold",
+              "mt-1 text-2xl font-bold",
               monthlyStats.totalPnl >= 0 ? "text-green-600" : "text-red-600"
             )}
           >
@@ -276,32 +276,32 @@ export default function CalendarPage() {
           </h2>
         </Card>
 
-        <Card className="p-5 fade-in">
+        <Card className="fade-in gap-1 px-5 py-5">
           <p className="text-xs text-muted-foreground">WIN RATE</p>
-          <h2 className="text-2xl font-bold">{monthlyStats.winRate}%</h2>
+          <h2 className="mt-1 text-2xl font-bold">{monthlyStats.winRate}%</h2>
         </Card>
 
-        <Card className="p-5 fade-in">
+        <Card className="fade-in gap-1 px-5 py-5">
           <p className="text-xs text-muted-foreground">TOTAL TRADES</p>
-          <h2 className="text-2xl font-bold">{monthlyStats.totalTrades}</h2>
+          <h2 className="mt-1 text-2xl font-bold">{monthlyStats.totalTrades}</h2>
         </Card>
 
-        <Card className="p-5 fade-in">
+        <Card className="fade-in gap-1 px-5 py-5">
           <p className="text-xs text-muted-foreground">AVG. R:R</p>
-          <h2 className="text-2xl font-bold">{monthlyStats.avgRR}</h2>
+          <h2 className="mt-1 text-2xl font-bold">{monthlyStats.avgRR}</h2>
         </Card>
       </div>
 
       {/* Weekly Summary */}
-      <Card className="p-6 fade-in">
-        <h2 className="font-semibold mb-3">📊 Weekly Performance</h2>
+      <Card className="fade-in gap-4 px-6 py-6">
+        <h2 className="mb-1 font-semibold">Weekly Performance</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {weeklySummary.map((week, index) => (
-            <Card key={index} className="p-4 bg-muted/50 shadow-sm scale-in">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">{week.label}</h3>
+            <Card key={index} className="scale-in gap-1 bg-muted/50 px-5 py-5 shadow-sm">
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">{week.label}</h3>
 
-              <div className="flex justify-between items-baseline mb-2">
+              <div className="mb-2 flex items-baseline justify-between">
                 <p
                   className={cn(
                     "text-xl font-bold",
@@ -312,7 +312,7 @@ export default function CalendarPage() {
                   {Math.abs(week.pnl).toLocaleString("en-IN")}
                 </p>
                 {week.trades > 0 && (
-                  <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-muted text-foreground">
+                  <span className="rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground">
                     {Math.round((week.wins / week.trades) * 100)}% WR
                   </span>
                 )}
@@ -327,8 +327,8 @@ export default function CalendarPage() {
       </Card>
 
       {/* Calendar */}
-      <Card className="p-6">
-        <div className="flex justify-between mb-4">
+      <Card className="gap-4 px-6 py-6">
+        <div className="mb-4 flex justify-between">
           <Button variant="ghost" size="icon" onClick={prevMonth}>
             <ChevronLeft />
           </Button>
@@ -358,7 +358,7 @@ export default function CalendarPage() {
 
             days.forEach((day, idx) => {
               if (day === null) {
-                rows.push(<div key={`empty-${idx}`} className="h-24" />);
+                rows.push(<div key={`empty-${idx}`} className="aspect-square" />);
               } else {
                 const key = `${currentDate.getFullYear()}-${String(
                   currentDate.getMonth() + 1
@@ -376,31 +376,31 @@ export default function CalendarPage() {
                   <div
                     key={`day-${idx}`}
                     onClick={() => openDateTrades(day)}
-                    className="h-24 rounded-lg p-2 cursor-pointer transition-all duration-200 hover:scale-[1.03] hover:shadow-md relative overflow-hidden text-foreground/80 border border-border/40"
+                    className="relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-border/40 bg-muted/30 p-3 text-foreground/80 transition-all duration-200 hover:scale-[1.02] hover:shadow-md"
                     style={{
                       backgroundColor: dayInfo
                         ? dayInfo.pnl >= 0
                           ? `rgba(34, 197, 94, ${0.1 + (Math.min(Math.abs(dayInfo.pnl) / (monthlyHighlights.maxDailyPnl || 1), 1) * 0.6)})`
                           : `rgba(239, 68, 68, ${0.1 + (Math.min(Math.abs(dayInfo.pnl) / (monthlyHighlights.maxDailyPnl || 1), 1) * 0.6)})`
-                        : undefined
+                        : undefined,
                     }}
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex items-start justify-between">
                       <span className="text-sm font-medium opacity-70">
                         {day}
                       </span>
                       {isStreak && (
-                        <span className="text-base animate-pulse" title="Winning Streak! (3+ Days)">
+                        <span className="animate-pulse text-base" title="Winning Streak! (3+ Days)">
                           🔥
                         </span>
                       )}
                     </div>
 
                     {dayInfo && (
-                      <div className="mt-2 text-center md:text-left">
+                      <div className="mt-2 text-left">
                         <p
                           className={cn(
-                            "text-sm font-bold truncate",
+                            "truncate text-sm font-bold",
                             dayInfo.pnl >= 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"
                           )}
                         >
@@ -408,7 +408,7 @@ export default function CalendarPage() {
                           {Math.abs(dayInfo.pnl).toLocaleString("en-IN")}
                         </p>
 
-                        <p className="text-[10px] text-muted-foreground/80 font-medium mt-0.5">
+                        <p className="mt-0.5 text-[10px] font-medium text-muted-foreground/80">
                           {dayInfo.trades} trades
                         </p>
                       </div>
@@ -423,7 +423,7 @@ export default function CalendarPage() {
                 // If this is the last row and it's not complete, pad remaining day cells
                 if (idx === days.length - 1 && colInRow !== 0) {
                   for (let p = colInRow; p < 7; p++) {
-                    rows.push(<div key={`pad-${idx}-${p}`} className="h-24" />);
+                    rows.push(<div key={`pad-${idx}-${p}`} className="aspect-square" />);
                   }
                 }
 
@@ -432,7 +432,7 @@ export default function CalendarPage() {
                 rows.push(
                   <div
                     key={`week-${idx}`}
-                    className="h-24 rounded-lg p-2 flex flex-col items-center justify-center border border-border/20 bg-muted/20"
+                    className="flex aspect-square flex-col items-center justify-center rounded-xl border border-border/20 bg-muted/20 p-3"
                   >
                     {thisWeekPnl !== 0 ? (
                       <>
@@ -544,7 +544,7 @@ export default function CalendarPage() {
                                 ? "bg-indigo-500/15 text-indigo-500"
                                 : "bg-orange-500/15 text-orange-500"
                             )}>
-                              {(trade.type || trade.direction) === "long" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                              {(trade.type || trade.direction) === "long" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                               {(trade.type || trade.direction) === "long" ? "LONG" : "SHORT"}
                             </span>
                           </div>
@@ -563,7 +563,7 @@ export default function CalendarPage() {
                           <span>Qty: <span className="text-foreground font-medium">{trade.quantity || "—"}</span></span>
                           {trade.entryTime && (
                             <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
+                              <Clock className="h-4 w-4" />
                               {trade.entryTime}{trade.exitTime ? ` – ${trade.exitTime}` : ""}
                             </span>
                           )}
@@ -587,7 +587,7 @@ export default function CalendarPage() {
 
                         {/* View Details Hint */}
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Eye className="h-4 w-4 text-muted-foreground" />
+                          <Eye className="h-5 w-5 text-muted-foreground" />
                         </div>
                       </div>
                     ))

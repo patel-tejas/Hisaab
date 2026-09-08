@@ -88,15 +88,24 @@ function CustomTooltip({ active, payload, label }: any) {
 
 function StatCard({ label, value, sub, icon: Icon, color }: { label: string; value: string; sub?: string; icon: any; color: string }) {
   return (
-    <Card className="p-4 glass-card relative overflow-hidden group">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-          <p className={cn("text-2xl font-bold mt-1", color)}>{value}</p>
-          {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+    <Card className="glass-card relative gap-1 overflow-hidden px-5 py-5 group">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className={cn("mt-1 text-2xl font-bold", color)}>{value}</p>
+          {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
         </div>
-        <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center", color.includes("emerald") ? "bg-emerald-500/10" : color.includes("rose") ? "bg-rose-500/10" : "bg-primary/10")}>
-          <Icon className="h-4 w-4" />
+        <div
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-lg",
+            color.includes("emerald")
+              ? "bg-emerald-500/10 text-emerald-500"
+              : color.includes("rose")
+                ? "bg-rose-500/10 text-rose-500"
+                : "bg-primary/10 text-primary"
+          )}
+        >
+          <Icon className="size-5" />
         </div>
       </div>
     </Card>
@@ -398,7 +407,7 @@ export default function ReportsPage() {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Analytics & Reports</h1>
+          <h1 className="font-display text-2xl tracking-tight text-foreground">Analytics & Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">{filteredTrades.length} trades in the last {rangeLabel.toLowerCase()}</p>
         </div>
         <div className="flex gap-2">
@@ -408,7 +417,7 @@ export default function ReportsPage() {
                 "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
                 activeTab === tab.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}>
-                <tab.icon className="h-4 w-4" />
+                <tab.icon className="size-5" />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}
@@ -443,19 +452,19 @@ export default function ReportsPage() {
 
           {/* Streak Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Best Day</p>
               <p className="text-xl font-bold text-emerald-500 mt-1">+₹{performance.bestDay.toLocaleString("en-IN")}</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Worst Day</p>
               <p className="text-xl font-bold text-rose-500 mt-1">₹{performance.worstDay.toLocaleString("en-IN")}</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Win Streak</p>
               <p className="text-xl font-bold text-emerald-500 mt-1">{streaks.maxWin} trades</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Loss Streak</p>
               <p className="text-xl font-bold text-rose-500 mt-1">{streaks.maxLoss} trades</p>
             </Card>
@@ -871,22 +880,22 @@ export default function ReportsPage() {
       {activeTab === "journal" && (
         <Card className="glass-card overflow-hidden">
           <div className="bg-muted/30 px-6 py-3 border-b border-border flex font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
-            <div className="w-28">Date</div>
-            <div className="w-24">Symbol</div>
-            <div className="w-24 text-right">P&L</div>
-            <div className="flex-1 px-4">Notes</div>
-            <div className="w-28">Emotion</div>
+            <div className="w-32 shrink-0">Date</div>
+            <div className="w-32 shrink-0">Symbol</div>
+            <div className="w-28 shrink-0 text-right">P&L</div>
+            <div className="flex-1 min-w-0 px-4">Notes</div>
+            <div className="w-32 shrink-0">Emotion</div>
           </div>
           <div className="divide-y divide-border/50 max-h-[600px] overflow-auto">
             {journalEntries.map((entry, i) => (
               <div key={i} className="px-6 py-4 flex items-start text-sm hover:bg-muted/20 transition-colors">
-                <div className="w-28 text-muted-foreground text-xs">{new Date(entry.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</div>
-                <div className="w-24 font-semibold text-foreground">{entry.symbol}</div>
-                <div className={cn("w-24 text-right font-semibold", entry.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                <div className="w-32 shrink-0 text-muted-foreground text-xs">{new Date(entry.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</div>
+                <div className="w-32 shrink-0 font-semibold text-foreground">{entry.symbol}</div>
+                <div className={cn("w-28 shrink-0 text-right font-semibold", entry.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
                   {entry.pnl >= 0 ? "+" : ""}₹{entry.pnl.toLocaleString("en-IN")}
                 </div>
-                <div className="flex-1 px-4 text-muted-foreground text-xs line-clamp-2">{entry.notes || "—"}</div>
-                <div className="w-28">
+                <div className="flex-1 min-w-0 px-4 text-muted-foreground text-xs line-clamp-2">{entry.notes || "—"}</div>
+                <div className="w-32 shrink-0">
                   <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-md text-[11px] font-medium">{entry.emotionalState || "Neutral"}</span>
                 </div>
               </div>

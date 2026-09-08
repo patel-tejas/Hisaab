@@ -100,7 +100,7 @@ export function PricingSection() {
                 className="flex items-start gap-2.5 font-marketing text-[14px] text-[#3a4556]"
               >
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e8f6fb] text-cyan-signal">
-                  <Check className="h-3 w-3" strokeWidth={2.5} />
+                  <Check className="h-5 w-5" strokeWidth={2.5} />
                 </span>
                 {feature}
               </li>

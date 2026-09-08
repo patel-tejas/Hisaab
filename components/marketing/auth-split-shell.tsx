@@ -98,7 +98,7 @@ export function AuthSplitShell({
                   className="flex items-center gap-3 font-marketing text-[16px] text-void/75"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-signal/25 text-deep-iris">
-                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    <Check className="h-5 w-5" strokeWidth={2.5} />
                   </span>
                   {item}
                 </li>

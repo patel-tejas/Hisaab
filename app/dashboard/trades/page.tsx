@@ -236,7 +236,7 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Trade History</h1>
+          <h1 className="font-display text-2xl tracking-tight text-foreground">Trade History</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {filteredTrades.length} trades •
             <span className="text-emerald-500 ml-1">{winCount}W</span> /
@@ -273,46 +273,46 @@ export default function TradesPage() {
             onClick={() => { setTradeToEdit(null); setIsAddTradeOpen(true); }}
             className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 h-10 px-5 transition-all hover:scale-[1.02]"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-5 w-5" />
             New Trade
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {/* Net P&L */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Net P&L</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Net P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", netPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
             {netPnl >= 0 ? "+" : ""}₹{netPnl.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Realized Profit</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Realized Profit</p>
         </Card>
 
         {/* Brokerage */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Charges</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Charges</p>
           <div className="mt-2 text-2xl font-bold text-amber-500">
             ₹{totalBrokerage.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Est. Brokerage & Taxes</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Est. Brokerage & Taxes</p>
         </Card>
 
         {/* Total Trades */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Trades</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total Trades</p>
           <div className="mt-2 text-2xl font-bold text-foreground">{filteredTrades.length}</div>
-          <p className="text-[10px] text-muted-foreground mt-1">{winCount} Wins • {lossCount} Losses</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">{winCount} Wins • {lossCount} Losses</p>
         </Card>
 
         {/* Gross P&L */}
-        <Card className="p-4 glass-card bg-linear-to-br from-background to-muted/20">
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Gross P&L</p>
+        <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gross P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", totalPnl >= 0 ? "text-emerald-500/80" : "text-rose-500/80")}>
             {totalPnl >= 0 ? "+" : ""}₹{totalPnl.toLocaleString("en-IN")}
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">Before Charges</p>
+          <p className="mt-1 text-[10px] text-muted-foreground">Before Charges</p>
         </Card>
       </div>
 
@@ -322,7 +322,7 @@ export default function TradesPage() {
           "p-3 rounded-xl border flex items-center gap-2 text-sm animate-in fade-in slide-in-from-top-2 duration-300",
           syncMessage.type === "success" ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" : "bg-rose-500/5 border-rose-500/20 text-rose-400"
         )}>
-          {syncMessage.type === "success" ? <Zap className="h-4 w-4 shrink-0" /> : <Link2 className="h-4 w-4 shrink-0" />}
+          {syncMessage.type === "success" ? <Zap className="h-5 w-5 shrink-0" /> : <Link2 className="h-5 w-5 shrink-0" />}
           {syncMessage.text}
         </div>
       )}
@@ -345,7 +345,7 @@ export default function TradesPage() {
           {/* Date Range Filter */}
           <div className="flex items-center gap-2">
             <div className="relative">
-              <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
               <input
                 type="date"
                 value={dateFrom}
@@ -356,7 +356,7 @@ export default function TradesPage() {
             </div>
             <span className="text-muted-foreground text-xs">to</span>
             <div className="relative">
-              <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              <CalendarIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
               <input
                 type="date"
                 value={dateTo}
@@ -380,7 +380,7 @@ export default function TradesPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-36 h-9 rounded-lg bg-secondary/50 border-border text-sm">
-                <ArrowUpDown className="h-3 w-3 mr-1 text-muted-foreground" />
+                <ArrowUpDown className="h-4 w-4 mr-1 text-muted-foreground" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -488,7 +488,7 @@ export default function TradesPage() {
                       <span className="font-semibold text-foreground">{trade.symbol}</span>
                       {trade.images && trade.images.length > 0 && (
                         <span title={`${trade.images.length} image(s)`}>
-                          <ImageIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                          <ImageIcon className="h-5 w-5 text-muted-foreground" />
                         </span>
                       )}
                     </div>
@@ -501,7 +501,7 @@ export default function TradesPage() {
                         ? "bg-indigo-500/10 text-indigo-500 dark:text-indigo-400"
                         : "bg-orange-500/10 text-orange-500 dark:text-orange-400"
                     )}>
-                      {trade.type === "long" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                      {trade.type === "long" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                       {trade.type === "long" ? "LONG" : "SHORT"}
                     </div>
                   </TableCell>
@@ -534,7 +534,7 @@ export default function TradesPage() {
 
                   <TableCell>
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-4 w-4" />
                       {formatDuration(trade)}
                     </span>
                   </TableCell>
@@ -565,7 +565,7 @@ export default function TradesPage() {
                           setIsAddTradeOpen(true);
                         }}
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -573,7 +573,7 @@ export default function TradesPage() {
                         className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
                         onClick={(e) => handleDeleteClick(trade._id, e)}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

@@ -109,7 +109,7 @@ function DummyPreview({
     <div className="w-full overflow-hidden rounded-2xl border border-pure/10 bg-void/45 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.25)] backdrop-blur-xl">
       <div className="mb-3 flex items-center gap-2">
         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-signal/20 text-cyan-signal">
-          <Icon className="h-3.5 w-3.5" />
+          <Icon className="h-5 w-5" />
         </span>
         <div className="min-w-0 text-left">
           <p className="truncate font-marketing text-[13px] font-medium text-pure">{label}</p>

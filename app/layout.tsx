@@ -2,29 +2,24 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Toaster } from "@/components/ui/sonner"
 import { Analytics } from "@vercel/analytics/next"
-import { Plus_Jakarta_Sans, Instrument_Serif, Manrope, Roboto_Mono } from "next/font/google"
+import { Instrument_Serif, Manrope, Roboto_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const plusJakarta = Plus_Jakarta_Sans({
+/** App + marketing UI */
+const manrope = Manrope({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
 })
 
-/** Quiet premium display — H1s / section titles */
+/** Quiet premium display — page titles / brand moments */
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-display",
-  display: "swap",
-})
-
-/** UI / body — neo-grotesque */
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-marketing",
   display: "swap",
 })
 
@@ -49,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${plusJakarta.variable} ${instrumentSerif.variable} ${manrope.variable} ${robotoMono.variable} font-sans antialiased`}
+        className={`${manrope.variable} ${instrumentSerif.variable} ${robotoMono.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"

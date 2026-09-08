@@ -100,7 +100,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
               {/* Trade Overview */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                  <Tag className="h-4 w-4 text-blue-500" />
+                  <Tag className="h-5 w-5 text-blue-500" />
                   Trade Overview
                 </div>
                 <div className="bg-muted/40 rounded-lg p-4 space-y-3">
@@ -116,7 +116,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
               {/* Risk Management */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                  <Shield className="h-4 w-4 text-orange-500" />
+                  <Shield className="h-5 w-5 text-orange-500" />
                   Risk Management
                 </div>
                 <div className="bg-muted/40 rounded-lg p-4 space-y-3">
@@ -142,7 +142,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             {/* === SECTION 2: Psychology === */}
             <div>
               <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                <Star className="h-4 w-4 text-amber-500" />
+                <Star className="h-5 w-5 text-amber-500" />
                 Psychology & Evaluation
               </div>
               <div className="bg-muted/40 rounded-lg p-4">
@@ -197,7 +197,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             {/* === SECTION 3: Journal / Analysis === */}
             <div>
               <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                <FileText className="h-4 w-4 text-purple-500" />
+                <FileText className="h-5 w-5 text-purple-500" />
                 Trade Analysis & Notes
               </div>
               <div className="bg-muted/40 rounded-lg p-4 space-y-4">
@@ -219,7 +219,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                 {trade.lessonsLearned && (
                   <div>
                     <h4 className="text-xs uppercase text-muted-foreground font-semibold mb-2 flex items-center gap-1">
-                      <BookOpen className="h-3 w-3" /> Lessons Learned
+                      <BookOpen className="h-5 w-5" /> Lessons Learned
                     </h4>
                     <p className="text-sm text-foreground/80">{trade.lessonsLearned}</p>
                   </div>
@@ -227,7 +227,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                 {trade.mistakes && trade.mistakes.length > 0 && (
                   <div>
                     <h4 className="text-xs uppercase text-muted-foreground font-semibold mb-2 flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3 text-amber-500" /> Mistakes
+                      <AlertTriangle className="h-5 w-5 text-amber-500" /> Mistakes
                     </h4>
                     <ul className="list-disc list-inside text-sm text-foreground/80 space-y-1">
                       {trade.mistakes.map((mistake, index) => (
@@ -243,7 +243,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             {trade.images && trade.images.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                  <ImageIcon className="h-4 w-4 text-cyan-500" />
+                  <ImageIcon className="h-5 w-5 text-cyan-500" />
                   Screenshots ({trade.images.length})
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

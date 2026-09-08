@@ -49,7 +49,7 @@ export function HeroPnl({ totalPnl, totalTrades, winRate }: HeroPnlProps) {
                             {isProfit ? "+" : ""}₹{displayValue.toLocaleString("en-IN")}
                         </h2>
                         <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${isProfit ? "bg-emerald-500/10 text-emerald-500 dark:text-emerald-400" : "bg-rose-500/10 text-rose-500 dark:text-rose-400"}`}>
-                            {isProfit ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                            {isProfit ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
                             {winRate}% WR
                         </div>
                     </div>

@@ -59,7 +59,7 @@ function PlanCard({ icon: Icon, title, color, children, className }: {
             <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
                     <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0", `bg-${color}-500/10`)}>
-                        <Icon className={cn("h-4 w-4", `text-${color}-400`)} />
+                        <Icon className={cn("h-5 w-5", `text-${color}-400`)} />
                     </div>
                     <h4 className={cn("text-xs font-bold uppercase tracking-wider", `text-${color}-400`)}>{title}</h4>
                 </div>
@@ -95,7 +95,7 @@ export default function DailyPlannerPage() {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-2 flex items-center gap-3">
                         <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
                     </h1>
                     <p className="text-muted-foreground">{todayName}</p>
@@ -128,7 +128,7 @@ export default function DailyPlannerPage() {
     if (loading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-amber-500 animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
@@ -146,12 +146,12 @@ export default function DailyPlannerPage() {
     if (error) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
                 <Card className="p-8 text-center">
                     <AlertTriangle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate plan</p>
                     <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">{error}</p>
-                    <Button onClick={fetchPlan} variant="outline"><RefreshCw className="h-4 w-4 mr-2" /> Retry</Button>
+                    <Button onClick={fetchPlan} variant="outline"><RefreshCw className="h-5 w-5 mr-2" /> Retry</Button>
                 </Card>
             </div>
         )
@@ -169,13 +169,13 @@ export default function DailyPlannerPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-1 flex items-center gap-3">
+                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
                         <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
                     </h1>
                     <p className="text-sm text-muted-foreground">{todayName}</p>
                 </div>
                 <Button variant="outline" onClick={fetchPlan} disabled={loading} className="gap-2">
-                    <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} /> Refresh
+                    <RefreshCw className={cn("h-5 w-5", loading && "animate-spin")} /> Refresh
                 </Button>
             </div>
 
@@ -268,7 +268,7 @@ export default function DailyPlannerPage() {
             {data.keyRules && data.keyRules.length > 0 && (
                 <Card className="p-5">
                     <h4 className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                        <Eye className="h-3.5 w-3.5" /> Today&apos;s Rules
+                        <Eye className="h-5 w-5" /> Today&apos;s Rules
                     </h4>
                     <div className="space-y-2">
                         {data.keyRules.map((rule, i) => (

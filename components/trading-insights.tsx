@@ -71,7 +71,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
         <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <Lightbulb className="h-4 w-4 text-amber-500" />
+                    <Lightbulb className="h-5 w-5 text-amber-500" />
                 </div>
                 <div>
                     <h3 className="font-semibold text-foreground text-lg">Trading Insights</h3>
@@ -87,7 +87,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <CalendarDays className="h-3 w-3" /> Best Day
+                                <CalendarDays className="h-5 w-5" /> Best Day
                             </p>
                             {bestDay ? (
                                 <>
@@ -106,7 +106,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                             )}
                         </div>
                         <div className="h-9 w-9 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                            <TrendingUp className="h-4 w-4 text-emerald-400" />
+                            <TrendingUp className="h-5 w-5 text-emerald-400" />
                         </div>
                     </div>
 
@@ -114,7 +114,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                         <div className="mt-3 pt-3 border-t border-border/50 relative z-10">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-muted-foreground flex items-center gap-1">
-                                    <TrendingDown className="h-3 w-3 text-rose-400" /> Worst: {worstDay.day}
+                                    <TrendingDown className="h-5 w-5 text-rose-400" /> Worst: {worstDay.day}
                                 </span>
                                 <span className="text-rose-500 font-medium">
                                     ₹{worstDay.pnl.toLocaleString("en-IN")}
@@ -130,7 +130,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <Clock className="h-3 w-3" /> Best Time
+                                <Clock className="h-5 w-5" /> Best Time
                             </p>
                             {bestTime ? (
                                 <>
@@ -149,7 +149,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                             )}
                         </div>
                         <div className="h-9 w-9 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                            <Clock className="h-4 w-4 text-indigo-400" />
+                            <Clock className="h-5 w-5 text-indigo-400" />
                         </div>
                     </div>
 
@@ -157,7 +157,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                         <div className="mt-3 pt-3 border-t border-border/50 relative z-10">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-muted-foreground flex items-center gap-1">
-                                    <TrendingDown className="h-3 w-3 text-rose-400" /> Worst: {worstTime.hour}
+                                    <TrendingDown className="h-5 w-5 text-rose-400" /> Worst: {worstTime.hour}
                                 </span>
                                 <span className="text-rose-500 font-medium">
                                     ₹{worstTime.pnl.toLocaleString("en-IN")}
@@ -173,7 +173,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <BarChart3 className="h-3 w-3" /> Best Strategy
+                                <BarChart3 className="h-5 w-5" /> Best Strategy
                             </p>
                             {bestStrategy ? (
                                 <>
@@ -192,7 +192,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                             )}
                         </div>
                         <div className="h-9 w-9 rounded-lg bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
-                            <BarChart3 className="h-4 w-4 text-violet-400" />
+                            <BarChart3 className="h-5 w-5 text-violet-400" />
                         </div>
                     </div>
                 </Card>

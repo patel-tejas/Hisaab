@@ -90,7 +90,7 @@ export default function SettingsPage() {
     return (
         <div className="space-y-6 max-w-2xl mx-auto py-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                <h1 className="font-display text-3xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                     Settings
                 </h1>
             </div>
