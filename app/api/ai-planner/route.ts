@@ -231,7 +231,7 @@ ${jsonStructure}`;
 
         const result = await groq.chat.completions.create({
             messages: [{ role: "user", content: prompt }],
-            model: "llama-3.3-70b-versatile",
+            model: "openai/gpt-oss-20b",
             response_format: { type: "json_object" },
         });
         const responseText = result.choices[0]?.message?.content?.trim() || "{}";

@@ -4,7 +4,7 @@ export const ANALYSIS_WINDOW_DAYS = 365
 export const TRADE_HARD_CAP = 500
 export const MIN_TRADES_FOR_INSIGHTS = 3
 export const RATE_LIMIT_MS = 15 * 60 * 1000
-export const GROQ_MODEL = "llama-3.3-70b-versatile"
+export const GROQ_MODEL = "openai/gpt-oss-20b"
 export const GROQ_TIMEOUT_MS = 45_000
 
 export interface InsightTrade {
