@@ -29,9 +29,9 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
     }
 
     const getSeverityIcon = (s: string) => {
-        if (s === "high") return <Flame className="h-3 w-3" />
-        if (s === "medium") return <Zap className="h-3 w-3" />
-        return <Clock className="h-3 w-3" />
+        if (s === "high") return <Flame className="h-5 w-5" />
+        if (s === "medium") return <Zap className="h-5 w-5" />
+        return <Clock className="h-5 w-5" />
     }
 
     return (
@@ -52,7 +52,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                         )}
                     >
                         <AlertTriangle
-                            className={cn("h-4 w-4", count > 0 ? "text-rose-500" : "text-emerald-500")}
+                            className={cn("h-5 w-5", count > 0 ? "text-rose-500" : "text-emerald-500")}
                         />
                     </div>
                     <div>

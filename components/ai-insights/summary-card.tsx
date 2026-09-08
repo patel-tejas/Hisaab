@@ -19,7 +19,7 @@ export function SummaryCard({
   return (
     <Card className="glass-card p-5 relative overflow-hidden h-full">
       <h4 className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-1">
-        <Sparkles className="h-3 w-3" /> AI summary
+        <Sparkles className="h-5 w-5" /> AI summary
       </h4>
       <p className="text-sm text-foreground leading-relaxed">
         {expanded ? insights.overallSummary : short}

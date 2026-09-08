@@ -544,7 +544,7 @@ export default function CalendarPage() {
                                 ? "bg-indigo-500/15 text-indigo-500"
                                 : "bg-orange-500/15 text-orange-500"
                             )}>
-                              {(trade.type || trade.direction) === "long" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                              {(trade.type || trade.direction) === "long" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                               {(trade.type || trade.direction) === "long" ? "LONG" : "SHORT"}
                             </span>
                           </div>
@@ -563,7 +563,7 @@ export default function CalendarPage() {
                           <span>Qty: <span className="text-foreground font-medium">{trade.quantity || "—"}</span></span>
                           {trade.entryTime && (
                             <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
+                              <Clock className="h-4 w-4" />
                               {trade.entryTime}{trade.exitTime ? ` – ${trade.exitTime}` : ""}
                             </span>
                           )}
@@ -587,7 +587,7 @@ export default function CalendarPage() {
 
                         {/* View Details Hint */}
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Eye className="h-4 w-4 text-muted-foreground" />
+                          <Eye className="h-5 w-5 text-muted-foreground" />
                         </div>
                       </div>
                     ))

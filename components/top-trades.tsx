@@ -31,7 +31,7 @@ export function TopTrades({ trades }: TopTradesProps) {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <Trophy className="h-4 w-4 text-amber-500" />
+            <Trophy className="h-5 w-5 text-amber-500" />
           </div>
           <div>
             <h3 className="font-semibold text-foreground">Top Performers</h3>
@@ -39,7 +39,7 @@ export function TopTrades({ trades }: TopTradesProps) {
           </div>
         </div>
         <Link href="/dashboard/trades" className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-          View All <ArrowUpRight className="h-3 w-3" />
+          View All <ArrowUpRight className="h-5 w-5" />
         </Link>
       </div>
 

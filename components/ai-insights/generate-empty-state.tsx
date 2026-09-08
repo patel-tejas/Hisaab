@@ -32,7 +32,7 @@ export function GenerateEmptyState({
           </>
         ) : (
           <>
-            <Sparkles className="h-4 w-4" /> Generate deep analysis
+            <Sparkles className="h-5 w-5" /> Generate deep analysis
           </>
         )}
       </Button>

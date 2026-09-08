@@ -237,7 +237,7 @@ export function AddTradeModal({
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <Info className="h-4 w-4" />
+            <Info className="h-5 w-5" />
             General
           </button>
           <button
@@ -249,7 +249,7 @@ export function AddTradeModal({
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <Brain className="h-4 w-4" />
+            <Brain className="h-5 w-5" />
             Psychology
           </button>
         </div>
@@ -301,7 +301,7 @@ export function AddTradeModal({
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
-                        <ArrowUpRight className="h-4 w-4" /> Long
+                        <ArrowUpRight className="h-5 w-5" /> Long
                       </button>
                       <button
                         type="button"
@@ -313,7 +313,7 @@ export function AddTradeModal({
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
-                        <ArrowDownRight className="h-4 w-4" /> Short
+                        <ArrowDownRight className="h-5 w-5" /> Short
                       </button>
                     </div>
                   </FieldGroup>
@@ -398,7 +398,7 @@ export function AddTradeModal({
                           onClick={() => removeImage(index)}
                           className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
@@ -493,7 +493,7 @@ export function AddTradeModal({
               onClick={handleReset}
               className="text-muted-foreground hover:text-foreground rounded-lg"
             >
-              <RotateCcw className="mr-2 h-4 w-4" /> Reset
+              <RotateCcw className="mr-2 h-5 w-5" /> Reset
             </Button>
 
             <div className="flex gap-2">
@@ -508,7 +508,7 @@ export function AddTradeModal({
                 onClick={handleSaveTrade}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-lg shadow-primary/20 px-6 transition-all hover:scale-[1.02]"
               >
-                <Save className="mr-2 h-4 w-4" /> {tradeToEdit ? "Update Trade" : "Save Trade"}
+                <Save className="mr-2 h-5 w-5" /> {tradeToEdit ? "Update Trade" : "Save Trade"}
               </Button>
             </div>
           </div>

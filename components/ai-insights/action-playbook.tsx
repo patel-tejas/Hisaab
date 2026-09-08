@@ -103,9 +103,9 @@ export function ActionPlaybook({
                   className="w-full flex items-start gap-2.5 text-left rounded-lg p-2 hover:bg-muted/40 transition-colors"
                 >
                   {checked[i] ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
                   ) : (
-                    <Circle className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <Circle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                   )}
                   <span className="flex-1 min-w-0">
                     <span

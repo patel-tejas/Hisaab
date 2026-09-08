@@ -57,7 +57,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                             isAchieved ? "bg-emerald-500/10" : "bg-amber-500/10"
                         )}
                     >
-                        <Target className={cn("h-4 w-4", isAchieved ? "text-emerald-500" : "text-amber-500")} />
+                        <Target className={cn("h-5 w-5", isAchieved ? "text-emerald-500" : "text-amber-500")} />
                     </div>
                     <div>
                         <h3 className="font-semibold text-foreground">{monthName} Goal</h3>
@@ -75,7 +75,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                             setIsEditing(true)
                         }}
                     >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-5 w-5" />
                     </Button>
                 )}
             </div>
@@ -93,7 +93,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                             onKeyDown={(e) => e.key === "Enter" && handleSave()}
                         />
                         <Button size="sm" className="h-9 w-9 p-0" onClick={handleSave}>
-                            <Check className="h-4 w-4" />
+                            <Check className="h-5 w-5" />
                         </Button>
                         <Button
                             size="sm"
@@ -101,7 +101,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                             className="h-9 w-9 p-0"
                             onClick={() => setIsEditing(false)}
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-5 w-5" />
                         </Button>
                     </div>
                 ) : goal === 0 ? (
@@ -113,7 +113,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                             onClick={() => setIsEditing(true)}
                             className="text-xs"
                         >
-                            <Target className="h-3 w-3 mr-1" /> Set Goal
+                            <Target className="h-5 w-5 mr-1" /> Set Goal
                         </Button>
                     </div>
                 ) : (

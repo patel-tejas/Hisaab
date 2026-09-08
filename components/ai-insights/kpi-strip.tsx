@@ -36,7 +36,7 @@ export function KpiStrip({ metrics }: { metrics: InsightsMetrics }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {items.map((item) => (
-        <Card key={item.label} className="glass-card p-4">
+        <Card key={item.label} className="glass-card p-5">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {item.label}
           </p>

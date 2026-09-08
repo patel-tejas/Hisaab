@@ -144,11 +144,11 @@ export default function BrokerPage() {
                     </div>
                     {dhan ? (
                         <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full">
-                            <CheckCircle2 className="h-3.5 w-3.5" /> Connected
+                            <CheckCircle2 className="h-5 w-5" /> Connected
                         </div>
                     ) : (
                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted px-3 py-1.5 rounded-full group-hover:bg-cyan-500/10 group-hover:text-cyan-400 transition-colors">
-                            <Link2 className="h-3.5 w-3.5" /> Connect Now
+                            <Link2 className="h-5 w-5" /> Connect Now
                         </div>
                     )}
                 </div>
@@ -192,7 +192,7 @@ export default function BrokerPage() {
                 onClick={() => setSelectedBroker(null)}
                 className="gap-2 text-muted-foreground hover:text-foreground pl-0"
             >
-                <div className="p-1 rounded-md bg-muted/50"><Link2 className="h-4 w-4 rotate-180" /></div>
+                <div className="p-1 rounded-md bg-muted/50"><Link2 className="h-5 w-5 rotate-180" /></div>
                 Back to Brokers
             </Button>
 
@@ -212,7 +212,7 @@ export default function BrokerPage() {
                         </div>
                         {dhan ? (
                             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
-                                <CheckCircle2 className="h-3.5 w-3.5" /> Connected
+                                <CheckCircle2 className="h-5 w-5" /> Connected
                             </span>
                         ) : (
                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full">
@@ -243,7 +243,7 @@ export default function BrokerPage() {
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
                                     <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Last Synced</p>
                                     <p className="text-sm text-foreground flex items-center gap-1.5">
-                                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <Clock className="h-5 w-5 text-muted-foreground" />
                                         {dhan.lastSynced
                                             ? new Date(dhan.lastSynced).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
                                             : "Never"
@@ -306,7 +306,7 @@ export default function BrokerPage() {
                                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                                         Dhan access tokens expire daily. If sync fails, regenerate your token from{" "}
                                         <a href="https://web.dhan.co" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">
-                                            web.dhan.co <ExternalLink className="h-3 w-3" />
+                                            web.dhan.co <ExternalLink className="h-5 w-5" />
                                         </a>{" "}
                                         → Profile → Access DhanHQ APIs, then reconnect below.
                                     </p>
@@ -319,13 +319,13 @@ export default function BrokerPage() {
                             {/* Instructions */}
                             <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
                                 <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
-                                    <Shield className="h-4 w-4 text-cyan-400" /> How to Connect
+                                    <Shield className="h-5 w-5 text-cyan-400" /> How to Connect
                                 </h3>
                                 <ol className="text-xs text-muted-foreground space-y-1.5 list-decimal list-inside leading-relaxed">
                                     <li>
                                         Login to{" "}
                                         <a href="https://web.dhan.co" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">
-                                            web.dhan.co <ExternalLink className="h-3 w-3" />
+                                            web.dhan.co <ExternalLink className="h-5 w-5" />
                                         </a>
                                     </li>
                                     <li>Go to <strong>Profile → Access DhanHQ APIs</strong></li>
@@ -366,7 +366,7 @@ export default function BrokerPage() {
                                         </button>
                                     </div>
                                     <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
-                                        <Shield className="h-3 w-3" /> Token is encrypted before storage — never stored in plain text
+                                        <Shield className="h-5 w-5" /> Token is encrypted before storage — never stored in plain text
                                     </p>
                                 </div>
                             </div>
@@ -374,13 +374,13 @@ export default function BrokerPage() {
                             {/* Error / Success */}
                             {connectError && (
                                 <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 flex items-center gap-2">
-                                    <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+                                    <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0" />
                                     <p className="text-sm text-rose-400">{connectError}</p>
                                 </div>
                             )}
                             {connectSuccess && (
                                 <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
                                     <p className="text-sm text-emerald-400">{connectSuccess}</p>
                                 </div>
                             )}
@@ -412,7 +412,7 @@ export default function BrokerPage() {
                     ].map((item, i) => (
                         <div key={i} className="p-4 rounded-xl bg-muted/20 border border-border/30">
                             <div className="flex items-center gap-2 mb-2">
-                                <item.icon className="h-4 w-4 text-cyan-400" />
+                                <item.icon className="h-5 w-5 text-cyan-400" />
                                 <p className="text-xs font-bold text-foreground uppercase tracking-wider">{item.title}</p>
                             </div>
                             <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>

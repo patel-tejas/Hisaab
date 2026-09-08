@@ -160,7 +160,7 @@ export default function AiInsightsPage() {
           {generating ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-5 w-5" />
           )}
           Refresh
         </Button>
@@ -169,7 +169,7 @@ export default function AiInsightsPage() {
       {data.stale && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3">
           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-400">
-            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+            <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
             <span>Trades changed since this analysis. Refresh for an up-to-date coaching report.</span>
           </div>
           <Button size="sm" variant="outline" onClick={generate} disabled={generating} className="shrink-0">
@@ -210,7 +210,7 @@ export default function AiInsightsPage() {
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <tab.icon className="size-4" />
+            <tab.icon className="size-5" />
             <span className="hidden sm:inline">{tab.label}</span>
           </button>
         ))}

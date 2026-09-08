@@ -452,19 +452,19 @@ export default function ReportsPage() {
 
           {/* Streak Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Best Day</p>
               <p className="text-xl font-bold text-emerald-500 mt-1">+₹{performance.bestDay.toLocaleString("en-IN")}</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Worst Day</p>
               <p className="text-xl font-bold text-rose-500 mt-1">₹{performance.worstDay.toLocaleString("en-IN")}</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Win Streak</p>
               <p className="text-xl font-bold text-emerald-500 mt-1">{streaks.maxWin} trades</p>
             </Card>
-            <Card className="p-4 glass-card">
+            <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Loss Streak</p>
               <p className="text-xl font-bold text-rose-500 mt-1">{streaks.maxLoss} trades</p>
             </Card>

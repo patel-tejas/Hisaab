@@ -45,8 +45,8 @@ export function RecentActivity({ trades }: RecentActivityProps) {
                                 {/* Timeline dot */}
                                 <div className={`relative z-10 h-[30px] w-[30px] shrink-0 rounded-full flex items-center justify-center ${isProfit ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
                                     {isProfit
-                                        ? <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-                                        : <ArrowDownRight className="h-4 w-4 text-rose-500" />
+                                        ? <ArrowUpRight className="h-5 w-5 text-emerald-500" />
+                                        : <ArrowDownRight className="h-5 w-5 text-rose-500" />
                                     }
                                 </div>
 
@@ -66,7 +66,7 @@ export function RecentActivity({ trades }: RecentActivityProps) {
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                                        <Clock className="h-3 w-3" />
+                                        <Clock className="h-5 w-5" />
                                         {getTimeAgo(trade.date)}
                                     </div>
                                 </div>

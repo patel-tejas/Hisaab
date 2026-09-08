@@ -255,7 +255,7 @@ export default function BacktesterPage() {
                         {/* Total P&L Bar Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <BarChart3 className="h-3.5 w-3.5" /> Total P&L by Strategy
+                                <BarChart3 className="h-5 w-5" /> Total P&L by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={pnlChartData} layout="vertical">
@@ -279,7 +279,7 @@ export default function BacktesterPage() {
                         {/* Win Rate Bar Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <Target className="h-3.5 w-3.5" /> Win Rate by Strategy
+                                <Target className="h-5 w-5" /> Win Rate by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={winRateChartData} layout="vertical">
@@ -299,7 +299,7 @@ export default function BacktesterPage() {
                         {/* Avg P&L Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-violet-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-3.5 w-3.5" /> Avg P&L Per Trade
+                                <TrendingUp className="h-5 w-5" /> Avg P&L Per Trade
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={avgPnlChartData} layout="vertical">
@@ -323,7 +323,7 @@ export default function BacktesterPage() {
                         {/* Cumulative P&L Line Chart */}
                         <Card className="p-5">
                             <h4 className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-3.5 w-3.5" /> Cumulative P&L Over Time
+                                <TrendingUp className="h-5 w-5" /> Cumulative P&L Over Time
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={cumulativeData}>
