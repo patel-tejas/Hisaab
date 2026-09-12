@@ -11,6 +11,7 @@ import {
   Link2,
   CalendarClock,
   FlaskConical,
+  Sparkles,
   Settings2,
 } from "lucide-react"
 
@@ -34,6 +35,7 @@ const navMain = [
   { title: "Brokers", url: "/dashboard/broker", icon: Link2 },
   { title: "Daily Planner", url: "/dashboard/planner", icon: CalendarClock },
   { title: "Backtester", url: "/dashboard/backtester", icon: FlaskConical },
+  { title: "Eve Agent", url: "/agent", icon: Sparkles },
 ]
 
 const navSecondary = [
