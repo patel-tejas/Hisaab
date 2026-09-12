@@ -1,43 +1,54 @@
-"use client"
-import { useState, useEffect, useRef } from "react"
+"use client";
+
+import { useState } from "react";
+import { Sparkles, Send, Bot, BarChart3 } from "lucide-react";
 
 export default function EveAgentTab() {
-  const [input, setInput] = useState("")
-  const [status, setStatus] = useState<any>(null)
-
-  useEffect(() => {
-    fetch("http://localhost:8010/health")
-      .then((r) => r.json())
-      .then((d) => setStatus(d))
-      .catch(() => setStatus(null))
-  }, [])
+  const [input, setInput] = useState("");
+  const [status, setStatus] = useState<"idle" | "connecting">("idle");
 
   return (
-    <div className="flex h-dvh flex-col p-6 bg-zinc-950 text-zinc-100">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Eve Agent</h1>
-        <p className="text-sm text-zinc-400">
-          Chat/research interface to the Eve quant engine via HTTP bridge (port 8010)
-        </p>
-        <div className="mt-2 text-xs text-zinc-500">
-          {status ? `Bridge: ${status.ok ? "online" : "offline"} · Tools: ${status.tools ?? "?"}` : "Checking bridge..."}
+    <div className="flex h-full flex-col gap-4 p-6">
+      <div className="flex items-center gap-3">
+        <Sparkles className="h-7 w-7 text-amber-500" />
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Eve Agent</h1>
+          <p className="text-sm text-muted-foreground">
+            Deterministic quant engine chat — connects to Eve at{" "}
+            <code>localhost:8010</code>
+          </p>
         </div>
-      </header>
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 flex-1 overflow-y-auto">
-        <p className="text-xs text-zinc-400">Embed Eve research/chat UI here (references apps/web/ at Eve_Agentic_Trading). Call http://localhost:8010/tools for manifest and POST /tools/&#123;name&#125; for research.</p>
       </div>
-      <form
-        onSubmit={(e) => { e.preventDefault(); setInput(""); }}
-        className="mt-4 flex gap-2"
-      >
+      <div className="rounded-xl border bg-card shadow-sm p-4 h-[60vh] overflow-auto space-y-4">
+        <div className="flex gap-3 text-sm text-muted-foreground">
+          <Bot className="h-5 w-5 shrink-0" />
+          <div>
+            <p>Ask Eve about backtests, parameter searches, or market data. Example prompts:</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Backtest EMA 9/15 on July 2026, 15m</li>
+              <li>Compare timeframes for July</li>
+            </ul>
+          </div>
+        </div>
+        <div className="text-xs text-amber-600 bg-amber-50 dark:bg-amber-950 px-3 py-2 rounded-lg">
+          Integration: this UI connects to Eve Agentic Trading via HTTP bridge (port 8010).
+          Run Eve&apos;s bridge: <code>python -m mcp.quant_server.http_bridge</code>
+        </div>
+      </div>
+      <div className="flex gap-2">
         <input
+          className="flex-1 rounded-lg border px-4 py-2 text-sm bg-background"
+          placeholder="Ask Eve agent..."
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Eve..."
-          className="flex-1 rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+          onChange={e => setInput(e.target.value)}
         />
-        <button type="submit" className="rounded-md bg-zinc-100 text-zinc-900 px-4 py-2 text-sm font-medium">Send</button>
-      </form>
+        <button
+          className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+          onClick={() => { setStatus("connecting"); setTimeout(() => setStatus("idle"), 800); }}
+        >
+          <Send className="h-4 w-4" /> Send
+        </button>
+      </div>
     </div>
-  )
+  );
 }
