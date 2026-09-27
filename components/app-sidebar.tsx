@@ -35,7 +35,7 @@ const navMain = [
   { title: "Brokers", url: "/dashboard/broker", icon: Link2 },
   { title: "Daily Planner", url: "/dashboard/planner", icon: CalendarClock },
   { title: "Backtester", url: "/dashboard/backtester", icon: FlaskConical },
-  { title: "Eve Agent", url: "/agent", icon: Sparkles },
+  { title: "Eve Agent", url: "/dashboard/agent", icon: Sparkles },
 ]
 
 const navSecondary = [
