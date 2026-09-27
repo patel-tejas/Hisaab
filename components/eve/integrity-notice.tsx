@@ -19,7 +19,7 @@ export function IntegrityNotice({ result }: { result: BacktestResult }) {
   const trades = result.trades ?? [];
 
   return (
-    <Card className="space-y-2.5 border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-4 text-xs">
+    <Card className="space-y-3 rounded-xl border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-5 text-xs">
       <p className="flex items-center gap-1.5 font-medium text-[var(--warning)]">
         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
         Read these numbers with care
@@ -49,7 +49,7 @@ export function IntegrityNotice({ result }: { result: BacktestResult }) {
       </ul>
 
       {a.dependsOnOvernight && (
-        <div className="rounded-md border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-2.5">
+        <div className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-3">
           <p className="font-medium text-foreground">
             The positive result rests on that overnight exposure.
           </p>

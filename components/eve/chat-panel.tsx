@@ -126,67 +126,72 @@ export function ChatPanel({
   }, [messages, status, grounding]);
 
   return (
+    /*
+     * The panel owns its own gutters: the Card wrapper is p-0 so the scroll
+     * area can run edge to edge and the composer can sit on a full-width rule.
+     */
     <div className="flex min-h-0 flex-1 flex-col">
-      <ScrollArea
-        ref={scrollRef}
-        className={cn("min-h-0 flex-1", messages.length > 0 && "pr-3")}
-      >
-        {/*
-          The empty state fills the panel instead of pinning to the top. A tall
-          column of dead space above the composer was the single biggest reason
-          this screen read as unfinished.
-        */}
+      <ScrollArea ref={scrollRef} className="min-h-0 flex-1">
         {messages.length === 0 ? (
-          <div className="flex min-h-[440px] flex-col justify-center px-1 py-10">
+          /*
+           * Sized by its content, centred in whatever room is left. The
+           * previous min-height forced a tall void above the composer.
+           */
+          <div className="flex h-full flex-col justify-center px-5 py-8 md:px-8">
             <p className="label-mono">Start here</p>
-            <h2 className="mt-3 max-w-[22ch] font-display text-3xl leading-[1.05] tracking-tight md:text-4xl">
+            <h2 className="mt-2.5 max-w-[20ch] font-display text-[1.75rem] leading-[1.1] tracking-tight md:text-[2rem]">
               Describe a strategy the way you&apos;d say it out loud.
             </h2>
-            <p className="mt-3 max-w-prose text-sm leading-relaxed text-muted-foreground">
-              Eve turns it into something the engine can actually test, tells you
-              what it had to leave out, and runs it on real NIFTY futures data.
+            <p className="mt-2.5 max-w-[46ch] text-sm leading-relaxed text-muted-foreground">
+              Eve turns it into something the engine can actually test and tells
+              you what it had to leave out.
             </p>
 
-            <ul className="stagger mt-7 space-y-px">
+            <ul className="panel-inset stagger mt-6 divide-y divide-border/50 overflow-hidden">
               {EXAMPLES.map((example) => (
                 <li key={example}>
                   <button
                     onClick={() => submit(example)}
                     disabled={!ready}
-                    className="interactive group flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left text-sm disabled:pointer-events-none disabled:opacity-40"
+                    className="group flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm transition-colors hover:bg-accent/50 disabled:pointer-events-none disabled:opacity-50"
                   >
                     <span className="text-muted-foreground group-hover:text-foreground">
                       {example}
                     </span>
-                    <ArrowUpRight className="size-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                    <ArrowUpRight className="size-3.5 shrink-0 -translate-x-1 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                   </button>
                 </li>
               ))}
             </ul>
+
+            {!ready && (
+              <p className="mt-4 text-xs text-muted-foreground">
+                Start the quant engine to use these.
+              </p>
+            )}
           </div>
-        ) : null}
+        ) : (
+          <div className="space-y-5 px-5 py-6 md:px-8">
+            {messages.map((message) => (
+              <Message
+                key={message.id}
+                message={message}
+                grounding={grounding[message.id]}
+                onLoadStrategy={onLoadStrategy}
+                loadedKey={loadedKey}
+              />
+            ))}
 
-        <div className="space-y-4 pb-4">
-
-          {messages.map((message) => (
-            <Message
-              key={message.id}
-              message={message}
-              grounding={grounding[message.id]}
-              onLoadStrategy={onLoadStrategy}
-              loadedKey={loadedKey}
-            />
-          ))}
-
-          {status === "submitted" && (
-            <p className="text-xs text-muted-foreground">Thinking…</p>
-          )}
-          {error && (
-            <div className="rounded-md border border-[var(--destructive)]/30 bg-[var(--destructive)]/[0.07] px-3 py-2 text-xs text-[var(--destructive)]">
-              {error.message}
-            </div>
-          )}
-        </div>
+            {status === "submitted" && (
+              <p className="label-mono animate-pulse">Thinking…</p>
+            )}
+            {error && (
+              <div className="rounded-lg border border-[var(--destructive)]/30 bg-[var(--destructive)]/[0.07] px-3.5 py-2.5 text-xs text-[var(--destructive)]">
+                {error.message}
+              </div>
+            )}
+          </div>
+        )}
       </ScrollArea>
 
       <form
@@ -194,7 +199,7 @@ export function ChatPanel({
           e.preventDefault();
           submit(input);
         }}
-        className="shrink-0 pt-3"
+        className="shrink-0 border-t border-border/60 px-5 py-4 md:px-8"
       >
         <div className="panel-inset interactive flex items-center gap-2 p-1.5 focus-within:border-border">
           <Input
@@ -239,7 +244,7 @@ function Message({
     <div className={isUser ? "flex justify-end" : "flex justify-start"}>
       <div className={isUser ? "max-w-[85%]" : "w-full"}>
         {!isUser && (
-          <div className="mb-1 font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+          <div className="label-mono mb-1 text-muted-foreground">
             Eve
           </div>
         )}

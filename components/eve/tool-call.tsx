@@ -36,10 +36,10 @@ function Block({ label, value }: { label: string; value: unknown }) {
   const text = typeof value === "string" ? value : JSON.stringify(value, null, 2);
   return (
     <div>
-      <div className="mb-1 font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="label-mono mb-1 text-muted-foreground">
         {label}
       </div>
-      <pre className="max-h-64 overflow-auto rounded-md bg-muted/60 p-2 font-mono text-[11px] leading-relaxed">
+      <pre className="max-h-64 overflow-auto rounded-lg bg-background/60 p-3 font-mono text-[11px] leading-relaxed">
         {text}
       </pre>
     </div>

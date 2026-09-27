@@ -182,7 +182,7 @@ export default function BacktesterPage() {
             {/* Strategy Selector */}
             <Card className="p-5">
                 <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Select Strategies to Compare</h4>
+                    <h4 className="label-mono text-muted-foreground">Select Strategies to Compare</h4>
                     <div className="flex gap-2">
                         <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-7">Select All</Button>
                         <Button variant="ghost" size="sm" onClick={clearAll} className="text-xs h-7">Clear</Button>
@@ -254,8 +254,8 @@ export default function BacktesterPage() {
                     <div className="grid gap-6 md:grid-cols-2">
                         {/* Total P&L Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-[var(--success)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <BarChart3 className="h-5 w-5" /> Total P&L by Strategy
+                            <h4 className="label-mono text-[var(--success)] mb-4 flex items-center gap-1.5">
+                                <BarChart3 className="size-3.5" /> Total P&L by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={pnlChartData} layout="vertical">
@@ -278,8 +278,8 @@ export default function BacktesterPage() {
 
                         {/* Win Rate Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <Target className="h-5 w-5" /> Win Rate by Strategy
+                            <h4 className="label-mono text-[var(--primary)] mb-4 flex items-center gap-1.5">
+                                <Target className="size-3.5" /> Win Rate by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={winRateChartData} layout="vertical">
@@ -298,8 +298,8 @@ export default function BacktesterPage() {
 
                         {/* Avg P&L Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-5 w-5" /> Avg P&L Per Trade
+                            <h4 className="label-mono text-[var(--primary)] mb-4 flex items-center gap-1.5">
+                                <TrendingUp className="size-3.5" /> Avg P&L Per Trade
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={avgPnlChartData} layout="vertical">
@@ -322,8 +322,8 @@ export default function BacktesterPage() {
 
                         {/* Cumulative P&L Line Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-5 w-5" /> Cumulative P&L Over Time
+                            <h4 className="label-mono text-cyan-400 mb-4 flex items-center gap-1.5">
+                                <TrendingUp className="size-3.5" /> Cumulative P&L Over Time
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={cumulativeData}>
@@ -355,7 +355,7 @@ export default function BacktesterPage() {
 
                     {/* Detailed Table */}
                     <Card className="p-5 overflow-x-auto">
-                        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Detailed Comparison</h4>
+                        <h4 className="label-mono text-muted-foreground mb-4">Detailed Comparison</h4>
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border text-xs text-muted-foreground">

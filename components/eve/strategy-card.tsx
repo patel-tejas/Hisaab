@@ -35,10 +35,10 @@ export function StrategyCard({
   const numeric: NumericParam[] = ["fast_ema", "slow_ema", "angle_threshold", "angle_lookback"];
 
   return (
-    <Card className="space-y-4 border-primary/25 bg-primary/[0.03] p-4">
+    <Card className="space-y-4 rounded-xl border-border bg-secondary/30 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+          <p className="label-mono text-muted-foreground">
             Strategy understood
           </p>
           {proposal.plain_english && (
@@ -92,7 +92,7 @@ export function StrategyCard({
       )}
 
       {unsupported.length > 0 && (
-        <div className="rounded-md border border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-3 text-xs">
+        <div className="rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-3.5 text-xs">
           <p className="flex items-center gap-1.5 font-medium text-[var(--warning)]">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             Not testable by this engine

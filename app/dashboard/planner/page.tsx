@@ -267,8 +267,8 @@ export default function DailyPlannerPage() {
             {/* Row 5: Key Rules */}
             {data.keyRules && data.keyRules.length > 0 && (
                 <Card className="p-5">
-                    <h4 className="text-[10px] font-bold text-[var(--warning)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                        <Eye className="h-5 w-5" /> Today&apos;s Rules
+                    <h4 className="label-mono text-[var(--warning)] mb-4 flex items-center gap-1.5">
+                        <Eye className="size-3.5" /> Today&apos;s Rules
                     </h4>
                     <div className="space-y-2">
                         {data.keyRules.map((rule, i) => (

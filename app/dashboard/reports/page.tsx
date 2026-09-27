@@ -91,7 +91,7 @@ function StatCard({ label, value, sub, icon: Icon, color }: { label: string; val
     <Card className="glass-card relative gap-1 overflow-hidden px-5 py-5 group">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="label-mono text-muted-foreground">{label}</p>
           <p className={cn("mt-1 text-2xl font-bold", color)}>{value}</p>
           {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
         </div>
@@ -451,19 +451,19 @@ export default function ReportsPage() {
           {/* Streak Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-5 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Best Day</p>
+              <p className="label-mono text-muted-foreground">Best Day</p>
               <p className="text-xl font-bold text-[var(--success)] mt-1">+₹{performance.bestDay.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-5 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Worst Day</p>
+              <p className="label-mono text-muted-foreground">Worst Day</p>
               <p className="text-xl font-bold text-[var(--destructive)] mt-1">₹{performance.worstDay.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-5 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Win Streak</p>
+              <p className="label-mono text-muted-foreground">Max Win Streak</p>
               <p className="text-xl font-bold text-[var(--success)] mt-1">{streaks.maxWin} trades</p>
             </Card>
             <Card className="p-5 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Loss Streak</p>
+              <p className="label-mono text-muted-foreground">Max Loss Streak</p>
               <p className="text-xl font-bold text-[var(--destructive)] mt-1">{streaks.maxLoss} trades</p>
             </Card>
           </div>
@@ -782,7 +782,7 @@ export default function ReportsPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-4 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Drawdown</p>
+              <p className="label-mono text-muted-foreground">Max Drawdown</p>
               <div className="flex items-baseline gap-2">
                 <p className="text-2xl font-bold text-[var(--destructive)] mt-1">{maxDrawdown.toFixed(1)}%</p>
                 <p className="text-sm font-medium text-[var(--destructive)]">(-₹{maxDrawdownAmount.toLocaleString("en-IN")})</p>
@@ -790,15 +790,15 @@ export default function ReportsPage() {
               <p className="text-xs text-muted-foreground">From peak equity</p>
             </Card>
             <Card className="p-4 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Avg Position Size</p>
+              <p className="label-mono text-muted-foreground">Avg Position Size</p>
               <p className="text-2xl font-bold text-foreground mt-1">₹{Math.round(riskMetrics.avgPositionSize).toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-4 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Largest Win</p>
+              <p className="label-mono text-muted-foreground">Largest Win</p>
               <p className="text-2xl font-bold text-[var(--success)] mt-1">+₹{riskMetrics.largestWin.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-4 glass-card">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Largest Loss</p>
+              <p className="label-mono text-muted-foreground">Largest Loss</p>
               <p className="text-2xl font-bold text-[var(--destructive)] mt-1">₹{riskMetrics.largestLoss.toLocaleString("en-IN")}</p>
             </Card>
           </div>
@@ -877,7 +877,7 @@ export default function ReportsPage() {
       ═══════════════════════════════════════ */}
       {activeTab === "journal" && (
         <Card className="glass-card overflow-hidden">
-          <div className="bg-muted/30 px-6 py-3 border-b border-border flex font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
+          <div className="label-mono bg-muted/30 px-6 py-3 border-b border-border flex text-muted-foreground">
             <div className="w-32 shrink-0">Date</div>
             <div className="w-32 shrink-0">Symbol</div>
             <div className="w-28 shrink-0 text-right">P&L</div>

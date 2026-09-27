@@ -143,7 +143,7 @@ export function ActionPlaybook({
 function PatternTile({ label, text }: { label: string; text: string }) {
   return (
     <Card className="glass-card p-3.5">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+      <p className="label-mono text-muted-foreground mb-1">
         {label}
       </p>
       <p className="text-xs text-foreground leading-snug line-clamp-3">{text || "—"}</p>

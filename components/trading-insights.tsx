@@ -86,8 +86,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--success)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <CalendarDays className="h-5 w-5" /> Best Day
+                            <p className="label-mono text-muted-foreground flex items-center gap-1.5">
+                                <CalendarDays className="size-3.5" /> Best Day
                             </p>
                             {bestDay ? (
                                 <>
@@ -129,8 +129,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--primary)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <Clock className="h-5 w-5" /> Best Time
+                            <p className="label-mono text-muted-foreground flex items-center gap-1.5">
+                                <Clock className="size-3.5" /> Best Time
                             </p>
                             {bestTime ? (
                                 <>
@@ -172,8 +172,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                     <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--primary)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                                <BarChart3 className="h-5 w-5" /> Best Strategy
+                            <p className="label-mono text-muted-foreground flex items-center gap-1.5">
+                                <BarChart3 className="size-3.5" /> Best Strategy
                             </p>
                             {bestStrategy ? (
                                 <>

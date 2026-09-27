@@ -176,7 +176,7 @@ export default function BrokerPage() {
                             <h3 className="text-lg font-bold text-muted-foreground">{broker.name}</h3>
                             <p className="text-xs text-muted-foreground">Coming Soon</p>
                         </div>
-                        <div className="px-3 py-1.5 rounded-full bg-muted/50 text-[10px] uppercase font-bold text-muted-foreground">
+                        <div className="label-mono px-3 py-1.5 rounded-full bg-muted/50 text-muted-foreground">
                             Integration Soon
                         </div>
                     </div>
@@ -231,17 +231,17 @@ export default function BrokerPage() {
                             {/* Status Info */}
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Client ID</p>
+                                    <p className="label-mono text-muted-foreground mb-1">Client ID</p>
                                     <p className="text-sm font-mono text-foreground">{dhan.clientId}</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Status</p>
+                                    <p className="label-mono text-muted-foreground mb-1">Status</p>
                                     <p className="text-sm text-[var(--success)] font-medium flex items-center gap-1.5">
                                         <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" /> Active
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Last Synced</p>
+                                    <p className="label-mono text-muted-foreground mb-1">Last Synced</p>
                                     <p className="text-sm text-foreground flex items-center gap-1.5">
                                         <Clock className="h-5 w-5 text-muted-foreground" />
                                         {dhan.lastSynced
@@ -337,7 +337,7 @@ export default function BrokerPage() {
                             {/* Form */}
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">Dhan Client ID</label>
+                                    <label className="label-mono text-muted-foreground block mb-1.5">Dhan Client ID</label>
                                     <input
                                         type="text"
                                         value={clientId}
@@ -347,7 +347,7 @@ export default function BrokerPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">Access Token</label>
+                                    <label className="label-mono text-muted-foreground block mb-1.5">Access Token</label>
                                     <div className="relative">
                                         <input
                                             type={showToken ? "text" : "password"}
@@ -361,7 +361,7 @@ export default function BrokerPage() {
                                             onClick={() => setShowToken(!showToken)}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                                         >
-                                            {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            {showToken ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
                                         </button>
                                     </div>
                                     <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
@@ -412,7 +412,7 @@ export default function BrokerPage() {
                         <div key={i} className="p-4 rounded-xl bg-muted/20 border border-border/30">
                             <div className="flex items-center gap-2 mb-2">
                                 <item.icon className="h-5 w-5 text-cyan-400" />
-                                <p className="text-xs font-bold text-foreground uppercase tracking-wider">{item.title}</p>
+                                <p className="label-mono text-foreground">{item.title}</p>
                             </div>
                             <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                         </div>

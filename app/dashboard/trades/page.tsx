@@ -283,7 +283,7 @@ export default function TradesPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {/* Net P&L */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Net P&L</p>
+          <p className="label-mono text-muted-foreground">Net P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", netPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
             {netPnl >= 0 ? "+" : ""}₹{netPnl.toLocaleString("en-IN")}
           </div>
@@ -292,7 +292,7 @@ export default function TradesPage() {
 
         {/* Brokerage */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Charges</p>
+          <p className="label-mono text-muted-foreground">Charges</p>
           <div className="mt-2 text-2xl font-bold text-[var(--warning)]">
             ₹{totalBrokerage.toLocaleString("en-IN")}
           </div>
@@ -301,14 +301,14 @@ export default function TradesPage() {
 
         {/* Total Trades */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total Trades</p>
+          <p className="label-mono text-muted-foreground">Total Trades</p>
           <div className="mt-2 text-2xl font-bold text-foreground">{filteredTrades.length}</div>
           <p className="mt-1 text-[10px] text-muted-foreground">{winCount} Wins • {lossCount} Losses</p>
         </Card>
 
         {/* Gross P&L */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gross P&L</p>
+          <p className="label-mono text-muted-foreground">Gross P&L</p>
           <div className={cn("mt-2 text-2xl font-bold", totalPnl >= 0 ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80")}>
             {totalPnl >= 0 ? "+" : ""}₹{totalPnl.toLocaleString("en-IN")}
           </div>
@@ -450,16 +450,16 @@ export default function TradesPage() {
                     aria-label="Select all"
                   />
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Date</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Symbol</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Direction</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Entry / Exit</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">P&L</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">R:R</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Strategy</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Duration</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Outcome</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-24">Actions</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Date</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Symbol</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Direction</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Entry / Exit</TableHead>
+                <TableHead className="label-mono text-muted-foreground">P&L</TableHead>
+                <TableHead className="label-mono text-muted-foreground">R:R</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Strategy</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Duration</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Outcome</TableHead>
+                <TableHead className="label-mono text-muted-foreground w-24">Actions</TableHead>
               </TableRow>
             </TableHeader>
 

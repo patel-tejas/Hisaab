@@ -199,124 +199,217 @@ export function EveStudio() {
     );
   }, [params]);
 
+  /*
+   * Height is bounded, not derived from the viewport. An earlier revision used
+   * `calc(100svh - 16rem)`, which — inside a shell that is already h-svh with
+   * its own scroller — made the page taller than the viewport and pushed the
+   * header off screen.
+   */
+  const COLUMN = "h-[min(68vh,42rem)]";
+
   return (
-    <div className="space-y-4">
+    <div>
       <PageHeader
         eyebrow="Strategy studio"
         title="Eve Agent"
         description="Describe a strategy in plain English. Test it on real NIFTY futures data."
-        className="pb-0"
         actions={
-          <div className="flex items-center gap-4">
-          <StatusDot
-            ok={bridgeOk}
-            label={bridgeOk ? `engine · ${status?.bridge.tools} tools` : "engine offline"}
-            title={status?.bridge.error ?? status?.bridge.url}
-          />
-          <StatusDot
-            ok={status?.model.ok ?? false}
-            label={`${status?.model.provider ?? "groq"} · ${status?.model.id ?? "…"}`}
-            title={status?.model.detail ?? "checking…"}
-          />
+          <div className="flex flex-col items-end gap-1.5">
+            <StatusDot
+              ok={bridgeOk}
+              label={bridgeOk ? `engine · ${status?.bridge.tools} tools` : "engine offline"}
+              title={status?.bridge.error ?? status?.bridge.url}
+            />
+            <StatusDot
+              ok={status?.model.ok ?? false}
+              label={`${status?.model.provider ?? "groq"} · ${status?.model.id ?? "…"}`}
+              title={status?.model.detail ?? "checking…"}
+            />
           </div>
         }
       />
 
-      {status && !ready && (
-        <Card className="border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-5 text-xs">
-          <p className="label-mono text-[var(--warning)]">Setup needed</p>
-          <ul className="mt-2 list-disc space-y-1.5 pl-4 leading-relaxed text-muted-foreground marker:text-[var(--warning)]/50">
-            {!bridgeOk && (
-              <li>
-                Start the quant engine:{" "}
-                <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-foreground">
-                  uv run python -m mcp.quant_server.http_bridge
-                </code>{" "}
-                in <code className="font-mono">d:\Trading\EMA_Strategy</code>
-              </li>
-            )}
-            {!status.model.ok && (
-              <li>
-                {status.model.detail} Set it in <code className="font-mono">.env</code> and
-                restart the dev server.
-              </li>
-            )}
-          </ul>
-        </Card>
-      )}
+      {/*
+        One state at a time. Previously an offline engine produced three
+        competing half-empty cards — a warning banner, a disabled chat, and a
+        lonely "start the engine" note — which is what made the page read as a
+        prototype.
+      */}
+      {status && !ready ? (
+        <EngineSetup
+          bridgeOk={bridgeOk}
+          bridgeUrl={status.bridge.url}
+          modelOk={status.model.ok}
+          modelDetail={status.model.detail}
+        />
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+          <Card className={cn("flex flex-col overflow-hidden p-0", COLUMN)}>
+            <ChatPanel
+              onLoadStrategy={loadStrategy}
+              loadedKey={params ? JSON.stringify(params) : null}
+              seedMessage={seedMessage}
+              onSeedConsumed={() => setSeedMessage(null)}
+              ready={ready}
+            />
+          </Card>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
-        <Card className="panel-p flex h-[calc(100svh-16rem)] min-h-[560px] flex-col">
-          <ChatPanel
-            onLoadStrategy={loadStrategy}
-            loadedKey={params ? JSON.stringify(params) : null}
-            seedMessage={seedMessage}
-            onSeedConsumed={() => setSeedMessage(null)}
-            ready={ready}
-          />
-        </Card>
+          <ScrollArea className={COLUMN}>
+            <div className="space-y-4 pr-3">
+              {params ? (
+                <>
+                  <Card className="panel-p">
+                    <ParamSliders
+                      params={params}
+                      months={months}
+                      onChange={setParams}
+                      disabled={!bridgeOk}
+                    />
+                    <div className="mt-6 flex gap-2 border-t border-border/60 pt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="interactive flex-1 gap-1.5"
+                        onClick={askEve}
+                        disabled={!ready}
+                      >
+                        <MessageSquarePlus className="size-3.5" /> Ask Eve about this
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="interactive gap-1.5"
+                        onClick={exportCsv}
+                        disabled={exporting || !bridgeOk}
+                      >
+                        <Download className="size-3.5" />
+                        {exporting ? "Exporting…" : "CSV"}
+                      </Button>
+                    </div>
+                  </Card>
 
-        <ScrollArea className="h-[calc(100svh-16rem)] min-h-[560px]">
-          <div className="space-y-4 pr-3">
-            {params ? (
-              <>
-                <Card className="panel-p">
-                  <ParamSliders
-                    params={params}
-                    months={months}
-                    onChange={setParams}
-                    disabled={!bridgeOk}
+                  <VerdictPanel
+                    significance={significance}
+                    validation={validation}
+                    loading={verdictLoading}
+                    onRun={runVerdict}
+                    monthCount={months.length}
                   />
-                  <div className="mt-6 flex gap-2 border-t border-border/60 pt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 gap-1.5"
-                      onClick={askEve}
-                      disabled={!ready}
-                    >
-                      <MessageSquarePlus className="h-3.5 w-3.5" /> Ask Eve about this
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5"
-                      onClick={exportCsv}
-                      disabled={exporting || !bridgeOk}
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      {exporting ? "Exporting…" : "CSV"}
-                    </Button>
-                  </div>
+
+                  {running && !result ? (
+                    <ResultsSkeleton />
+                  ) : result ? (
+                    <div className={cn(running && "opacity-60 transition-opacity")}>
+                      <ResultsPanel result={result} />
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <Card className="panel-p">
+                  <p className="label-mono">No data</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    No processed months were found. Download and process a month
+                    before running a backtest.
+                  </p>
                 </Card>
-
-                <VerdictPanel
-                  significance={significance}
-                  validation={validation}
-                  loading={verdictLoading}
-                  onRun={runVerdict}
-                  monthCount={months.length}
-                />
-
-                {running && !result ? (
-                  <ResultsSkeleton />
-                ) : result ? (
-                  <div className={cn(running && "opacity-60 transition-opacity")}>
-                    <ResultsPanel result={result} />
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <Card className="panel-p text-center text-sm text-muted-foreground">
-                {bridgeOk
-                  ? "No processed months found. Download and process a month first."
-                  : "Start the quant engine to load the available months."}
-              </Card>
-            )}
-          </div>
-        </ScrollArea>
-      </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
     </div>
+  );
+}
+
+/**
+ * The engine is a separate local process, so "not running" is an ordinary
+ * state rather than an error. It gets a real screen: what is wrong, the exact
+ * command, and nothing else competing for attention.
+ */
+function EngineSetup({
+  bridgeOk,
+  bridgeUrl,
+  modelOk,
+  modelDetail,
+}: {
+  bridgeOk: boolean;
+  bridgeUrl: string;
+  modelOk: boolean;
+  modelDetail: string;
+}) {
+  return (
+    <Card className="panel-p">
+      <div className="mx-auto max-w-2xl py-6 md:py-10">
+        <p className="label-mono">Not connected</p>
+        <h2 className="mt-3 font-display text-3xl leading-[1.05] tracking-tight md:text-4xl">
+          The quant engine isn&apos;t running.
+        </h2>
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-muted-foreground">
+          Eve reads every number from a local Python engine. Start it and this
+          page will connect on its own.
+        </p>
+
+        <ol className="mt-8 space-y-5">
+          {!bridgeOk && (
+            <SetupStep
+              n={1}
+              title="Start the engine"
+              detail={
+                <>
+                  Run this in <code className="font-mono text-foreground">d:\Trading\EMA_Strategy</code>.
+                  It stays in the foreground, so leave the terminal open.
+                </>
+              }
+              command="uv run python -m mcp.quant_server.http_bridge"
+              note={`Expected at ${bridgeUrl}`}
+            />
+          )}
+          {!modelOk && (
+            <SetupStep
+              n={bridgeOk ? 1 : 2}
+              title="Configure the model"
+              detail={modelDetail}
+              command="EVE_MODEL=openai/gpt-oss-120b"
+              note="Set in .env, then restart the dev server."
+            />
+          )}
+        </ol>
+
+        <p className="mt-8 border-t border-border/60 pt-4 text-xs text-muted-foreground">
+          This page polls on load. Refresh once the engine is up.
+        </p>
+      </div>
+    </Card>
+  );
+}
+
+function SetupStep({
+  n,
+  title,
+  detail,
+  command,
+  note,
+}: {
+  n: number;
+  title: string;
+  detail: React.ReactNode;
+  command: string;
+  note?: string;
+}) {
+  return (
+    <li className="flex gap-4">
+      <span className="label-mono mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-foreground">
+        {n}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium">{title}</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{detail}</p>
+        <pre className="panel-inset mt-3 overflow-x-auto px-3.5 py-2.5 font-mono text-xs text-foreground">
+          {command}
+        </pre>
+        {note && <p className="mt-1.5 text-xs text-muted-foreground">{note}</p>}
+      </div>
+    </li>
   );
 }
 

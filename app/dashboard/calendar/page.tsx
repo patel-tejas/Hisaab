@@ -486,19 +486,19 @@ export default function CalendarPage() {
                   </DialogHeader>
                   <div className="flex items-center gap-6 mt-3">
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Day P&L</p>
+                      <p className="label-mono text-muted-foreground">Day P&L</p>
                       <p className={cn("text-2xl font-bold", dayPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                         {dayPnl >= 0 ? "+" : ""}₹{dayPnl.toLocaleString("en-IN")}
                       </p>
                     </div>
                     <div className="h-10 w-px bg-border" />
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Trades</p>
+                      <p className="label-mono text-muted-foreground">Trades</p>
                       <p className="text-lg font-semibold">{selectedTrades.length}</p>
                     </div>
                     <div className="h-10 w-px bg-border" />
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">W / L</p>
+                      <p className="label-mono text-muted-foreground">W / L</p>
                       <p className="text-lg font-semibold">
                         <span className="text-[var(--success)]">{wins}</span>
                         <span className="text-muted-foreground mx-1">/</span>

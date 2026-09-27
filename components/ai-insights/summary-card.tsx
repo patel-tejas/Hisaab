@@ -18,8 +18,8 @@ export function SummaryCard({
 
   return (
     <Card className="glass-card p-5 relative overflow-hidden h-full">
-      <h4 className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-1">
-        <Sparkles className="h-5 w-5" /> AI summary
+      <h4 className="label-mono text-primary mb-2 flex items-center gap-1">
+        <Sparkles className="size-3.5" /> AI summary
       </h4>
       <p className="text-sm text-foreground leading-relaxed">
         {expanded ? insights.overallSummary : short}
@@ -37,7 +37,7 @@ export function SummaryCard({
       {forecast?.projection && (
         <div className="mt-4 pt-3 border-t border-border/60">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--primary)]">
+            <span className="label-mono text-[var(--primary)]">
               Forecast
             </span>
             {forecast.confidence && (

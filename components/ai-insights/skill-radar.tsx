@@ -1,5 +1,6 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import {
   PolarAngleAxis,
@@ -73,11 +74,10 @@ function ChipList({
   return (
     <div>
       <p
-        className={
-          tone === "pos"
-            ? "text-[10px] font-bold uppercase tracking-wider text-[var(--success)] mb-1.5"
-            : "text-[10px] font-bold uppercase tracking-wider text-[var(--warning)] mb-1.5"
-        }
+        className={cn(
+          "label-mono mb-1.5",
+          tone === "pos" ? "text-[var(--success)]" : "text-[var(--warning)]",
+        )}
       >
         {title}
       </p>

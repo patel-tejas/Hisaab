@@ -40,7 +40,7 @@ export function ConfidenceIndex({ value }: ConfidenceIndexProps) {
       </div>
 
       <div className="mt-6 z-10">
-        <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+        <div className="label-mono flex items-center justify-between text-muted-foreground mb-2">
           <span>Fearful</span>
           <span>Balanced</span>
           <span>Confident</span>

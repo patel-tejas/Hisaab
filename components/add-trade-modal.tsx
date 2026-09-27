@@ -29,7 +29,7 @@ const defaultQuantities: Record<string, number> = {"NIFTY 50": 65,
 // Moved outside to prevent re-mounting on every render
 const FieldGroup = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
-    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+    <Label className="label-mono text-muted-foreground">
       {label}{required && <span className="text-primary ml-0.5">*</span>}
     </Label>
     {children}

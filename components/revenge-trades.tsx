@@ -85,7 +85,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                         <div className="grid grid-cols-3 gap-2 mb-3">
                             <div className="bg-muted/40 rounded-lg p-2 text-center">
                                 <p className="text-lg font-bold text-foreground">{count}</p>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                <p className="label-mono text-muted-foreground">
                                     Revenge
                                 </p>
                             </div>
@@ -94,13 +94,13 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                                     {totalRevengePnl >= 0 ? "+" : ""}₹
                                     {Math.abs(totalRevengePnl).toLocaleString("en-IN")}
                                 </p>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                <p className="label-mono text-muted-foreground">
                                     Impact
                                 </p>
                             </div>
                             <div className="bg-muted/40 rounded-lg p-2 text-center">
                                 <p className="text-lg font-bold text-foreground">{ratio}%</p>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                <p className="label-mono text-muted-foreground">
                                     of Trades
                                 </p>
                             </div>

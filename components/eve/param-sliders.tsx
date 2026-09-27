@@ -62,7 +62,7 @@ export function ParamSliders({
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <p className="font-mono-label text-[10px] uppercase tracking-wider text-muted-foreground">
+        <p className="label-mono text-muted-foreground">
           Parameters you can tweak
         </p>
         {!isDefault && (

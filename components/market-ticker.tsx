@@ -74,7 +74,7 @@ export function MarketTicker() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--success)] opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
         </span>
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="label-mono text-muted-foreground">
           Live
         </span>
       </div>
