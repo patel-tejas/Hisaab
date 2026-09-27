@@ -28,7 +28,7 @@ export default function ToolsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl tracking-tight text-foreground">Trading Tools</h1>
+        <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">Trading Tools</h1>
         <p className="text-muted-foreground mt-1">Calculators and utilities to help with your trading decisions.</p>
       </div>
 
@@ -36,7 +36,7 @@ export default function ToolsPage() {
         {tools.map((tool) => (
           <Card
             key={tool.title}
-            className="p-6 cursor-pointer transition-all hover:shadow-md hover:border-primary/20 group"
+            className="p-6 cursor-pointer transition-all hover: hover:border-primary/20 group"
           >
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">

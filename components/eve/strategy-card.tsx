@@ -88,21 +88,21 @@ export function StrategyCard({
       </div>
 
       {adjusted && (
-        <p className="text-xs text-amber-700 dark:text-amber-400">{adjusted}</p>
+        <p className="text-xs text-[var(--warning)]">{adjusted}</p>
       )}
 
       {unsupported.length > 0 && (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs dark:border-amber-900/60 dark:bg-amber-950/40">
-          <p className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
+        <div className="rounded-md border border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-3 text-xs">
+          <p className="flex items-center gap-1.5 font-medium text-[var(--warning)]">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             Not testable by this engine
           </p>
-          <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-amber-900/90 dark:text-amber-200/90">
+          <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-muted-foreground">
             {unsupported.map((item, i) => (
               <li key={i}>{item}</li>
             ))}
           </ul>
-          <p className="mt-2 text-amber-900/70 dark:text-amber-200/70">
+          <p className="mt-2 text-muted-foreground">
             The engine only tests EMA crossovers with a steepness gate. Everything above was
             left out of the test — not applied silently.
           </p>

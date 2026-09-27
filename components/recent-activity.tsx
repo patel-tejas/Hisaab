@@ -45,10 +45,10 @@ export function RecentActivity({ trades }: RecentActivityProps) {
                                 )}
 
                                 {/* Timeline dot */}
-                                <div className={`relative z-10 h-[30px] w-[30px] shrink-0 rounded-full flex items-center justify-center ${isProfit ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
+                                <div className={`relative z-10 h-[30px] w-[30px] shrink-0 rounded-full flex items-center justify-center ${isProfit ? "bg-[var(--success)]/10" : "bg-[var(--destructive)]/10"}`}>
                                     {isProfit
-                                        ? <ArrowUpRight className="h-5 w-5 text-emerald-500" />
-                                        : <ArrowDownRight className="h-5 w-5 text-rose-500" />
+                                        ? <ArrowUpRight className="h-5 w-5 text-[var(--success)]" />
+                                        : <ArrowDownRight className="h-5 w-5 text-[var(--destructive)]" />
                                     }
                                 </div>
 
@@ -58,12 +58,12 @@ export function RecentActivity({ trades }: RecentActivityProps) {
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium text-foreground text-sm">{trade.symbol}</span>
                                             {trade.direction && (
-                                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${trade.direction === "long" ? "bg-indigo-500/20 text-indigo-400" : "bg-orange-500/20 text-orange-400"}`}>
+                                                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${trade.direction === "long" ? "bg-[var(--primary)]/20 text-[var(--primary)]" : "bg-[var(--warning)]/20 text-[var(--warning)]"}`}>
                                                     {trade.direction.toUpperCase()}
                                                 </span>
                                             )}
                                         </div>
-                                        <span className={`text-sm font-semibold ${isProfit ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
+                                        <span className={`text-sm font-semibold ${isProfit ? "text-[var(--success)] dark:text-[var(--success)]" : "text-[var(--destructive)] dark:text-[var(--destructive)]"}`}>
                                             {isProfit ? "+" : ""}₹{trade.pnl.toLocaleString("en-IN")}
                                         </span>
                                     </div>

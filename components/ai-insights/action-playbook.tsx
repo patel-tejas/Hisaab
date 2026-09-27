@@ -10,9 +10,9 @@ import { normalizeActions } from "./format"
 const CHECKS_KEY = "ai-action-checks-v2"
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: "bg-red-500/10 text-red-400 border-red-500/20",
-  "quick-win": "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  "long-term": "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  high: "bg-[var(--destructive)]/10 text-[var(--destructive)] border-[var(--destructive)]/20",
+  "quick-win": "bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/20",
+  "long-term": "bg-[var(--primary)]/10 text-[var(--primary)] border-[var(--primary)]/20",
 }
 
 export function ActionPlaybook({
@@ -103,7 +103,7 @@ export function ActionPlaybook({
                   className="w-full flex items-start gap-2.5 text-left rounded-lg p-2 hover:bg-muted/40 transition-colors"
                 >
                   {checked[i] ? (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="h-5 w-5 text-[var(--success)] shrink-0 mt-0.5" />
                   ) : (
                     <Circle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                   )}

@@ -75,7 +75,7 @@ interface Trade {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-xl text-sm">
+    <div className="bg-popover border border-border rounded-lg px-3 py-2 text-sm">
       <p className="text-muted-foreground text-xs mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="font-semibold" style={{ color: p.color }}>
@@ -96,12 +96,11 @@ function StatCard({ label, value, sub, icon: Icon, color }: { label: string; val
           {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
         </div>
         <div
-          className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-lg",
+          className={cn("flex size-10 shrink-0 items-center justify-center rounded-lg",
             color.includes("emerald")
-              ? "bg-emerald-500/10 text-emerald-500"
+              ? "bg-[var(--success)]/10 text-[var(--success)]"
               : color.includes("rose")
-                ? "bg-rose-500/10 text-rose-500"
+                ? "bg-[var(--destructive)]/10 text-[var(--destructive)]"
                 : "bg-primary/10 text-primary"
           )}
         >
@@ -407,15 +406,14 @@ export default function ReportsPage() {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl tracking-tight text-foreground">Analytics & Reports</h1>
+          <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">Analytics & Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">{filteredTrades.length} trades in the last {rangeLabel.toLowerCase()}</p>
         </div>
         <div className="flex gap-2">
           <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1">
             {tabs.map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                activeTab === tab.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={cn("flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                activeTab === tab.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}>
                 <tab.icon className="size-5" />
                 <span className="hidden sm:inline">{tab.label}</span>
@@ -444,29 +442,29 @@ export default function ReportsPage() {
         <div className="space-y-6">
           {/* Stats Row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Total P&L" value={`₹${performance.totalPnl.toLocaleString("en-IN")}`} sub={`${filteredTrades.length} trades`} icon={performance.totalPnl >= 0 ? TrendingUp : TrendingDown} color={performance.totalPnl >= 0 ? "text-emerald-500" : "text-rose-500"} />
+            <StatCard label="Total P&L" value={`₹${performance.totalPnl.toLocaleString("en-IN")}`} sub={`${filteredTrades.length} trades`} icon={performance.totalPnl >= 0 ? TrendingUp : TrendingDown} color={performance.totalPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"} />
             <StatCard label="Win Rate" value={`${performance.winRate}%`} sub={`${performance.wins}W / ${performance.losses}L`} icon={Trophy} color="text-foreground" />
             <StatCard label="Profit Factor" value={performance.profitFactor.toFixed(2)} sub={`Avg Win ₹${Math.round(performance.avgWin).toLocaleString()}`} icon={Target} color="text-foreground" />
-            <StatCard label="Expectancy" value={`₹${Math.round(performance.expectancy).toLocaleString()}`} sub="Per trade" icon={Zap} color={performance.expectancy >= 0 ? "text-emerald-500" : "text-rose-500"} />
+            <StatCard label="Expectancy" value={`₹${Math.round(performance.expectancy).toLocaleString()}`} sub="Per trade" icon={Zap} color={performance.expectancy >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"} />
           </div>
 
           {/* Streak Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Best Day</p>
-              <p className="text-xl font-bold text-emerald-500 mt-1">+₹{performance.bestDay.toLocaleString("en-IN")}</p>
+              <p className="text-xl font-bold text-[var(--success)] mt-1">+₹{performance.bestDay.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Worst Day</p>
-              <p className="text-xl font-bold text-rose-500 mt-1">₹{performance.worstDay.toLocaleString("en-IN")}</p>
+              <p className="text-xl font-bold text-[var(--destructive)] mt-1">₹{performance.worstDay.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Win Streak</p>
-              <p className="text-xl font-bold text-emerald-500 mt-1">{streaks.maxWin} trades</p>
+              <p className="text-xl font-bold text-[var(--success)] mt-1">{streaks.maxWin} trades</p>
             </Card>
             <Card className="p-5 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Loss Streak</p>
-              <p className="text-xl font-bold text-rose-500 mt-1">{streaks.maxLoss} trades</p>
+              <p className="text-xl font-bold text-[var(--destructive)] mt-1">{streaks.maxLoss} trades</p>
             </Card>
           </div>
 
@@ -562,30 +560,30 @@ export default function ReportsPage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium text-indigo-500">Long</span>
+                    <span className="font-medium text-[var(--primary)]">Long</span>
                     <span className="text-muted-foreground">{longShortStats.long.count} trades</span>
                   </div>
                   <div className="flex gap-3 text-xs">
-                    <span className={cn("font-semibold", longShortStats.long.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>{longShortStats.long.pnl >= 0 ? "+" : ""}₹{longShortStats.long.pnl.toLocaleString("en-IN")}</span>
+                    <span className={cn("font-semibold", longShortStats.long.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>{longShortStats.long.pnl >= 0 ? "+" : ""}₹{longShortStats.long.pnl.toLocaleString("en-IN")}</span>
                     <span className="text-muted-foreground">WR: {longShortStats.long.winRate}%</span>
                     <span className="text-muted-foreground">Avg: ₹{Math.round(longShortStats.long.avgPnl).toLocaleString()}</span>
                   </div>
                   <div className="mt-1 h-2 bg-secondary/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${longShortStats.long.winRate}%` }} />
+                    <div className="h-full bg-[var(--primary)] rounded-full" style={{ width: `${longShortStats.long.winRate}%` }} />
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium text-orange-500">Short</span>
+                    <span className="font-medium text-[var(--warning)]">Short</span>
                     <span className="text-muted-foreground">{longShortStats.short.count} trades</span>
                   </div>
                   <div className="flex gap-3 text-xs">
-                    <span className={cn("font-semibold", longShortStats.short.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>{longShortStats.short.pnl >= 0 ? "+" : ""}₹{longShortStats.short.pnl.toLocaleString("en-IN")}</span>
+                    <span className={cn("font-semibold", longShortStats.short.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>{longShortStats.short.pnl >= 0 ? "+" : ""}₹{longShortStats.short.pnl.toLocaleString("en-IN")}</span>
                     <span className="text-muted-foreground">WR: {longShortStats.short.winRate}%</span>
                     <span className="text-muted-foreground">Avg: ₹{Math.round(longShortStats.short.avgPnl).toLocaleString()}</span>
                   </div>
                   <div className="mt-1 h-2 bg-secondary/50 rounded-full overflow-hidden">
-                    <div className="h-full bg-orange-500 rounded-full" style={{ width: `${longShortStats.short.winRate}%` }} />
+                    <div className="h-full bg-[var(--warning)] rounded-full" style={{ width: `${longShortStats.short.winRate}%` }} />
                   </div>
                 </div>
               </div>
@@ -764,7 +762,7 @@ export default function ReportsPage() {
                   <div key={m.mistake} className="flex items-center gap-4">
                     <span className="w-40 text-sm text-foreground truncate">{m.mistake}</span>
                     <div className="flex-1 bg-secondary/30 rounded-full h-2.5 overflow-hidden">
-                      <div className="bg-rose-500 h-full rounded-full transition-all" style={{ width: `${(m.count / filteredTrades.length) * 100}%` }} />
+                      <div className="bg-[var(--destructive)] h-full rounded-full transition-all" style={{ width: `${(m.count / filteredTrades.length) * 100}%` }} />
                     </div>
                     <span className="text-sm font-semibold w-12 text-right text-foreground">{m.count}</span>
                   </div>
@@ -786,8 +784,8 @@ export default function ReportsPage() {
             <Card className="p-4 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Max Drawdown</p>
               <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-bold text-rose-500 mt-1">{maxDrawdown.toFixed(1)}%</p>
-                <p className="text-sm font-medium text-rose-400">(-₹{maxDrawdownAmount.toLocaleString("en-IN")})</p>
+                <p className="text-2xl font-bold text-[var(--destructive)] mt-1">{maxDrawdown.toFixed(1)}%</p>
+                <p className="text-sm font-medium text-[var(--destructive)]">(-₹{maxDrawdownAmount.toLocaleString("en-IN")})</p>
               </div>
               <p className="text-xs text-muted-foreground">From peak equity</p>
             </Card>
@@ -797,11 +795,11 @@ export default function ReportsPage() {
             </Card>
             <Card className="p-4 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Largest Win</p>
-              <p className="text-2xl font-bold text-emerald-500 mt-1">+₹{riskMetrics.largestWin.toLocaleString("en-IN")}</p>
+              <p className="text-2xl font-bold text-[var(--success)] mt-1">+₹{riskMetrics.largestWin.toLocaleString("en-IN")}</p>
             </Card>
             <Card className="p-4 glass-card">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Largest Loss</p>
-              <p className="text-2xl font-bold text-rose-500 mt-1">₹{riskMetrics.largestLoss.toLocaleString("en-IN")}</p>
+              <p className="text-2xl font-bold text-[var(--destructive)] mt-1">₹{riskMetrics.largestLoss.toLocaleString("en-IN")}</p>
             </Card>
           </div>
 
@@ -825,9 +823,9 @@ export default function ReportsPage() {
                     if (!active || !payload?.length) return null
                     const data = payload[0].payload
                     return (
-                      <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-xl text-sm">
+                      <div className="bg-popover border border-border rounded-lg px-3 py-2 text-sm">
                         <p className="text-muted-foreground text-xs mb-1">{label}</p>
-                        <p className="font-semibold text-rose-500">Drawdown: {data.drawdown.toFixed(2)}%</p>
+                        <p className="font-semibold text-[var(--destructive)]">Drawdown: {data.drawdown.toFixed(2)}%</p>
                         <p className="text-xs text-muted-foreground mt-1">Amount: -₹{Math.round(data.drawdownAmount || 0).toLocaleString("en-IN")}</p>
                         <p className="text-xs text-muted-foreground">Equity: ₹{Math.round(data.equity).toLocaleString("en-IN")}</p>
                       </div>
@@ -891,7 +889,7 @@ export default function ReportsPage() {
               <div key={i} className="px-6 py-4 flex items-start text-sm hover:bg-muted/20 transition-colors">
                 <div className="w-32 shrink-0 text-muted-foreground text-xs">{new Date(entry.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</div>
                 <div className="w-32 shrink-0 font-semibold text-foreground">{entry.symbol}</div>
-                <div className={cn("w-28 shrink-0 text-right font-semibold", entry.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                <div className={cn("w-28 shrink-0 text-right font-semibold", entry.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                   {entry.pnl >= 0 ? "+" : ""}₹{entry.pnl.toLocaleString("en-IN")}
                 </div>
                 <div className="flex-1 min-w-0 px-4 text-muted-foreground text-xs line-clamp-2">{entry.notes || "—"}</div>

@@ -23,9 +23,9 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
     const highCount = trades.filter((t) => t.severity === "high").length
 
     const getSeverityColor = (s: string) => {
-        if (s === "high") return "text-rose-500 bg-rose-500/10 border-rose-500/20"
-        if (s === "medium") return "text-amber-500 bg-amber-500/10 border-amber-500/20"
-        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
+        if (s === "high") return "text-[var(--destructive)] bg-[var(--destructive)]/10 border-[var(--destructive)]/20"
+        if (s === "medium") return "text-[var(--warning)] bg-[var(--warning)]/10 border-[var(--warning)]/20"
+        return "text-[var(--warning)] bg-[var(--warning)]/10 border-[var(--warning)]/20"
     }
 
     const getSeverityIcon = (s: string) => {
@@ -39,7 +39,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
             <div
                 className={cn(
                     "absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-10",
-                    count > 0 ? "bg-rose-500" : "bg-emerald-500"
+                    count > 0 ? "bg-[var(--destructive)]" : "bg-[var(--success)]"
                 )}
             />
 
@@ -48,11 +48,11 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                     <div
                         className={cn(
                             "h-8 w-8 rounded-lg flex items-center justify-center",
-                            count > 0 ? "bg-rose-500/10" : "bg-emerald-500/10"
+                            count > 0 ? "bg-[var(--destructive)]/10" : "bg-[var(--success)]/10"
                         )}
                     >
                         <AlertTriangle
-                            className={cn("h-5 w-5", count > 0 ? "text-rose-500" : "text-emerald-500")}
+                            className={cn("h-5 w-5", count > 0 ? "text-[var(--destructive)]" : "text-[var(--success)]")}
                         />
                     </div>
                     <div>
@@ -62,7 +62,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                 </div>
 
                 {count > 0 && (
-                    <span className="text-xs font-bold text-rose-500 bg-rose-500/10 px-2 py-1 rounded-full">
+                    <span className="text-xs font-bold text-[var(--destructive)] bg-[var(--destructive)]/10 px-2 py-1 rounded-full">
                         {count} detected
                     </span>
                 )}
@@ -71,10 +71,10 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
             <div className="relative z-10">
                 {count === 0 ? (
                     <div className="text-center py-4">
-                        <div className="h-10 w-10 mx-auto mb-2 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <div className="h-10 w-10 mx-auto mb-2 rounded-full bg-[var(--success)]/10 flex items-center justify-center">
                             <span className="text-lg">🎯</span>
                         </div>
-                        <p className="text-sm font-semibold text-emerald-500">No revenge trades detected!</p>
+                        <p className="text-sm font-semibold text-[var(--success)]">No revenge trades detected!</p>
                         <p className="text-xs text-muted-foreground mt-1">
                             Great discipline — you're trading with a clear head.
                         </p>
@@ -90,7 +90,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                                 </p>
                             </div>
                             <div className="bg-muted/40 rounded-lg p-2 text-center">
-                                <p className="text-lg font-bold text-rose-500">
+                                <p className="text-lg font-bold text-[var(--destructive)]">
                                     {totalRevengePnl >= 0 ? "+" : ""}₹
                                     {Math.abs(totalRevengePnl).toLocaleString("en-IN")}
                                 </p>
@@ -135,7 +135,7 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                                     <span
                                         className={cn(
                                             "text-sm font-semibold",
-                                            rt.trade.pnl >= 0 ? "text-emerald-500" : "text-rose-500"
+                                            rt.trade.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                                         )}
                                     >
                                         {rt.trade.pnl >= 0 ? "+" : ""}₹
@@ -146,8 +146,8 @@ export function RevengeTrades({ trades, totalTrades }: RevengeTradesProps) {
                         </div>
 
                         {highCount > 0 && (
-                            <div className="bg-rose-500/5 border border-rose-500/20 rounded-lg px-3 py-2">
-                                <p className="text-xs text-rose-400">
+                            <div className="bg-[var(--destructive)]/5 border border-[var(--destructive)]/20 rounded-lg px-3 py-2">
+                                <p className="text-xs text-[var(--destructive)]">
                                     ⚠️ {highCount} trade{highCount > 1 ? "s" : ""} taken within 5 minutes of a loss.
                                     Consider adding a cooldown timer to your routine.
                                 </p>

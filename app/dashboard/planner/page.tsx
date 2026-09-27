@@ -95,26 +95,26 @@ export default function DailyPlannerPage() {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div>
-                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-2 flex items-center gap-3">
-                        <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
+                    <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
+                        <CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner
                     </h1>
                     <p className="text-muted-foreground">{todayName}</p>
                 </div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute inset-0">
-                        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-10 bg-amber-500 animate-pulse" />
-                        <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full blur-3xl opacity-10 bg-orange-500 animate-pulse" style={{ animationDelay: "1s" }} />
+                        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-10 bg-[var(--warning)] animate-pulse" />
+                        <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full blur-3xl opacity-10 bg-[var(--warning)] animate-pulse" style={{ animationDelay: "1s" }} />
                     </div>
                     <div className="relative z-10 flex flex-col items-center justify-center py-20 px-8 text-center">
-                        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/20 mb-6">
-                            <CalendarClock className="h-10 w-10 text-amber-400" />
+                        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-[var(--warning)]/20 to-[var(--warning)]/20 flex items-center justify-center border border-[var(--warning)]/20 mb-6">
+                            <CalendarClock className="h-10 w-10 text-[var(--warning)]" />
                         </div>
                         <h2 className="text-2xl font-bold text-foreground mb-3">Your AI Game Plan</h2>
                         <p className="text-muted-foreground max-w-lg mb-8 leading-relaxed">
                             Get a personalized daily trading plan based on your historical patterns —
                             best strategies, optimal trade count, time windows, and emotional guidance.
                         </p>
-                        <Button size="lg" onClick={fetchPlan} className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-lg shadow-amber-500/20 px-8">
+                        <Button size="lg" onClick={fetchPlan} className="bg-gradient-to-r from-[var(--warning)] to-[var(--warning)] hover:from-[var(--warning)] hover:to-[var(--warning)] text-white shadow-[var(--warning)]/20 px-8">
                             <Sparkles className="h-5 w-5 mr-2" /> Generate Today&apos;s Plan
                         </Button>
                         <p className="text-xs text-muted-foreground mt-4">Cached for the day • Refreshes daily</p>
@@ -128,14 +128,14 @@ export default function DailyPlannerPage() {
     if (loading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner</h1></div>
                 <Card className="relative overflow-hidden">
-                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-amber-500 animate-pulse" />
+                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-[var(--warning)] animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
-                        <Loader2 className="h-10 w-10 text-amber-400 animate-spin mb-4" />
+                        <Loader2 className="h-10 w-10 text-[var(--warning)] animate-spin mb-4" />
                         <p className="text-lg font-semibold text-foreground mb-1">Building your game plan...</p>
                         <p className="text-sm text-muted-foreground">Analyzing patterns for {new Date().toLocaleDateString("en-IN", { weekday: "long" })}</p>
-                        <div className="flex gap-1 mt-5">{[0, 1, 2, 3, 4].map(i => <div key={i} className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" style={{ animationDelay: i * .2 + "s" }} />)}</div>
+                        <div className="flex gap-1 mt-5">{[0, 1, 2, 3, 4].map(i => <div key={i} className="w-2 h-2 rounded-full bg-[var(--warning)] animate-pulse" style={{ animationDelay: i * .2 + "s" }} />)}</div>
                     </div>
                 </Card>
             </div>
@@ -146,9 +146,9 @@ export default function DailyPlannerPage() {
     if (error) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner</h1></div>
                 <Card className="p-8 text-center">
-                    <AlertTriangle className="h-12 w-12 text-amber-400 mx-auto mb-4" />
+                    <AlertTriangle className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate plan</p>
                     <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">{error}</p>
                     <Button onClick={fetchPlan} variant="outline"><RefreshCw className="h-5 w-5 mr-2" /> Retry</Button>
@@ -159,7 +159,7 @@ export default function DailyPlannerPage() {
 
     if (!data?.ready) {
         return (
-            <div className="space-y-6"><Card className="p-8 text-center"><CalendarClock className="h-12 w-12 text-amber-400 mx-auto mb-4" /><p className="text-muted-foreground">{data?.summary}</p></Card></div>
+            <div className="space-y-6"><Card className="p-8 text-center"><CalendarClock className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" /><p className="text-muted-foreground">{data?.summary}</p></Card></div>
         )
     }
 
@@ -169,8 +169,8 @@ export default function DailyPlannerPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
-                        <CalendarClock className="h-8 w-8 text-amber-400" /> Daily Planner
+                    <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
+                        <CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner
                     </h1>
                     <p className="text-sm text-muted-foreground">{todayName}</p>
                 </div>
@@ -181,9 +181,9 @@ export default function DailyPlannerPage() {
 
             {/* Greeting Banner */}
             {data.greeting && (
-                <Card className="p-5 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-rose-500/10 border-amber-500/20">
+                <Card className="p-5 bg-gradient-to-r from-[var(--warning)]/10 via-[var(--warning)]/10 to-[var(--destructive)]/10 border-[var(--warning)]/20">
                     <p className="text-lg font-semibold text-foreground flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-amber-400" /> {data.greeting}
+                        <Sparkles className="h-5 w-5 text-[var(--warning)]" /> {data.greeting}
                     </p>
                 </Card>
             )}
@@ -194,11 +194,11 @@ export default function DailyPlannerPage() {
                     <PlanCard icon={Target} title="Focus Strategy" color="emerald">
                         <div className="flex items-center gap-3 mb-2">
                             <span className="text-xl font-bold text-foreground">{data.focusStrategy.name}</span>
-                            <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">{data.focusStrategy.winRate} WR</span>
+                            <span className="text-xs font-bold text-[var(--success)] bg-[var(--success)]/10 px-2 py-0.5 rounded-full">{data.focusStrategy.winRate} WR</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">{data.focusStrategy.reason}</p>
                         {data.focusStrategy.avgPnl !== 0 && (
-                            <p className="text-xs text-muted-foreground mt-2">Avg P&L: <span className={cn("font-bold", data.focusStrategy.avgPnl > 0 ? "text-emerald-400" : "text-rose-400")}>₹{data.focusStrategy.avgPnl.toLocaleString("en-IN")}</span></p>
+                            <p className="text-xs text-muted-foreground mt-2">Avg P&L: <span className={cn("font-bold", data.focusStrategy.avgPnl > 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>₹{data.focusStrategy.avgPnl.toLocaleString("en-IN")}</span></p>
                         )}
                     </PlanCard>
                 )}
@@ -245,7 +245,7 @@ export default function DailyPlannerPage() {
                 {data.emotionalAdvice && (
                     <PlanCard icon={Brain} title="Emotional Guidance" color="pink">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">Watch for: {data.emotionalAdvice.watchFor}</span>
+                            <span className="text-xs font-bold text-[var(--warning)] bg-[var(--warning)]/10 px-2 py-0.5 rounded-full">Watch for: {data.emotionalAdvice.watchFor}</span>
                         </div>
                         <p className="text-sm text-foreground leading-relaxed">{data.emotionalAdvice.tip}</p>
                     </PlanCard>
@@ -267,13 +267,13 @@ export default function DailyPlannerPage() {
             {/* Row 5: Key Rules */}
             {data.keyRules && data.keyRules.length > 0 && (
                 <Card className="p-5">
-                    <h4 className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                    <h4 className="text-[10px] font-bold text-[var(--warning)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
                         <Eye className="h-5 w-5" /> Today&apos;s Rules
                     </h4>
                     <div className="space-y-2">
                         {data.keyRules.map((rule, i) => (
-                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/20 border border-transparent hover:border-amber-500/20 transition-colors">
-                                <span className="text-amber-400 font-bold text-sm shrink-0 mt-px">#{i + 1}</span>
+                            <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/20 border border-transparent hover:border-[var(--warning)]/20 transition-colors">
+                                <span className="text-[var(--warning)] font-bold text-sm shrink-0 mt-px">#{i + 1}</span>
                                 <p className="text-sm text-foreground">{rule}</p>
                             </div>
                         ))}

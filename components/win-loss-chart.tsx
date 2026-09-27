@@ -53,12 +53,12 @@ export function WinLossChart({ winCount, lossCount, winRate }: WinLossChartProps
 
             <div className="flex items-center justify-between mt-2 pt-3 border-t border-border">
                 <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-[var(--success)]"></div>
                     <span className="text-xs text-muted-foreground">Wins</span>
                     <span className="text-xs font-bold text-foreground">{winCount}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-rose-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-[var(--destructive)]"></div>
                     <span className="text-xs text-muted-foreground">Losses</span>
                     <span className="text-xs font-bold text-foreground">{lossCount}</span>
                 </div>

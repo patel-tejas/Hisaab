@@ -19,13 +19,13 @@ export function IntegrityNotice({ result }: { result: BacktestResult }) {
   const trades = result.trades ?? [];
 
   return (
-    <Card className="space-y-2.5 border-amber-300 bg-amber-50/70 p-4 text-xs dark:border-amber-900/60 dark:bg-amber-950/30">
-      <p className="flex items-center gap-1.5 font-medium text-amber-900 dark:text-amber-200">
+    <Card className="space-y-2.5 border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-4 text-xs">
+      <p className="flex items-center gap-1.5 font-medium text-[var(--warning)]">
         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
         Read these numbers with care
       </p>
 
-      <ul className="list-disc space-y-1.5 pl-5 text-amber-900/90 dark:text-amber-200/90">
+      <ul className="list-disc space-y-1.5 pl-5 text-muted-foreground">
         {a.lotWrong && (
           <li>
             The engine sized positions at <strong>{a.lotUsed} contracts</strong> per lot. The
@@ -49,11 +49,11 @@ export function IntegrityNotice({ result }: { result: BacktestResult }) {
       </ul>
 
       {a.dependsOnOvernight && (
-        <div className="rounded-md border border-amber-400/70 bg-amber-100/70 p-2.5 dark:border-amber-800 dark:bg-amber-900/30">
-          <p className="font-medium text-amber-950 dark:text-amber-100">
+        <div className="rounded-md border border-[var(--warning)]/40 bg-[var(--warning)]/10 p-2.5">
+          <p className="font-medium text-foreground">
             The positive result rests on that overnight exposure.
           </p>
-          <p className="mt-1 text-amber-900/90 dark:text-amber-200/90">
+          <p className="mt-1 text-muted-foreground">
             {a.allOvernight ? (
               <>
                 Not one position was closed within its own session, so the{" "}
@@ -74,7 +74,7 @@ export function IntegrityNotice({ result }: { result: BacktestResult }) {
         </div>
       )}
 
-      <p className="text-amber-900/70 dark:text-amber-200/70">
+      <p className="text-muted-foreground">
         Fixing this means passing a <code className="font-mono">MarketContext</code> and{" "}
         <code className="font-mono">ExitConfig</code> in the bridge&apos;s{" "}
         <code className="font-mono">_backtest_config()</code>. Until then, signal counts are

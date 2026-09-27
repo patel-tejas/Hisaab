@@ -30,8 +30,8 @@ export function TopTrades({ trades }: TopTradesProps) {
     <Card className="p-6 glass-card h-full flex flex-col">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <Trophy className="h-5 w-5 text-amber-500" />
+          <div className="h-8 w-8 rounded-lg bg-[var(--warning)]/10 flex items-center justify-center">
+            <Trophy className="h-5 w-5 text-[var(--warning)]" />
           </div>
           <div>
             <h3 className="font-semibold text-foreground">Top Performers</h3>
@@ -55,9 +55,9 @@ export function TopTrades({ trades }: TopTradesProps) {
                 {/* Rank */}
                 <div className={cn(
                   "h-8 w-8 flex items-center justify-center rounded-lg text-xs font-bold",
-                  index === 0 ? "bg-amber-500/10 text-amber-500" :
-                    index === 1 ? "bg-zinc-400/10 text-zinc-400" :
-                      index === 2 ? "bg-orange-600/10 text-orange-600 dark:text-orange-400" :
+                  index === 0 ? "bg-[var(--warning)]/10 text-[var(--warning)]" :
+                    index === 1 ? "bg-[var(--muted-foreground)]/10 text-[var(--muted-foreground)]" :
+                      index === 2 ? "bg-[var(--warning)]/10 text-[var(--warning)] dark:text-[var(--warning)]" :
                         "bg-secondary/50 text-muted-foreground"
                 )}>
                   #{index + 1}
@@ -70,8 +70,8 @@ export function TopTrades({ trades }: TopTradesProps) {
                       <span className={cn(
                         "text-[10px] px-1.5 py-0.5 rounded font-semibold",
                         trade.direction === 'long'
-                          ? 'bg-indigo-500/10 text-indigo-500 dark:text-indigo-400'
-                          : 'bg-orange-500/10 text-orange-500 dark:text-orange-400'
+                          ? 'bg-[var(--primary)]/10 text-[var(--primary)] dark:text-[var(--primary)]'
+                          : 'bg-[var(--warning)]/10 text-[var(--warning)] dark:text-[var(--warning)]'
                       )}>
                         {trade.direction.toUpperCase()}
                       </span>
@@ -84,10 +84,10 @@ export function TopTrades({ trades }: TopTradesProps) {
               </div>
 
               <div className="text-right">
-                <p className={cn("font-semibold text-sm", isProfit ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400")}>
+                <p className={cn("font-semibold text-sm", isProfit ? "text-[var(--success)] dark:text-[var(--success)]" : "text-[var(--destructive)] dark:text-[var(--destructive)]")}>
                   {isProfit ? "+" : ""}₹{trade.pnl.toLocaleString("en-IN")}
                 </p>
-                <p className={cn("text-[11px] mt-0.5", isProfit ? "text-emerald-500/60" : "text-rose-500/60")}>
+                <p className={cn("text-[11px] mt-0.5", isProfit ? "text-[var(--success)]/60" : "text-[var(--destructive)]/60")}>
                   {isProfit ? "+" : ""}{trade.pnlPercent.toFixed(2)}%
                 </p>
               </div>

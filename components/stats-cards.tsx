@@ -45,29 +45,29 @@ export function StatsCards({ highestPnl, winRate, avgRiskReward, tradesThisMonth
     {
       label: "Highest P&L",
       value: `₹${highestPnl.toLocaleString("en-IN")}`,
-      progressColor: "bg-emerald-500",
+      progressColor: "bg-[var(--success)]",
       sparkColor: "#10b981",
       progress: 100,
       icon: TrendingUp,
-      iconBg: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+      iconBg: "bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20",
     },
     {
       label: "Win Rate",
       value: `${winRate}%`,
-      progressColor: "bg-indigo-500",
+      progressColor: "bg-[var(--primary)]",
       sparkColor: "#818cf8",
       progress: winRate,
       icon: Trophy,
-      iconBg: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
+      iconBg: "bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20",
     },
     {
       label: "Avg. Risk/Reward",
       value: avgRiskReward,
-      progressColor: "bg-blue-500",
+      progressColor: "bg-[var(--primary)]",
       sparkColor: "#3b82f6",
       progress: 50,
       icon: Target,
-      iconBg: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+      iconBg: "bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20",
     },
     {
       label: "Trades This Month",
@@ -76,14 +76,14 @@ export function StatsCards({ highestPnl, winRate, avgRiskReward, tradesThisMonth
       sparkColor: "#f43f5e",
       progress: 0,
       icon: Activity,
-      iconBg: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+      iconBg: "bg-[var(--destructive)]/10 text-[var(--destructive)] border border-[var(--destructive)]/20",
     },
   ]
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => (
-        <Card key={stat.label} className="p-5 glass-card relative overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+        <Card key={stat.label} className="p-5 glass-card relative overflow-hidden group hover: transition-shadow duration-300">
           {/* Glow effect on hover */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -93,7 +93,7 @@ export function StatsCards({ highestPnl, winRate, avgRiskReward, tradesThisMonth
               <p className="text-2xl font-bold text-foreground tracking-tight">{stat.value}</p>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl shadow-lg", stat.iconBg)}>
+              <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", stat.iconBg)}>
                 <stat.icon className="h-5 w-5" />
               </div>
               {sparklineData.length > 1 && (

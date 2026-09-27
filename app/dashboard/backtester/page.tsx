@@ -143,11 +143,11 @@ export default function BacktesterPage() {
     if (isLoading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><FlaskConical className="h-8 w-8 text-[var(--primary)]" /> Strategy Backtester</h1></div>
                 <Card className="relative overflow-hidden">
-                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-indigo-500 animate-pulse" />
+                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-[var(--primary)] animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
-                        <Loader2 className="h-10 w-10 text-indigo-400 animate-spin mb-4" />
+                        <Loader2 className="h-10 w-10 text-[var(--primary)] animate-spin mb-4" />
                         <p className="text-lg font-semibold text-foreground">Loading your trades...</p>
                     </div>
                 </Card>
@@ -158,9 +158,9 @@ export default function BacktesterPage() {
     if (trades.length === 0) {
         return (
             <div className="space-y-6">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><FlaskConical className="h-8 w-8 text-[var(--primary)]" /> Strategy Backtester</h1></div>
                 <Card className="p-8 text-center">
-                    <FlaskConical className="h-12 w-12 text-indigo-400 mx-auto mb-4" />
+                    <FlaskConical className="h-12 w-12 text-[var(--primary)] mx-auto mb-4" />
                     <p className="text-muted-foreground">Add some trades first to compare strategies.</p>
                 </Card>
             </div>
@@ -173,8 +173,8 @@ export default function BacktesterPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
-                    <FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester
+                <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
+                    <FlaskConical className="h-8 w-8 text-[var(--primary)]" /> Strategy Backtester
                 </h1>
                 <p className="text-sm text-muted-foreground">Compare your strategies head-to-head with data</p>
             </div>
@@ -226,7 +226,7 @@ export default function BacktesterPage() {
                                     <div className="grid grid-cols-2 gap-2 text-xs">
                                         <div>
                                             <p className="text-muted-foreground">Total P&L</p>
-                                            <p className={cn("font-bold text-base", stat.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <p className={cn("font-bold text-base", stat.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 {stat.pnl >= 0 ? "+" : ""}₹{stat.pnl.toLocaleString("en-IN")}
                                             </p>
                                         </div>
@@ -240,7 +240,7 @@ export default function BacktesterPage() {
                                         </div>
                                         <div>
                                             <p className="text-muted-foreground">Avg P&L</p>
-                                            <p className={cn("font-bold", stat.avgPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <p className={cn("font-bold", stat.avgPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 ₹{stat.avgPnl.toLocaleString("en-IN")}
                                             </p>
                                         </div>
@@ -254,7 +254,7 @@ export default function BacktesterPage() {
                     <div className="grid gap-6 md:grid-cols-2">
                         {/* Total P&L Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                            <h4 className="text-[10px] font-bold text-[var(--success)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
                                 <BarChart3 className="h-5 w-5" /> Total P&L by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
@@ -278,7 +278,7 @@ export default function BacktesterPage() {
 
                         {/* Win Rate Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                            <h4 className="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
                                 <Target className="h-5 w-5" /> Win Rate by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
@@ -298,7 +298,7 @@ export default function BacktesterPage() {
 
                         {/* Avg P&L Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-violet-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                            <h4 className="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-4 flex items-center gap-1.5">
                                 <TrendingUp className="h-5 w-5" /> Avg P&L Per Trade
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
@@ -382,17 +382,17 @@ export default function BacktesterPage() {
                                                 {s}
                                             </td>
                                             <td className="text-right py-2.5 px-3">{stat.count}</td>
-                                            <td className="text-right py-2.5 px-3 text-emerald-500">{stat.wins}</td>
-                                            <td className="text-right py-2.5 px-3 text-rose-500">{stat.losses}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--success)]">{stat.wins}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--destructive)]">{stat.losses}</td>
                                             <td className="text-right py-2.5 px-3 font-medium">{winRate}%</td>
-                                            <td className={cn("text-right py-2.5 px-3 font-bold", stat.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <td className={cn("text-right py-2.5 px-3 font-bold", stat.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 {stat.pnl >= 0 ? "+" : ""}₹{stat.pnl.toLocaleString("en-IN")}
                                             </td>
-                                            <td className={cn("text-right py-2.5 px-3", stat.avgPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <td className={cn("text-right py-2.5 px-3", stat.avgPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 ₹{stat.avgPnl.toLocaleString("en-IN")}
                                             </td>
-                                            <td className="text-right py-2.5 px-3 text-emerald-500">+₹{stat.maxWin.toLocaleString("en-IN")}</td>
-                                            <td className="text-right py-2.5 px-3 text-rose-500">₹{stat.maxLoss.toLocaleString("en-IN")}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--success)]">+₹{stat.maxWin.toLocaleString("en-IN")}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--destructive)]">₹{stat.maxLoss.toLocaleString("en-IN")}</td>
                                         </tr>
                                     )
                                 })}

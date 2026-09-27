@@ -11,10 +11,11 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Download, Sparkles, MessageSquarePlus } from "lucide-react";
+import { Download, MessageSquarePlus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -200,17 +201,13 @@ export function EveStudio() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <Sparkles className="h-6 w-6 text-primary" />
-          <div>
-            <h1 className="font-display text-3xl leading-none tracking-tight">Eve Agent</h1>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Describe a strategy. Test it on real NIFTY futures data.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 text-xs">
+      <PageHeader
+        eyebrow="Strategy studio"
+        title="Eve Agent"
+        description="Describe a strategy in plain English. Test it on real NIFTY futures data."
+        className="pb-0"
+        actions={
+          <div className="flex items-center gap-4">
           <StatusDot
             ok={bridgeOk}
             label={bridgeOk ? `engine · ${status?.bridge.tools} tools` : "engine offline"}
@@ -221,17 +218,18 @@ export function EveStudio() {
             label={`${status?.model.provider ?? "groq"} · ${status?.model.id ?? "…"}`}
             title={status?.model.detail ?? "checking…"}
           />
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       {status && !ready && (
-        <Card className="border-amber-300 bg-amber-50 p-4 text-xs dark:border-amber-900/60 dark:bg-amber-950/30">
-          <p className="font-medium text-amber-900 dark:text-amber-200">Setup needed</p>
-          <ul className="mt-1.5 list-disc space-y-1 pl-5 text-amber-900/90 dark:text-amber-200/90">
+        <Card className="border-[var(--warning)]/30 bg-[var(--warning)]/[0.07] p-5 text-xs">
+          <p className="label-mono text-[var(--warning)]">Setup needed</p>
+          <ul className="mt-2 list-disc space-y-1.5 pl-4 leading-relaxed text-muted-foreground marker:text-[var(--warning)]/50">
             {!bridgeOk && (
               <li>
                 Start the quant engine:{" "}
-                <code className="rounded bg-amber-100 px-1 font-mono dark:bg-amber-900/40">
+                <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-foreground">
                   uv run python -m mcp.quant_server.http_bridge
                 </code>{" "}
                 in <code className="font-mono">d:\Trading\EMA_Strategy</code>
@@ -248,7 +246,7 @@ export function EveStudio() {
       )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
-        <Card className="flex h-[calc(100svh-15rem)] min-h-[520px] flex-col p-4">
+        <Card className="panel-p flex h-[calc(100svh-16rem)] min-h-[560px] flex-col">
           <ChatPanel
             onLoadStrategy={loadStrategy}
             loadedKey={params ? JSON.stringify(params) : null}
@@ -258,18 +256,18 @@ export function EveStudio() {
           />
         </Card>
 
-        <ScrollArea className="h-[calc(100svh-15rem)] min-h-[520px]">
+        <ScrollArea className="h-[calc(100svh-16rem)] min-h-[560px]">
           <div className="space-y-4 pr-3">
             {params ? (
               <>
-                <Card className="p-4">
+                <Card className="panel-p">
                   <ParamSliders
                     params={params}
                     months={months}
                     onChange={setParams}
                     disabled={!bridgeOk}
                   />
-                  <div className="mt-4 flex gap-2 border-t pt-3">
+                  <div className="mt-6 flex gap-2 border-t border-border/60 pt-4">
                     <Button
                       variant="outline"
                       size="sm"
@@ -309,7 +307,7 @@ export function EveStudio() {
                 ) : null}
               </>
             ) : (
-              <Card className="p-6 text-center text-sm text-muted-foreground">
+              <Card className="panel-p text-center text-sm text-muted-foreground">
                 {bridgeOk
                   ? "No processed months found. Download and process a month first."
                   : "Start the quant engine to load the available months."}
@@ -332,8 +330,13 @@ function StatusDot({
   title?: string;
 }) {
   return (
-    <span title={title} className="flex items-center gap-1.5 text-muted-foreground">
-      <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-emerald-500" : "bg-red-500")} />
+    <span title={title} className="label-mono flex items-center gap-2">
+      <span
+        className={cn(
+          "size-1.5 rounded-full",
+          ok ? "bg-[var(--success)]" : "bg-[var(--destructive)]",
+        )}
+      />
       {label}
     </span>
   );

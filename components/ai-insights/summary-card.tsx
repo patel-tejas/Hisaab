@@ -37,7 +37,7 @@ export function SummaryCard({
       {forecast?.projection && (
         <div className="mt-4 pt-3 border-t border-border/60">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-sky-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--primary)]">
               Forecast
             </span>
             {forecast.confidence && (

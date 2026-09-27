@@ -58,7 +58,7 @@ export function ToolCall({ part }: { part: AnyToolPart }) {
         <span
           className={cn(
             "h-1.5 w-1.5 shrink-0 rounded-full",
-            failed ? "bg-red-500" : done ? "bg-emerald-500" : "animate-pulse bg-amber-500",
+            failed ? "bg-[var(--destructive)]" : done ? "bg-[var(--success)]" : "animate-pulse bg-[var(--warning)]",
           )}
         />
         <span className="font-mono font-medium">{name}</span>

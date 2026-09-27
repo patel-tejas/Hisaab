@@ -71,8 +71,8 @@ export function MarketTicker() {
     <div className="relative flex h-10 w-full min-w-0 items-center gap-4 border-b border-border/50 bg-background px-4 md:px-6">
       <div className="flex shrink-0 items-center gap-2">
         <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--success)] opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Live
@@ -96,10 +96,10 @@ export function MarketTicker() {
               className="flex items-center gap-2 text-xs font-medium"
             >
               <span className="text-foreground/90">{item.name}</span>
-              <span className={up ? "text-emerald-500" : "text-rose-500"}>
+              <span className={up ? "text-[var(--success)]" : "text-[var(--destructive)]"}>
                 {item.price.toLocaleString()}
               </span>
-              <span className={up ? "text-emerald-500/80" : "text-rose-500/80"}>
+              <span className={up ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80"}>
                 {up ? "+" : ""}
                 {item.percent}%
               </span>

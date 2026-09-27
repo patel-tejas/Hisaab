@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, getToolName, isToolUIPart, type UIMessage } from "ai";
-import { Send, Square } from "lucide-react";
+import { ArrowUpRight, Send, Square } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -127,28 +127,46 @@ export function ChatPanel({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <ScrollArea ref={scrollRef} className="min-h-0 flex-1 pr-3">
-        <div className="space-y-4 pb-4">
-          {messages.length === 0 && (
-            <div className="space-y-3 py-4">
-              <p className="text-sm text-muted-foreground">
-                Describe a strategy in your own words. Eve turns it into something the engine
-                can actually test, and tells you what it had to leave out.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {EXAMPLES.map((example) => (
+      <ScrollArea
+        ref={scrollRef}
+        className={cn("min-h-0 flex-1", messages.length > 0 && "pr-3")}
+      >
+        {/*
+          The empty state fills the panel instead of pinning to the top. A tall
+          column of dead space above the composer was the single biggest reason
+          this screen read as unfinished.
+        */}
+        {messages.length === 0 ? (
+          <div className="flex min-h-[440px] flex-col justify-center px-1 py-10">
+            <p className="label-mono">Start here</p>
+            <h2 className="mt-3 max-w-[22ch] font-display text-3xl leading-[1.05] tracking-tight md:text-4xl">
+              Describe a strategy the way you&apos;d say it out loud.
+            </h2>
+            <p className="mt-3 max-w-prose text-sm leading-relaxed text-muted-foreground">
+              Eve turns it into something the engine can actually test, tells you
+              what it had to leave out, and runs it on real NIFTY futures data.
+            </p>
+
+            <ul className="stagger mt-7 space-y-px">
+              {EXAMPLES.map((example) => (
+                <li key={example}>
                   <button
-                    key={example}
                     onClick={() => submit(example)}
                     disabled={!ready}
-                    className="rounded-full border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
+                    className="interactive group flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left text-sm disabled:pointer-events-none disabled:opacity-40"
                   >
-                    {example}
+                    <span className="text-muted-foreground group-hover:text-foreground">
+                      {example}
+                    </span>
+                    <ArrowUpRight className="size-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                   </button>
-                ))}
-              </div>
-            </div>
-          )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        <div className="space-y-4 pb-4">
 
           {messages.map((message) => (
             <Message
@@ -164,7 +182,7 @@ export function ChatPanel({
             <p className="text-xs text-muted-foreground">Thinking…</p>
           )}
           {error && (
-            <div className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200">
+            <div className="rounded-md border border-[var(--destructive)]/30 bg-[var(--destructive)]/[0.07] px-3 py-2 text-xs text-[var(--destructive)]">
               {error.message}
             </div>
           )}
@@ -176,15 +194,15 @@ export function ChatPanel({
           e.preventDefault();
           submit(input);
         }}
-        className="shrink-0 border-t pt-3"
+        className="shrink-0 pt-3"
       >
-        <div className="flex gap-2">
+        <div className="panel-inset interactive flex items-center gap-2 p-1.5 focus-within:border-border">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={ready ? "Describe your strategy…" : "Start the quant engine to begin"}
             disabled={!ready}
-            className="text-sm"
+            className="h-9 border-0 bg-transparent px-2.5 text-sm shadow-none focus-visible:ring-0"
           />
           {busy ? (
             <Button type="button" variant="outline" onClick={stop} className="gap-1.5">

@@ -189,14 +189,7 @@ export default function CalendarPage() {
 
     let bestDay = "";
     let bestWinRate = -1;
-    const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday",
     ];
 
     Object.entries(dayStats).forEach(([day, stats]) => {
@@ -266,9 +259,8 @@ export default function CalendarPage() {
         <Card className="fade-in gap-1 px-5 py-5">
           <p className="text-xs text-muted-foreground">TOTAL P&L</p>
           <h2
-            className={cn(
-              "mt-1 text-2xl font-bold",
-              monthlyStats.totalPnl >= 0 ? "text-green-600" : "text-red-600"
+            className={cn("mt-1 text-2xl font-bold",
+              monthlyStats.totalPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
             )}
           >
             {monthlyStats.totalPnl >= 0 ? "+" : "-"}
@@ -298,14 +290,13 @@ export default function CalendarPage() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {weeklySummary.map((week, index) => (
-            <Card key={index} className="scale-in gap-1 bg-muted/50 px-5 py-5 shadow-sm">
+            <Card key={index} className="scale-in gap-1 bg-muted/50 px-5 py-5">
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">{week.label}</h3>
 
               <div className="mb-2 flex items-baseline justify-between">
                 <p
-                  className={cn(
-                    "text-xl font-bold",
-                    week.pnl >= 0 ? "text-green-600" : "text-red-600"
+                  className={cn("text-xl font-bold",
+                    week.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                   )}
                 >
                   {week.pnl >= 0 ? "+" : "-"}₹
@@ -376,7 +367,7 @@ export default function CalendarPage() {
                   <div
                     key={`day-${idx}`}
                     onClick={() => openDateTrades(day)}
-                    className="relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-border/40 bg-muted/30 p-3 text-foreground/80 transition-all duration-200 hover:scale-[1.02] hover:shadow-md"
+                    className="relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-border/40 bg-muted/30 p-3 text-foreground/80 transition-all duration-200 hover:scale-[1.02] hover:"
                     style={{
                       backgroundColor: dayInfo
                         ? dayInfo.pnl >= 0
@@ -399,9 +390,8 @@ export default function CalendarPage() {
                     {dayInfo && (
                       <div className="mt-2 text-left">
                         <p
-                          className={cn(
-                            "truncate text-sm font-bold",
-                            dayInfo.pnl >= 0 ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"
+                          className={cn("truncate text-sm font-bold",
+                            dayInfo.pnl >= 0 ? "text-[var(--success)] dark:text-[var(--success)]" : "text-[var(--destructive)] dark:text-[var(--destructive)]"
                           )}
                         >
                           {dayInfo.pnl >= 0 ? "+" : "-"}₹
@@ -436,9 +426,8 @@ export default function CalendarPage() {
                   >
                     {thisWeekPnl !== 0 ? (
                       <>
-                        <p className={cn(
-                          "text-sm font-bold",
-                          thisWeekPnl >= 0 ? "text-emerald-500" : "text-rose-500"
+                        <p className={cn("text-sm font-bold",
+                          thisWeekPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                         )}>
                           {thisWeekPnl >= 0 ? "+" : ""}₹{Math.round(thisWeekPnl).toLocaleString("en-IN")}
                         </p>
@@ -461,16 +450,16 @@ export default function CalendarPage() {
 
       {/* MONTHLY INSIGHTS */}
       {monthlyHighlights.bestDay && (
-        <Card className="p-6 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border-indigo-500/20">
+        <Card className="p-6 bg-gradient-to-r from-[var(--primary)]/10 via-[var(--primary)]/10 to-pink-500/10 border-[var(--primary)]/20">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-indigo-500/20 rounded-full text-indigo-500">
+            <div className="p-3 bg-[var(--primary)]/20 rounded-full text-[var(--primary)]">
               <Trophy className="h-6 w-6" />
             </div>
             <div>
               <h3 className="font-semibold text-lg">Monthly Insight</h3>
               <p className="text-muted-foreground">
                 You performed best on <span className="font-bold text-foreground">{monthlyHighlights.bestDay}s</span> this month,
-                with a <span className="font-bold text-green-500">{monthlyHighlights.bestWinRate.toFixed(0)}% Win Rate</span>.
+                with a <span className="font-bold text-[var(--success)]">{monthlyHighlights.bestWinRate.toFixed(0)}% Win Rate</span>.
                 {monthlyHighlights.streakDates.size > 0 && <span> You also had <strong>{monthlyHighlights.streakDates.size} days</strong> part of winning streaks! 🔥</span>}
               </p>
             </div>
@@ -489,9 +478,8 @@ export default function CalendarPage() {
             const displayDate = selectedDate ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "";
             return (
               <>
-                <div className={cn(
-                  "px-6 py-5 border-b",
-                  dayPnl >= 0 ? "bg-green-500/10 border-green-500/20" : "bg-red-500/10 border-red-500/20"
+                <div className={cn("px-6 py-5 border-b",
+                  dayPnl >= 0 ? "bg-[var(--success)]/10 border-[var(--success)]/20" : "bg-[var(--destructive)]/10 border-[var(--destructive)]/20"
                 )}>
                   <DialogHeader>
                     <DialogTitle className="text-lg font-bold">{displayDate}</DialogTitle>
@@ -499,7 +487,7 @@ export default function CalendarPage() {
                   <div className="flex items-center gap-6 mt-3">
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider">Day P&L</p>
-                      <p className={cn("text-2xl font-bold", dayPnl >= 0 ? "text-green-500" : "text-red-500")}>
+                      <p className={cn("text-2xl font-bold", dayPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                         {dayPnl >= 0 ? "+" : ""}₹{dayPnl.toLocaleString("en-IN")}
                       </p>
                     </div>
@@ -512,9 +500,9 @@ export default function CalendarPage() {
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider">W / L</p>
                       <p className="text-lg font-semibold">
-                        <span className="text-green-500">{wins}</span>
+                        <span className="text-[var(--success)]">{wins}</span>
                         <span className="text-muted-foreground mx-1">/</span>
-                        <span className="text-red-500">{losses}</span>
+                        <span className="text-[var(--destructive)]">{losses}</span>
                       </p>
                     </div>
                   </div>
@@ -538,19 +526,17 @@ export default function CalendarPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
                             <span className="text-base font-bold">{trade.symbol}</span>
-                            <span className={cn(
-                              "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold",
+                            <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold",
                               (trade.type || trade.direction) === "long"
-                                ? "bg-indigo-500/15 text-indigo-500"
-                                : "bg-orange-500/15 text-orange-500"
+                                ? "bg-[var(--primary)]/15 text-[var(--primary)]"
+                                : "bg-[var(--warning)]/15 text-[var(--warning)]"
                             )}>
                               {(trade.type || trade.direction) === "long" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                               {(trade.type || trade.direction) === "long" ? "LONG" : "SHORT"}
                             </span>
                           </div>
-                          <span className={cn(
-                            "text-lg font-bold",
-                            (trade.pnl || 0) >= 0 ? "text-green-500" : "text-red-500"
+                          <span className={cn("text-lg font-bold",
+                            (trade.pnl || 0) >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                           )}>
                             {(trade.pnl || 0) >= 0 ? "+" : ""}₹{(trade.pnl || 0).toLocaleString("en-IN")}
                           </span>
@@ -573,12 +559,10 @@ export default function CalendarPage() {
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-muted-foreground">Strategy: <span className="font-medium text-foreground">{trade.strategy}</span></span>
                           {trade.outcome && (
-                            <span className={cn(
-                              "text-[11px] font-medium px-2 py-0.5 rounded-full",
-                              trade.outcome === "full-success" || trade.outcome === "success" ? "bg-green-500/15 text-green-500" :
-                                trade.outcome === "mistake" ? "bg-red-500/15 text-red-500" :
-                                  trade.outcome === "partial" ? "bg-blue-500/15 text-blue-500" :
-                                    "bg-zinc-500/15 text-zinc-400"
+                            <span className={cn("text-[11px] font-medium px-2 py-0.5 rounded-full",
+                              trade.outcome === "full-success" || trade.outcome === "success" ? "bg-[var(--success)]/15 text-[var(--success)]" :
+                                trade.outcome === "mistake" ? "bg-[var(--destructive)]/15 text-[var(--destructive)]" :
+                                  trade.outcome === "partial" ? "bg-[var(--primary)]/15 text-[var(--primary)]" :"bg-[var(--muted-foreground)]/15 text-[var(--muted-foreground)]"
                             )}>
                               {trade.outcome === "full-success" ? "Full Success" : trade.outcome.charAt(0).toUpperCase() + trade.outcome.slice(1)}
                             </span>

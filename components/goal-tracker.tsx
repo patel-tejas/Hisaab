@@ -45,7 +45,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
             <div
                 className={cn(
                     "absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-10",
-                    isAchieved ? "bg-emerald-500" : "bg-amber-500"
+                    isAchieved ? "bg-[var(--success)]" : "bg-[var(--warning)]"
                 )}
             />
 
@@ -54,10 +54,10 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                     <div
                         className={cn(
                             "h-8 w-8 rounded-lg flex items-center justify-center",
-                            isAchieved ? "bg-emerald-500/10" : "bg-amber-500/10"
+                            isAchieved ? "bg-[var(--success)]/10" : "bg-[var(--warning)]/10"
                         )}
                     >
-                        <Target className={cn("h-5 w-5", isAchieved ? "text-emerald-500" : "text-amber-500")} />
+                        <Target className={cn("h-5 w-5", isAchieved ? "text-[var(--success)]" : "text-[var(--warning)]")} />
                     </div>
                     <div>
                         <h3 className="font-semibold text-foreground">{monthName} Goal</h3>
@@ -125,7 +125,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                                 <span
                                     className={cn(
                                         "text-xs font-bold",
-                                        isAchieved ? "text-emerald-500" : progress >= 75 ? "text-amber-500" : "text-foreground"
+                                        isAchieved ? "text-[var(--success)]" : progress >= 75 ? "text-[var(--warning)]" : "text-foreground"
                                     )}
                                 >
                                     {progress}%
@@ -136,10 +136,10 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                                     className={cn(
                                         "h-full rounded-full transition-all duration-700 ease-out",
                                         isAchieved
-                                            ? "bg-emerald-500"
+                                            ? "bg-[var(--success)]"
                                             : progress >= 75
-                                                ? "bg-amber-500"
-                                                : "bg-indigo-500"
+                                                ? "bg-[var(--warning)]"
+                                                : "bg-[var(--primary)]"
                                     )}
                                     style={{ width: `${Math.max(progress, 2)}%` }}
                                 />
@@ -153,7 +153,7 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
                                 <p
                                     className={cn(
                                         "text-sm font-bold",
-                                        currentPnl >= 0 ? "text-emerald-500" : "text-rose-500"
+                                        currentPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                                     )}
                                 >
                                     {currentPnl >= 0 ? "+" : ""}₹{currentPnl.toLocaleString("en-IN")}
@@ -169,8 +169,8 @@ export function GoalTracker({ currentPnl }: GoalTrackerProps) {
 
                         {/* Status Message */}
                         {isAchieved ? (
-                            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 text-center">
-                                <p className="text-xs font-semibold text-emerald-500">
+                            <div className="bg-[var(--success)]/10 border border-[var(--success)]/20 rounded-lg px-3 py-2 text-center">
+                                <p className="text-xs font-semibold text-[var(--success)]">
                                     🎉 Goal achieved! +₹{(currentPnl - goal).toLocaleString("en-IN")} over target
                                 </p>
                             </div>

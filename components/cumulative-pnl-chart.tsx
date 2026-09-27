@@ -11,9 +11,9 @@ interface CumulativePnlChartProps {
 export function CumulativePnlChart({ data }: CumulativePnlChartProps) {
   return (
     <Card className="p-6 glass-card relative overflow-hidden group">
-      <div className="absolute top-0 right-0 p-4 opacity-50 text-indigo-500/20 group-hover:text-indigo-500/40 transition-colors pointer-events-none">
+      <div className="absolute top-0 right-0 p-4 opacity-50 text-[var(--primary)]/20 group-hover:text-[var(--primary)]/40 transition-colors pointer-events-none">
         {/* Background decoration */}
-        <div className="w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl absolute -top-10 -right-10"></div>
+        <div className="w-64 h-64 bg-[var(--primary)]/10 rounded-full blur-3xl absolute -top-10 -right-10"></div>
       </div>
 
       <div className="flex items-center justify-between mb-6 relative z-10">

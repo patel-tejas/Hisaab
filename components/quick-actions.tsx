@@ -19,7 +19,7 @@ export function QuickActions({ onNewTrade }: QuickActionsProps) {
             <div className="space-y-3">
                 <Button
                     onClick={onNewTrade}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 h-11 transition-all hover:scale-[1.02]"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-primary/20 h-11 transition-all hover:scale-[1.02]"
                 >
                     <Plus className="h-5 w-5 mr-2" />
                     Add New Trade

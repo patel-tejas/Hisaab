@@ -90,12 +90,12 @@ export default function SettingsPage() {
     return (
         <div className="space-y-6 max-w-2xl mx-auto py-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
-                <h1 className="font-display text-3xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">
                     Settings
                 </h1>
             </div>
 
-            <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur-sm">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <User className="h-5 w-5 text-primary" />
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                         </div>
 
                         {profileMessage && (
-                            <div className={`p-3 rounded-lg text-sm font-medium ${profileMessage.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-destructive/10 text-destructive'}`}>
+                            <div className={`p-3 rounded-lg text-sm font-medium ${profileMessage.type === 'success' ? 'bg-[var(--success)]/10 text-[var(--success)]' : 'bg-destructive/10 text-destructive'}`}>
                                 {profileMessage.text}
                             </div>
                         )}
@@ -152,15 +152,14 @@ export default function SettingsPage() {
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Saving...
                                 </>
-                            ) : (
-                                "Save Profile"
+                            ) : ("Save Profile"
                             )}
                         </Button>
                     </form>
                 </CardContent>
             </Card>
 
-            <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur-sm">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Lock className="h-5 w-5 text-primary" />
@@ -224,19 +223,18 @@ export default function SettingsPage() {
                         </div>
 
                         {message && (
-                            <div className={`p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-destructive/10 text-destructive'}`}>
+                            <div className={`p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-[var(--success)]/10 text-[var(--success)]' : 'bg-destructive/10 text-destructive'}`}>
                                 {message.text}
                             </div>
                         )}
 
-                        <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all duration-300">
+                        <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary)] hover:from-[var(--primary)] hover:to-[var(--primary)] transition-all duration-300">
                             {loading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Updating...
                                 </>
-                            ) : (
-                                "Change Password"
+                            ) : ("Change Password"
                             )}
                         </Button>
                     </form>

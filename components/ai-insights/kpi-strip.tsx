@@ -43,9 +43,9 @@ export function KpiStrip({ metrics }: { metrics: InsightsMetrics }) {
           <p
             className={cn(
               "mt-1 text-xl font-semibold tabular-nums",
-              item.tone === "pos" && "text-emerald-500",
-              item.tone === "neg" && "text-red-400",
-              item.tone === "warn" && "text-amber-500"
+              item.tone === "pos" && "text-[var(--success)]",
+              item.tone === "neg" && "text-[var(--destructive)]",
+              item.tone === "warn" && "text-[var(--warning)]"
             )}
           >
             {item.value}

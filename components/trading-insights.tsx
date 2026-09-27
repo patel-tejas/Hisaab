@@ -53,7 +53,7 @@ interface TradingInsightsProps {
 function InsightTooltip({ active, payload, label }: any) {
     if (!active || !payload?.length) return null
     return (
-        <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-xl text-sm">
+        <div className="bg-popover border border-border rounded-lg px-3 py-2 text-sm">
             <p className="text-muted-foreground text-xs mb-1">{label}</p>
             {payload.map((p: any, i: number) => (
                 <p key={i} className="font-semibold" style={{ color: p.color }}>
@@ -70,8 +70,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <Lightbulb className="h-5 w-5 text-amber-500" />
+                <div className="h-8 w-8 rounded-lg bg-[var(--warning)]/10 flex items-center justify-center">
+                    <Lightbulb className="h-5 w-5 text-[var(--warning)]" />
                 </div>
                 <div>
                     <h3 className="font-semibold text-foreground text-lg">Trading Insights</h3>
@@ -83,7 +83,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Best Day */}
                 <Card className="p-5 glass-card relative overflow-hidden group">
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-emerald-500" />
+                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--success)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -93,7 +93,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <>
                                     <p className="text-2xl font-bold text-foreground">{bestDay.day}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-emerald-500 font-semibold text-sm">
+                                        <span className="text-[var(--success)] font-semibold text-sm">
                                             +₹{bestDay.pnl.toLocaleString("en-IN")}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
@@ -105,8 +105,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <p className="text-sm text-muted-foreground mt-1">Not enough data</p>
                             )}
                         </div>
-                        <div className="h-9 w-9 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                            <TrendingUp className="h-5 w-5 text-emerald-400" />
+                        <div className="h-9 w-9 rounded-lg bg-[var(--success)]/10 flex items-center justify-center border border-[var(--success)]/20">
+                            <TrendingUp className="h-5 w-5 text-[var(--success)]" />
                         </div>
                     </div>
 
@@ -114,9 +114,9 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                         <div className="mt-3 pt-3 border-t border-border/50 relative z-10">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-muted-foreground flex items-center gap-1">
-                                    <TrendingDown className="h-5 w-5 text-rose-400" /> Worst: {worstDay.day}
+                                    <TrendingDown className="h-5 w-5 text-[var(--destructive)]" /> Worst: {worstDay.day}
                                 </span>
-                                <span className="text-rose-500 font-medium">
+                                <span className="text-[var(--destructive)] font-medium">
                                     ₹{worstDay.pnl.toLocaleString("en-IN")}
                                 </span>
                             </div>
@@ -126,7 +126,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
 
                 {/* Best Time */}
                 <Card className="p-5 glass-card relative overflow-hidden group">
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-indigo-500" />
+                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--primary)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -136,7 +136,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <>
                                     <p className="text-2xl font-bold text-foreground">{bestTime.hour}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-emerald-500 font-semibold text-sm">
+                                        <span className="text-[var(--success)] font-semibold text-sm">
                                             +₹{bestTime.pnl.toLocaleString("en-IN")}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
@@ -148,8 +148,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <p className="text-sm text-muted-foreground mt-1">Add entry times to see</p>
                             )}
                         </div>
-                        <div className="h-9 w-9 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                            <Clock className="h-5 w-5 text-indigo-400" />
+                        <div className="h-9 w-9 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center border border-[var(--primary)]/20">
+                            <Clock className="h-5 w-5 text-[var(--primary)]" />
                         </div>
                     </div>
 
@@ -157,9 +157,9 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                         <div className="mt-3 pt-3 border-t border-border/50 relative z-10">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-muted-foreground flex items-center gap-1">
-                                    <TrendingDown className="h-5 w-5 text-rose-400" /> Worst: {worstTime.hour}
+                                    <TrendingDown className="h-5 w-5 text-[var(--destructive)]" /> Worst: {worstTime.hour}
                                 </span>
-                                <span className="text-rose-500 font-medium">
+                                <span className="text-[var(--destructive)] font-medium">
                                     ₹{worstTime.pnl.toLocaleString("en-IN")}
                                 </span>
                             </div>
@@ -169,7 +169,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
 
                 {/* Best Strategy */}
                 <Card className="p-5 glass-card relative overflow-hidden group">
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-violet-500" />
+                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10 bg-[var(--primary)]" />
                     <div className="flex items-start justify-between relative z-10">
                         <div className="space-y-1">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -179,7 +179,7 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <>
                                     <p className="text-2xl font-bold text-foreground">{bestStrategy.strategy}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <span className={cn("font-semibold text-sm", bestStrategy.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                        <span className={cn("font-semibold text-sm", bestStrategy.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                             {bestStrategy.pnl >= 0 ? "+" : ""}₹{bestStrategy.pnl.toLocaleString("en-IN")}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
@@ -191,8 +191,8 @@ export function TradingInsights({ insights }: TradingInsightsProps) {
                                 <p className="text-sm text-muted-foreground mt-1">Not enough data</p>
                             )}
                         </div>
-                        <div className="h-9 w-9 rounded-lg bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
-                            <BarChart3 className="h-5 w-5 text-violet-400" />
+                        <div className="h-9 w-9 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center border border-[var(--primary)]/20">
+                            <BarChart3 className="h-5 w-5 text-[var(--primary)]" />
                         </div>
                     </div>
                 </Card>
