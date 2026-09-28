@@ -14,12 +14,20 @@ import { cn } from "@/lib/utils"
  * (never bolded), then body copy in Ash.
  */
 export function PageHeader({
+  icon,
   eyebrow,
   title,
   description,
   actions,
   className,
 }: {
+  /**
+   * A lucide icon element. Rendered in its own enclosure beside the title
+   * block rather than inline inside the <h1> — an icon sitting in display-size
+   * text inflates the line box and shifts the baseline, and no single glyph
+   * size looks right against a 44px serif.
+   */
+  icon?: React.ReactNode
   eyebrow?: string
   title: string
   description?: React.ReactNode
@@ -43,21 +51,35 @@ export function PageHeader({
         className,
       )}
     >
-      <div className="min-w-0">
-        {eyebrow && <p className="label-mono">{eyebrow}</p>}
-        <h1
-          className={cn(
-            "font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]",
-            eyebrow && "mt-2.5",
-          )}
-        >
-          {title}
-        </h1>
-        {description && (
-          <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-muted-foreground">
-            {description}
-          </p>
+      <div className="flex min-w-0 items-start gap-4">
+        {icon && (
+          <span
+            className={cn(
+              "mt-1 flex size-11 shrink-0 items-center justify-center rounded-xl",
+              "border border-border bg-secondary/50 text-foreground",
+              "shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)]",
+              "[&>svg]:size-5",
+            )}
+          >
+            {icon}
+          </span>
         )}
+        <div className="min-w-0">
+          {eyebrow && <p className="label-mono">{eyebrow}</p>}
+          <h1
+            className={cn(
+              "font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]",
+              eyebrow && "mt-2.5",
+            )}
+          >
+            {title}
+          </h1>
+          {description && (
+            <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-muted-foreground">
+              {description}
+            </p>
+          )}
+        </div>
       </div>
 
       {actions && (

@@ -58,13 +58,13 @@ export default function DashboardPage() {
       <div className="space-y-6 pt-6">
       {/* Greeting */}
       <div>
-        <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">
+        <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">
           {greeting},{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]">
             {user?.name || "Pro Trader"}
           </span>
         </h1>
-        <p className="text-muted-foreground">{today}</p>
+        <p className="mt-3 text-muted-foreground">{today}</p>
       </div>
 
       {/* Row 1: Hero P&L + Psychology Score */}

@@ -28,8 +28,8 @@ export default function ToolsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">Trading Tools</h1>
-        <p className="text-muted-foreground mt-1">Calculators and utilities to help with your trading decisions.</p>
+        <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">Trading Tools</h1>
+        <p className="mt-3 text-muted-foreground mt-1">Calculators and utilities to help with your trading decisions.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

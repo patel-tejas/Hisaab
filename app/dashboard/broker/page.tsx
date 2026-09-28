@@ -426,10 +426,13 @@ export default function BrokerPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
-                    <Link2 className="h-8 w-8 text-cyan-400" /> Broker Connections
-                </h1>
-                <p className="text-sm text-muted-foreground">Connect your trading account to auto-import trades</p>
+                <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <Link2 />
+            </span>
+            Broker Connections
+          </h1>
+                <p className="mt-3 text-sm text-muted-foreground">Connect your trading account to auto-import trades</p>
             </div>
 
             {selectedBroker === "dhan" ? renderDhanDetails() : renderBrokerList()}

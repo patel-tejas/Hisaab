@@ -133,11 +133,13 @@ export default function AiInsightsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
-            <Brain className="h-8 w-8 text-primary" />
+          <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <Brain />
+            </span>
             AI Trading Coach
           </h1>
-          <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
+          <div className="mt-3 flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
             {metrics.dataRange && (
               <span>
                 {metrics.dataRange.totalTrades} trades · {metrics.dataRange.from} –{" "}

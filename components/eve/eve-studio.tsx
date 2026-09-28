@@ -244,15 +244,17 @@ export function EveStudio() {
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-          <Card className={cn("flex flex-col overflow-hidden p-0", COLUMN)}>
-            <ChatPanel
-              onLoadStrategy={loadStrategy}
-              loadedKey={params ? JSON.stringify(params) : null}
-              seedMessage={seedMessage}
-              onSeedConsumed={() => setSeedMessage(null)}
-              ready={ready}
-            />
-          </Card>
+          <div className={cn("bezel", COLUMN)}>
+            <div className="bezel-core flex h-full flex-col overflow-hidden">
+              <ChatPanel
+                onLoadStrategy={loadStrategy}
+                loadedKey={params ? JSON.stringify(params) : null}
+                seedMessage={seedMessage}
+                onSeedConsumed={() => setSeedMessage(null)}
+                ready={ready}
+              />
+            </div>
+          </div>
 
           <ScrollArea className={COLUMN}>
             <div className="space-y-4 pr-3">

@@ -89,7 +89,8 @@ export function ResultsPanel({ result }: { result: BacktestResult }) {
   return (
     <div className="stagger space-y-4">
       {/* ── Hero: the number they came for, with its curve ─────────────── */}
-      <section className="panel overflow-hidden">
+      <section className="bezel">
+        <div className="bezel-core overflow-hidden">
         <div className="panel-px pt-5 md:pt-8">
           <p className="label-mono">Net profit &amp; loss</p>
           <p
@@ -150,6 +151,7 @@ export function ResultsPanel({ result }: { result: BacktestResult }) {
             </p>
           </div>
         )}
+        </div>
       </section>
 
       <IntegrityNotice result={result} />

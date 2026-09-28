@@ -310,22 +310,84 @@
   }
 
   /*
-   * Global Lucide icon defaults.
-   * h-* and w-* Tailwind utilities control sizing.
-   * size-* utilities also work for consistent scaling.
+   * Icons.
+   *
+   * A 2px stroke at small sizes is the single loudest "stock template" tell —
+   * premium interfaces use precise, light linework. 1.5 reads sharp at 16-20px
+   * without going wispy. Sizing still comes from size-* utilities.
    */
   svg.lucide {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
+    stroke-width: 1.5;
+  }
+
+  /* Larger glyphs need proportionally lighter strokes to keep optical weight
+     even against display type. */
+  svg.lucide[class*="size-8"],
+  svg.lucide[class*="size-9"],
+  svg.lucide[class*="size-10"],
+  svg.lucide[class*="h-8"],
+  svg.lucide[class*="h-9"],
+  svg.lucide[class*="h-10"] {
+    stroke-width: 1.25;
   }
 }
 
 @layer utilities {
   /*
+   * ── Double-bezel enclosure ───────────────────────────────────────────
+   *
+   * A premium container is not one box. It is a plate seated in a tray: an
+   * outer shell with a hairline, a small inset, and a large radius; then an
+   * inner core with its own surface, its own top highlight, and a radius
+   * reduced by exactly the inset so the curves stay concentric.
+   *
+   *   <div class="bezel">
+   *     <div class="bezel-core panel-p"> … </div>
+   *   </div>
+   *
+   * Reserved for containers that should read as hardware — the primary
+   * modules on a page. Ordinary cards stay on `.panel`.
+   */
+  .bezel {
+    padding: 6px;
+    border-radius: 1.5rem;
+    background: color-mix(in oklab, var(--foreground) 4%, transparent);
+    border: 1px solid color-mix(in oklab, var(--foreground) 7%, transparent);
+  }
+
+  .bezel-core {
+    /* 1.5rem shell radius − 6px inset = concentric inner curve. */
+    border-radius: calc(1.5rem - 6px);
+    background: var(--card);
+    border: 1px solid color-mix(in oklab, var(--foreground) 6%, transparent);
+    /* A single-pixel top highlight reads as light catching a machined edge. */
+    box-shadow: inset 0 1px 0 0 color-mix(in oklab, var(--foreground) 7%, transparent);
+  }
+
+  /*
+   * ── Motion ───────────────────────────────────────────────────────────
+   * One spring curve for the whole app. `ease-out` and `linear` are the
+   * defaults that make interfaces feel weightless and cheap.
+   */
+  .ease-spring {
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /* Magnetic press: the surface yields under the cursor. */
+  .magnetic {
+    transition: transform 400ms cubic-bezier(0.32, 0.72, 0, 1),
+                background-color 250ms cubic-bezier(0.32, 0.72, 0, 1),
+                border-color 250ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .magnetic:active { transform: scale(0.985); }
+
+  /*
    * ── Origin surface ladder ────────────────────────────────────────────
    * Elevation is a colour step, never a shadow. Use these instead of
-   * hand-picking bg-*/border-* per component, so every panel in the app
+   * hand-picking background and border utilities per component, so every panel
    * sits at a known level.
    *
    *   panel        level 1 — the standard container

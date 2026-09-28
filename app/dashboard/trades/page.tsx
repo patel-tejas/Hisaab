@@ -236,8 +236,8 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">Trade History</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">Trade History</h1>
+          <p className="mt-3 text-sm text-muted-foreground mt-1">
             {filteredTrades.length} trades •
             <span className="text-[var(--success)] ml-1">{winCount}W</span> /
             <span className="text-[var(--destructive)] ml-1">{lossCount}L</span> •

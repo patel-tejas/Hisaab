@@ -90,7 +90,7 @@ export default function SettingsPage() {
     return (
         <div className="space-y-6 max-w-2xl mx-auto py-6 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
-                <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl">
+                <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">
                     Settings
                 </h1>
             </div>

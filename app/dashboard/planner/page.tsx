@@ -95,10 +95,13 @@ export default function DailyPlannerPage() {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div>
-                    <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
-                        <CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner
-                    </h1>
-                    <p className="text-muted-foreground">{todayName}</p>
+                    <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <CalendarClock />
+            </span>
+            Daily Planner
+          </h1>
+                    <p className="mt-3 text-muted-foreground">{todayName}</p>
                 </div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute inset-0">
@@ -128,7 +131,12 @@ export default function DailyPlannerPage() {
     if (loading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <CalendarClock />
+            </span>
+            Daily Planner
+          </h1></div>
                 <Card className="relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-[var(--warning)] animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
@@ -146,7 +154,12 @@ export default function DailyPlannerPage() {
     if (error) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3"><CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner</h1></div>
+                <div><h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <CalendarClock />
+            </span>
+            Daily Planner
+          </h1></div>
                 <Card className="p-8 text-center">
                     <AlertTriangle className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate plan</p>
@@ -169,10 +182,13 @@ export default function DailyPlannerPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="font-display text-4xl leading-[0.95] tracking-tight md:text-5xl flex items-center gap-3">
-                        <CalendarClock className="h-8 w-8 text-[var(--warning)]" /> Daily Planner
-                    </h1>
-                    <p className="text-sm text-muted-foreground">{todayName}</p>
+                    <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <CalendarClock />
+            </span>
+            Daily Planner
+          </h1>
+                    <p className="mt-3 text-sm text-muted-foreground">{todayName}</p>
                 </div>
                 <Button variant="outline" onClick={fetchPlan} disabled={loading} className="gap-2">
                     <RefreshCw className={cn("h-5 w-5", loading && "animate-spin")} /> Refresh
