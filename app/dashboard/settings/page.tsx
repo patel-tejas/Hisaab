@@ -57,7 +57,8 @@ export default function SettingsPage() {
         setLoading(true)
         setMessage(null)
 
-        const formData = new FormData(e.currentTarget)
+        const form = e.currentTarget
+        const formData = new FormData(form)
         const currentPassword = formData.get("currentPassword")
         const newPassword = formData.get("newPassword")
         const confirmPassword = formData.get("confirmPassword")
@@ -79,7 +80,7 @@ export default function SettingsPage() {
             if (!res.ok) throw new Error(data.error || "Failed to update password")
 
             setMessage({ type: "success", text: "Password updated successfully" })
-            e.currentTarget.reset()
+            form.reset()
         } catch (err: any) {
             setMessage({ type: "error", text: err.message })
         } finally {

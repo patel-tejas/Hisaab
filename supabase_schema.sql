@@ -363,6 +363,54 @@ create policy "Users can update own ai insights" on public.ai_insights
 create policy "Users can delete own ai insights" on public.ai_insights
     for delete to authenticated using ((select auth.uid()) = user_id);
 
+-- ============================================================ 4b. STORAGE
+
+-- Trade screenshots. The bucket is PRIVATE: an earlier setup created it
+-- public, which made every screenshot readable by anyone holding its URL.
+-- New uploads go to `<user_id>/<uuid>.<ext>`; the app serves them through
+-- short-lived signed URLs (/api/trades/image). Size and type limits are
+-- enforced here as well as in the browser.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('trades', 'trades', false, 5242880,
+        array['image/png', 'image/jpeg', 'image/webp', 'image/gif'])
+on conflict (id) do update set
+    public = false,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Users can upload own trade screenshots" on storage.objects;
+drop policy if exists "Users can view own trade screenshots" on storage.objects;
+drop policy if exists "Users can delete own trade screenshots" on storage.objects;
+
+create policy "Users can upload own trade screenshots" on storage.objects
+    for insert to authenticated with check (
+        bucket_id = 'trades'
+        and (storage.foldername(name))[1] = (select auth.uid())::text
+    );
+
+-- Own folder, plus legacy root-level files that one of the user's trades
+-- still references by its old public URL.
+create policy "Users can view own trade screenshots" on storage.objects
+    for select to authenticated using (
+        bucket_id = 'trades'
+        and (
+            (storage.foldername(name))[1] = (select auth.uid())::text
+            or exists (
+                select 1
+                from public.trade_images ti
+                join public.trades t on t.id = ti.trade_id
+                where t.user_id = (select auth.uid())
+                  and right(ti.image_url, length(objects.name) + 1) = '/' || objects.name
+            )
+        )
+    );
+
+create policy "Users can delete own trade screenshots" on storage.objects
+    for delete to authenticated using (
+        bucket_id = 'trades'
+        and (storage.foldername(name))[1] = (select auth.uid())::text
+    );
+
 -- ============================================================ 5. BACKFILL
 
 -- The trigger only fires on INSERT, so any auth user created before it existed

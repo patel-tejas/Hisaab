@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { apiError } from "@/lib/api-error";
+import { sanitizeImageRefs } from "@/lib/trade-images";
 
 // Helper to map UI outcome values to DB-allowed values
 function mapOutcome(outcome: string): "success" | "failure" {
@@ -65,13 +67,13 @@ export async function GET() {
             .order("trade_date", { ascending: false });
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            return apiError("trades", error, 500);
         }
 
         const formattedTrades = (trades || []).map(mapTradeToResponse);
         return NextResponse.json(formattedTrades);
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("trades", err, 500);
     }
 }
 
@@ -85,7 +87,8 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { mistakes = [], images = [], ...tradeData } = body;
+        const { mistakes = [], images: rawImages = [], ...tradeData } = body;
+        const images = sanitizeImageRefs(rawImages, user.id);
 
         const dateVal = tradeData.date ? new Date(tradeData.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
 
@@ -123,7 +126,7 @@ export async function POST(req: Request) {
             .single();
 
         if (insertError) {
-            return NextResponse.json({ error: insertError.message }, { status: 400 });
+            return apiError("trades", insertError, 400);
         }
 
         // Insert Mistakes
@@ -153,7 +156,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json(mapTradeToResponse(fullTrade || newTrade), { status: 201 });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 400 });
+        return apiError("trades", err, 400);
     }
 }
 
@@ -167,7 +170,8 @@ export async function PUT(req: Request) {
         }
 
         const body = await req.json();
-        const { _id, id, mistakes = [], images = [], ...tradeData } = body;
+        const { _id, id, mistakes = [], images: rawImages = [], ...tradeData } = body;
+        const images = sanitizeImageRefs(rawImages, user.id);
         const tradeId = _id || id;
 
         if (!tradeId) {
@@ -208,7 +212,7 @@ export async function PUT(req: Request) {
             .eq("user_id", user.id);
 
         if (updateError) {
-            return NextResponse.json({ error: updateError.message }, { status: 400 });
+            return apiError("trades", updateError, 400);
         }
 
         // Update mistakes (delete & insert)
@@ -240,6 +244,6 @@ export async function PUT(req: Request) {
 
         return NextResponse.json(mapTradeToResponse(updatedTrade));
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 400 });
+        return apiError("trades", err, 400);
     }
 }

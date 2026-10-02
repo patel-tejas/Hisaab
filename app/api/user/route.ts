@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { apiError } from "@/lib/api-error";
 
 export async function GET() {
     try {
@@ -33,6 +34,6 @@ export async function GET() {
         });
     } catch (err: any) {
         console.error("Fetch user error:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("user", err, 500);
     }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { apiError } from "@/lib/api-error";
 
 export async function POST(req: Request) {
     try {
@@ -23,11 +24,11 @@ export async function POST(req: Request) {
             .eq("user_id", user.id);
 
         if (deleteError) {
-            return NextResponse.json({ error: deleteError.message }, { status: 400 });
+            return apiError("trades/bulk-delete", deleteError, 400);
         }
 
         return NextResponse.json({ success: true, count: ids.length });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("trades/bulk-delete", err, 500);
     }
 }

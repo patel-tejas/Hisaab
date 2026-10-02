@@ -78,7 +78,7 @@ export default function TradesPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setSyncMessage({ type: "success", text: data.message });
+      setSyncMessage({ type: data.success === false ? "error" : "success", text: data.message });
       if (data.imported > 0) {
         // Refresh trades list
         const tradesRes = await fetch("/api/trades");
