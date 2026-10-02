@@ -14,6 +14,7 @@ import { AddStrategyModal } from "./add-strategy-modal";
 import { RichTextEditor } from "./rich-text-editor";
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import { TRADE_IMAGE_BUCKET, TRADE_IMAGE_MAX_BYTES, TRADE_IMAGE_TYPES, tradeImageSrc } from "@/lib/trade-images";
 
 const defaultSymbols = ["NIFTY 50", "BANKNIFTY", "SENSEX", "BTC", "ETH", "GOLD", "SILVER"];
 
@@ -144,29 +145,42 @@ export function AddTradeModal({
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    setUploading(true);
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `${fileName}`;
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
 
+    const ext = TRADE_IMAGE_TYPES[file.type];
+    if (!ext) {
+      toast.error("Screenshots must be PNG, JPEG, WebP or GIF");
+      input.value = "";
+      return;
+    }
+    if (file.size > TRADE_IMAGE_MAX_BYTES) {
+      toast.error("Screenshots must be 5 MB or smaller");
+      input.value = "";
+      return;
+    }
+
+    setUploading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Please sign in again");
+
+      // Private bucket, per-user folder. The stored reference is the object
+      // path; it is rendered through a short-lived signed URL.
+      const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
       const { error: uploadError } = await supabase.storage
-        .from('trades')
-        .upload(filePath, file);
+        .from(TRADE_IMAGE_BUCKET)
+        .upload(filePath, file, { contentType: file.type, upsert: false });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
-        .from('trades')
-        .getPublicUrl(filePath);
-
-      setImages((prev) => [...prev, data.publicUrl]);
+      setImages((prev) => [...prev, filePath]);
     } catch (error: any) {
-      toast.error("Failed to upload image: " + error.message);
+      toast.error("Failed to upload image: " + (error?.message || "unknown error"));
     } finally {
       setUploading(false);
+      input.value = "";
     }
   };
 
@@ -410,7 +424,7 @@ export function AddTradeModal({
                   <div className="flex flex-wrap gap-3 mt-1">
                     {images.map((img, index) => (
                       <div key={index} className="relative w-20 h-20 border border-border rounded-lg overflow-hidden group">
-                        <img src={img} alt={`Screenshot ${index + 1}`} className="w-full h-full object-cover" />
+                        <img src={tradeImageSrc(img)} alt={`Screenshot ${index + 1}`} className="w-full h-full object-cover" />
                         <button
                           onClick={() => removeImage(index)}
                           className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -424,7 +438,7 @@ export function AddTradeModal({
                       <span className="text-[10px] text-muted-foreground font-medium">{uploading ? "Uploading..." : "Upload"}</span>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
                         className="hidden"
                         onChange={handleFileUpload}
                         disabled={uploading}

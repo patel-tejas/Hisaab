@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { apiError } from "@/lib/api-error";
+import { isDemoUser, DEMO_READ_ONLY_ERROR } from "@/lib/demo";
 
 export async function PUT(req: Request) {
     try {
@@ -24,6 +26,10 @@ export async function PUT(req: Request) {
 
         if (authError || !user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        if (isDemoUser(user)) {
+            return NextResponse.json({ error: DEMO_READ_ONLY_ERROR }, { status: 403 });
         }
 
         const trimmedUsername = username.trim();
@@ -54,7 +60,7 @@ export async function PUT(req: Request) {
             .single();
 
         if (updateError) {
-            return NextResponse.json({ error: updateError.message }, { status: 500 });
+            return apiError("user/profile", updateError, 500);
         }
 
         // Update auth.users email if changed
@@ -75,6 +81,6 @@ export async function PUT(req: Request) {
         });
     } catch (err: any) {
         console.error("Profile update error:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("user/profile", err, 500);
     }
 }

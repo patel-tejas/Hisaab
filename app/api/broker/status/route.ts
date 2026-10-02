@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { apiError } from "@/lib/api-error";
 
 /* ── GET: Broker connection status ── */
 export async function GET() {
@@ -17,7 +18,7 @@ export async function GET() {
             .eq("user_id", user.id);
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            return apiError("broker/status", error, 500);
         }
 
         const brokers = (connections || []).map((c: any) => ({
@@ -30,6 +31,6 @@ export async function GET() {
         return NextResponse.json({ brokers });
     } catch (err: any) {
         console.error("Error in GET /api/broker/status:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("broker/status", err, 500);
     }
 }

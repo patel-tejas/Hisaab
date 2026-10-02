@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { defaultStrategies } from "@/lib/default-strategies";
+import { apiError } from "@/lib/api-error";
 
 export async function GET() {
     try {
@@ -21,7 +22,7 @@ export async function GET() {
 
         return NextResponse.json({ strategies: combined });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("strategies", err, 500);
     }
 }
 
@@ -54,11 +55,11 @@ export async function POST(req: Request) {
             .single();
 
         if (insertError) {
-            return NextResponse.json({ error: insertError.message }, { status: 400 });
+            return apiError("strategies", insertError, 400);
         }
 
         return NextResponse.json({ success: true, strategy: newStrat }, { status: 201 });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("strategies", err, 500);
     }
 }

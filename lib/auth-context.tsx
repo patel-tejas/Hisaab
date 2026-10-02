@@ -21,6 +21,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/* Remove cached personal data (e.g. AI plans) so the next person on this
+   browser starts clean. */
+function clearPerUserCaches() {
+    try {
+        for (const key of Object.keys(localStorage)) {
+            if (key.startsWith("ai-planner-cache")) localStorage.removeItem(key)
+        }
+    } catch { /* storage unavailable */ }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
@@ -82,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 toast.error("Failed to logout: " + error.message)
             } else {
                 setUser(null)
+                clearPerUserCaches()
                 window.location.href = "/sign-in"
             }
         } catch {

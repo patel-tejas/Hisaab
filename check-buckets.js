@@ -24,9 +24,13 @@ async function listBuckets() {
         const tradesBucket = data.find(b => b.name === 'trades');
         if (!tradesBucket) {
             console.log("\n❌ Bucket 'trades' NOT found.");
-            console.log("Please create a public bucket named 'trades' in your Supabase dashboard.");
+            console.log("Run supabase_schema.sql (section 4b) to create the PRIVATE 'trades' bucket and its storage policies.");
+        } else if (tradesBucket.public) {
+            console.log("\n⚠️  Bucket 'trades' is PUBLIC: anyone with a link can read trade screenshots.");
+            console.log("Run supabase_schema.sql (section 4b) to make it private and add storage policies.");
+            process.exitCode = 1;
         } else {
-            console.log("\n✅ Bucket 'trades' found.");
+            console.log("\n✅ Bucket 'trades' found and private.");
         }
     }
 }

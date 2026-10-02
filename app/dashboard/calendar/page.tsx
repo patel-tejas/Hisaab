@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TradeSummaryModal } from "@/components/trade-summary-modal";
 import { Trade } from "@/lib/types";
+import { averageR, formatR } from "@/lib/r-multiple";
 
 // Types
 interface DayData {
@@ -62,7 +63,7 @@ export default function CalendarPage() {
       totalPnl,
       winRate,
       totalTrades: monthTrades.length,
-      avgRR: "1:2.4", // Simplified placeholder
+      avgR: averageR(monthTrades),
     };
   }, [currentDate, trades]);
 
@@ -279,8 +280,13 @@ export default function CalendarPage() {
         </Card>
 
         <Card className="fade-in gap-1 px-5 py-5">
-          <p className="text-xs text-muted-foreground">AVG. R:R</p>
-          <h2 className="mt-1 text-2xl font-bold">{monthlyStats.avgRR}</h2>
+          <p className="text-xs text-muted-foreground">AVG. R-MULTIPLE</p>
+          <h2 className="mt-1 text-2xl font-bold">{formatR(monthlyStats.avgR.avg)}</h2>
+          <p className="text-[11px] text-muted-foreground">
+            {monthlyStats.avgR.count > 0
+              ? `From ${monthlyStats.avgR.count} of ${monthlyStats.totalTrades} trades with a stop loss`
+              : "Add a stop loss to trades to see R"}
+          </p>
         </Card>
       </div>
 

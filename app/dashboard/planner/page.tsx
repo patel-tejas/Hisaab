@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useCallback } from "react"
+import { useAuth } from "@/lib/auth-context"
 import { GuardrailBadge } from "@/components/ai-insights/guardrail-badge"
 import type { GuardrailReport } from "@/lib/ai/guardrail/types"
 import {
@@ -31,40 +32,62 @@ interface PlannerData {
 }
 
 /* ─── Cache ─── */
-const CACHE_KEY = "ai-planner-cache"
+// Scoped per user: one browser can be shared by several accounts, and a
+// plan is personal trading data.
+const CACHE_PREFIX = "ai-planner-cache"
 const CACHE_TTL = 1000 * 60 * 60 * 12 // 12 hours
+const cacheKey = (userId: string) => `${CACHE_PREFIX}:${userId}`
 
-function getCached(): PlannerData | null {
+function getCached(userId: string): PlannerData | null {
     try {
-        const raw = localStorage.getItem(CACHE_KEY)
+        // Drop the old unscoped key left by earlier versions.
+        localStorage.removeItem(CACHE_PREFIX)
+        const raw = localStorage.getItem(cacheKey(userId))
         if (!raw) return null
         const { data, timestamp, day } = JSON.parse(raw)
         // Invalidate if different day or expired
         if (day !== new Date().toDateString() || Date.now() - timestamp > CACHE_TTL) {
-            localStorage.removeItem(CACHE_KEY)
+            localStorage.removeItem(cacheKey(userId))
             return null
         }
         return data
     } catch { return null }
 }
 
-function setCache(data: PlannerData) {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now(), day: new Date().toDateString() }))
+function setCache(userId: string, data: PlannerData) {
+    try {
+        localStorage.setItem(cacheKey(userId), JSON.stringify({ data, timestamp: Date.now(), day: new Date().toDateString() }))
+    } catch { /* storage full or blocked: caching is optional */ }
 }
+
+/* Static class sets: Tailwind only ships classes it can see in the source,
+   so `bg-${color}-500` style strings were never generated. */
+const PLAN_COLORS = {
+    emerald: { glow: "bg-emerald-500", chip: "bg-emerald-500/10", text: "text-emerald-400" },
+    rose: { glow: "bg-rose-500", chip: "bg-rose-500/10", text: "text-rose-400" },
+    blue: { glow: "bg-blue-500", chip: "bg-blue-500/10", text: "text-blue-400" },
+    indigo: { glow: "bg-indigo-500", chip: "bg-indigo-500/10", text: "text-indigo-400" },
+    violet: { glow: "bg-violet-500", chip: "bg-violet-500/10", text: "text-violet-400" },
+    pink: { glow: "bg-pink-500", chip: "bg-pink-500/10", text: "text-pink-400" },
+    orange: { glow: "bg-orange-500", chip: "bg-orange-500/10", text: "text-orange-400" },
+    cyan: { glow: "bg-cyan-500", chip: "bg-cyan-500/10", text: "text-cyan-400" },
+} as const
+type PlanColor = keyof typeof PLAN_COLORS
 
 /* ─── Section Card ─── */
 function PlanCard({ icon: Icon, title, color, children, className }: {
-    icon: any; title: string; color: string; children: React.ReactNode; className?: string
+    icon: any; title: string; color: PlanColor; children: React.ReactNode; className?: string
 }) {
+    const c = PLAN_COLORS[color]
     return (
         <Card className={cn("p-5 relative overflow-hidden group hover:border-primary/20 transition-colors", className)}>
-            <div className={cn("absolute -top-10 -right-10 w-28 h-28 rounded-full blur-3xl opacity-[.07]", `bg-${color}-500`)} />
+            <div className={cn("absolute -top-10 -right-10 w-28 h-28 rounded-full blur-3xl opacity-[.07]", c.glow)} />
             <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
-                    <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0", `bg-${color}-500/10`)}>
-                        <Icon className={cn("h-5 w-5", `text-${color}-400`)} />
+                    <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0", c.chip)}>
+                        <Icon className={cn("h-5 w-5", c.text)} />
                     </div>
-                    <h4 className={cn("text-xs font-bold uppercase tracking-wider", `text-${color}-400`)}>{title}</h4>
+                    <h4 className={cn("text-xs font-bold uppercase tracking-wider", c.text)}>{title}</h4>
                 </div>
                 {children}
             </div>
@@ -78,7 +101,14 @@ export default function DailyPlannerPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
-    useEffect(() => { const c = getCached(); if (c?.ready) setData(c) }, [])
+    const { user } = useAuth()
+    const userId = user?.id
+
+    useEffect(() => {
+        if (!userId) return
+        const c = getCached(userId)
+        if (c?.ready) setData(c)
+    }, [userId])
 
     const fetchPlan = useCallback(async () => {
         setLoading(true); setError("")
@@ -86,10 +116,10 @@ export default function DailyPlannerPage() {
             const res = await fetch("/api/ai-planner")
             if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.details || e.error || "Failed") }
             const json = await res.json()
-            setData(json); if (json.ready) setCache(json)
+            setData(json); if (json.ready && userId) setCache(userId, json)
         } catch (err: any) { setError(err.message || "Failed to generate plan.") }
         finally { setLoading(false) }
-    }, [])
+    }, [userId])
 
     const todayName = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
 

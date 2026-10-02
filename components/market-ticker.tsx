@@ -4,45 +4,35 @@ import { useCallback, useEffect, useRef, useState } from "react"
 
 interface TickerItem {
   symbol: string
-  price: number
-  change: number
-  percent: number
+  label: string
+  currency: "INR" | "USD"
+  price: number | null
+  change: number | null
+  percent: number | null
   valid: boolean
-  source?: string
-  name?: string
 }
 
-const FALLBACK_TICKERS: TickerItem[] = [
-  { symbol: "NIFTY", name: "NIFTY", price: 22500.5, change: 120.5, percent: 0.54, valid: true },
-  { symbol: "BANKNIFTY", name: "BANKNIFTY", price: 48000.2, change: -150.1, percent: -0.31, valid: true },
-  { symbol: "SENSEX", name: "SENSEX", price: 74000.8, change: 200.25, percent: 0.27, valid: true },
-  { symbol: "GOLD", name: "GOLD", price: 62250, change: 150, percent: 0.24, valid: true },
-  { symbol: "BTC", name: "BTC", price: 68000.45, change: 1250.3, percent: 1.85, valid: true },
-]
-
-function formatSymbol(symbol: string) {
-  return symbol.split(":").pop() || symbol
-}
+type TickerState = "loading" | "ready" | "unavailable"
 
 export function MarketTicker() {
   const [ticker, setTicker] = useState<TickerItem[]>([])
+  const [state, setState] = useState<TickerState>("loading")
   const scrollRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
 
+  // No made-up fallback: if quotes can't be fetched, say so.
   const loadTicker = useCallback(async () => {
     try {
       const res = await fetch("/api/market-ticker")
       const data = await res.json()
-      if (data.success && data.data) {
-        const items = data.data
-          .filter((i: TickerItem) => i.valid)
-          .map((i: TickerItem) => ({ ...i, name: formatSymbol(i.symbol) }))
-        setTicker(items.length ? items : FALLBACK_TICKERS)
-      } else {
-        setTicker(FALLBACK_TICKERS)
-      }
+      const items: TickerItem[] = Array.isArray(data?.data)
+        ? data.data.filter((i: TickerItem) => i.valid && typeof i.price === "number")
+        : []
+      setTicker(items)
+      setState(items.length ? "ready" : "unavailable")
     } catch {
-      setTicker(FALLBACK_TICKERS)
+      setTicker([])
+      setState("unavailable")
     }
   }, [])
 
@@ -70,12 +60,11 @@ export function MarketTicker() {
   return (
     <div className="relative flex h-10 w-full min-w-0 items-center gap-4 border-b border-border/50 bg-background px-4 md:px-6">
       <div className="flex shrink-0 items-center gap-2">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--success)] opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
-        </span>
-        <span className="label-mono text-muted-foreground">
-          Live
+        <span
+          className={`inline-flex h-1.5 w-1.5 rounded-full ${state === "ready" ? "bg-[var(--warning)]" : "bg-muted-foreground/50"}`}
+        />
+        <span className="label-mono text-muted-foreground" title="Quotes from Yahoo Finance, delayed. Gold, silver and crude are COMEX/NYMEX USD futures.">
+          Delayed
         </span>
       </div>
 
@@ -88,21 +77,27 @@ export function MarketTicker() {
         ref={scrollRef}
         className="flex min-w-0 flex-1 items-center gap-6 overflow-hidden whitespace-nowrap"
       >
+        {state === "unavailable" && (
+          <span className="text-xs text-muted-foreground">Market data is unavailable right now.</span>
+        )}
         {[...ticker, ...ticker].map((item, i) => {
-          const up = item.change >= 0
+          const up = (item.change ?? 0) >= 0
           return (
             <div
               key={`${item.symbol}-${i}`}
               className="flex items-center gap-2 text-xs font-medium"
             >
-              <span className="text-foreground/90">{item.name}</span>
+              <span className="text-foreground/90">{item.label}</span>
               <span className={up ? "text-[var(--success)]" : "text-[var(--destructive)]"}>
-                {item.price.toLocaleString()}
+                {item.currency === "USD" ? "$" : ""}
+                {item.price?.toLocaleString(item.currency === "INR" ? "en-IN" : "en-US")}
               </span>
-              <span className={up ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80"}>
-                {up ? "+" : ""}
-                {item.percent}%
-              </span>
+              {item.percent !== null && (
+                <span className={up ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80"}>
+                  {up ? "+" : ""}
+                  {item.percent}%
+                </span>
+              )}
             </div>
           )
         })}

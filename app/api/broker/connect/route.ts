@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { encrypt } from "@/lib/encryption";
+import { isDemoUser, DEMO_READ_ONLY_ERROR } from "@/lib/demo";
+import { apiError } from "@/lib/api-error";
 
 /* ── POST: Save / Update broker connection ── */
 export async function POST(req: Request) {
@@ -10,6 +12,10 @@ export async function POST(req: Request) {
 
         if (authError || !user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        if (isDemoUser(user)) {
+            return NextResponse.json({ error: DEMO_READ_ONLY_ERROR }, { status: 403 });
         }
 
         const { broker, clientId, accessToken } = await req.json();
@@ -51,13 +57,13 @@ export async function POST(req: Request) {
             );
 
         if (upsertError) {
-            return NextResponse.json({ error: upsertError.message }, { status: 500 });
+            return apiError("broker/connect", upsertError, 500);
         }
 
         return NextResponse.json({ success: true, message: "Dhan broker connected successfully" });
     } catch (err: any) {
         console.error("Broker connect error:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("broker/connect", err, 500);
     }
 }
 
@@ -80,11 +86,11 @@ export async function DELETE(req: Request) {
             .eq("broker", broker);
 
         if (deleteError) {
-            return NextResponse.json({ error: deleteError.message }, { status: 500 });
+            return apiError("broker/connect", deleteError, 500);
         }
 
         return NextResponse.json({ success: true, message: "Broker disconnected" });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return apiError("broker/connect", err, 500);
     }
 }

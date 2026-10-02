@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Trade } from "@/lib/types"
+import { tradeImageSrc } from "@/lib/trade-images"
 
 interface TradeSummaryModalProps {
   trade: Trade | null
@@ -249,7 +250,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                       onClick={() => setSelectedImage(img)}
                     >
                       <img
-                        src={img}
+                        src={tradeImageSrc(img)}
                         alt={`Trade screenshot ${index + 1}`}
                         className="object-contain w-full h-full"
                       />
@@ -275,7 +276,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
           </DialogHeader>
           <div className="relative w-full h-full flex items-center justify-center">
             <img
-              src={selectedImage || ""}
+              src={selectedImage ? tradeImageSrc(selectedImage) : ""}
               alt="Full screen"
               className="max-w-full max-h-[90vh] object-contain rounded-md"
             />

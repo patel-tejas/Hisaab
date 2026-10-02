@@ -8,9 +8,6 @@ import { supabase } from "@/utils/supabase/client"
 import { AuthSplitShell } from "@/components/marketing/auth-split-shell"
 import { TryDemoNotice } from "@/components/marketing/try-demo-notice"
 
-const DEMO_EMAIL = "test@tradehisaab.com"
-const DEMO_PASSWORD = "test@tradehisaab.coM1"
-
 const fieldClass =
   "w-full rounded-xl border border-[#c5d8ef] bg-pure px-5 py-3 font-marketing text-[15px] text-void placeholder:text-fog outline-none transition-[border-color,box-shadow] duration-200 focus:border-cyan-signal focus:shadow-[0_0_0_3px_rgba(0,179,221,0.15)]"
 
@@ -20,17 +17,27 @@ export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  function fillDemoCredentials() {
-    setEmail(DEMO_EMAIL)
-    setPassword(DEMO_PASSWORD)
-    toast.success("Demo credentials filled")
+  async function startDemo() {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/demo/sign-in", { method: "POST" })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        toast.error(data.error || "The demo is not available right now.")
+        return
+      }
+      toast.success("Signed in to the demo account")
+      window.location.href = "/dashboard"
+    } catch {
+      toast.error("The demo is not available right now.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("demo") === "1") {
-      setEmail(DEMO_EMAIL)
-      setPassword(DEMO_PASSWORD)
-      toast.success("Demo credentials filled")
+      void startDemo()
     }
   }, [])
 
@@ -59,7 +66,7 @@ export default function SignInPage() {
 
   return (
     <AuthSplitShell
-      floatingNotice={<TryDemoNotice onClick={fillDemoCredentials} />}
+      floatingNotice={<TryDemoNotice onClick={() => void startDemo()} />}
     >
       <h1 className="font-display text-[42px] leading-[0.95] tracking-[-0.02em] text-void">
         Sign in

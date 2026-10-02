@@ -15,6 +15,7 @@ import { buildTools, fetchManifest } from "@/lib/eve/bridge";
 import { systemPrompt } from "@/lib/eve/prompt";
 import { hisaabTools } from "@/lib/eve/tools";
 import { getAuthUser } from "@/lib/supabase-auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 // The tool loop calls a local Python service; keep it on Node, not Edge.
 export const runtime = "nodejs";
@@ -34,6 +35,17 @@ export async function POST(req: Request) {
   // gate is the only thing standing in front of it.
   const user = await getAuthUser();
   if (!user) return errorResponse("Unauthorized", "Sign in to use the Eve agent.", 401);
+
+  // Each turn can run up to 12 tool steps against the bridge, so cap turns
+  // per user: 20 per 10 minutes.
+  const limited = rateLimit(`eve-chat:${user.id}`, 20, 10 * 60 * 1000);
+  if (!limited.ok) {
+    return errorResponse(
+      "Too many messages.",
+      `Eve is limited to 20 messages every 10 minutes. Try again in ${limited.retryAfterSeconds}s.`,
+      429,
+    );
+  }
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
