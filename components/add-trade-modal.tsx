@@ -17,8 +17,7 @@ import { toast } from "sonner";
 
 const defaultSymbols = ["NIFTY 50", "BANKNIFTY", "SENSEX", "BTC", "ETH", "GOLD", "SILVER"];
 
-const defaultQuantities: Record<string, number> = {
-  "NIFTY 50": 65,
+const defaultQuantities: Record<string, number> = {"NIFTY 50": 65,
   BANKNIFTY: 15,
   SENSEX: 20,
   BTC: 1,
@@ -30,7 +29,7 @@ const defaultQuantities: Record<string, number> = {
 // Moved outside to prevent re-mounting on every render
 const FieldGroup = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
-    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+    <Label className="label-mono text-muted-foreground">
       {label}{required && <span className="text-primary ml-0.5">*</span>}
     </Label>
     {children}
@@ -252,10 +251,9 @@ export function AddTradeModal({
         <div className="flex gap-1 px-6 pt-2">
           <button
             onClick={() => setActiveTab("general")}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
               activeTab === "general"
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
@@ -264,10 +262,9 @@ export function AddTradeModal({
           </button>
           <button
             onClick={() => setActiveTab("psychology")}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
               activeTab === "psychology"
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
@@ -316,10 +313,9 @@ export function AddTradeModal({
                       <button
                         type="button"
                         onClick={() => setDirection("long")}
-                        className={cn(
-                          "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
+                        className={cn("flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
                           direction === "long"
-                            ? "bg-indigo-500/15 border-indigo-500/40 text-indigo-500 dark:text-indigo-400"
+                            ? "bg-[var(--primary)]/15 border-[var(--primary)]/40 text-[var(--primary)] dark:text-[var(--primary)]"
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
@@ -328,10 +324,9 @@ export function AddTradeModal({
                       <button
                         type="button"
                         onClick={() => setDirection("short")}
-                        className={cn(
-                          "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
+                        className={cn("flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
                           direction === "short"
-                            ? "bg-orange-500/15 border-orange-500/40 text-orange-500 dark:text-orange-400"
+                            ? "bg-[var(--warning)]/15 border-[var(--warning)]/40 text-[var(--warning)] dark:text-[var(--warning)]"
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
@@ -531,7 +526,7 @@ export function AddTradeModal({
               <Button
                 onClick={handleSaveTrade}
                 disabled={saving}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-lg shadow-primary/20 px-6 transition-all hover:scale-[1.02]"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-primary/20 px-6 transition-all hover:scale-[1.02]"
               >
                 {saving ? (
                   <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Saving…</>

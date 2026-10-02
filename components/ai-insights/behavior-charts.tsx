@@ -129,7 +129,7 @@ export function TiltMeter({
   const advice = insights?.sequentialPatterns?.advice
   const pct = level === "low" ? 28 : level === "high" ? 86 : 55
   const color =
-    level === "low" ? "bg-emerald-500" : level === "high" ? "bg-red-400" : "bg-amber-500"
+    level === "low" ? "bg-[var(--success)]" : level === "high" ? "bg-[var(--destructive)]" : "bg-[var(--warning)]"
 
   return (
     <Card className="glass-card p-5">
@@ -139,9 +139,9 @@ export function TiltMeter({
         <span
           className={cn(
             "font-semibold capitalize",
-            level === "low" && "text-emerald-500",
-            level === "medium" && "text-amber-500",
-            level === "high" && "text-red-400"
+            level === "low" && "text-[var(--success)]",
+            level === "medium" && "text-[var(--warning)]",
+            level === "high" && "text-[var(--destructive)]"
           )}
         >
           {level}

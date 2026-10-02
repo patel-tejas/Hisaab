@@ -35,13 +35,13 @@ export function CalendarHeatmap({ data }: CalendarHeatmapProps) {
 
     const getColor = (pnl: number | null) => {
         if (pnl === null) return "bg-secondary/30"
-        if (pnl > 5000) return "bg-emerald-500"
-        if (pnl > 1000) return "bg-emerald-500/70"
-        if (pnl > 0) return "bg-emerald-500/40"
+        if (pnl > 5000) return "bg-[var(--success)]"
+        if (pnl > 1000) return "bg-[var(--success)]/70"
+        if (pnl > 0) return "bg-[var(--success)]/40"
         if (pnl === 0) return "bg-secondary/50"
-        if (pnl > -1000) return "bg-rose-500/40"
-        if (pnl > -5000) return "bg-rose-500/70"
-        return "bg-rose-500"
+        if (pnl > -1000) return "bg-[var(--destructive)]/40"
+        if (pnl > -5000) return "bg-[var(--destructive)]/70"
+        return "bg-[var(--destructive)]"
     }
 
     const dayLabels = ["M", "", "W", "", "F", "", ""]
@@ -85,11 +85,11 @@ export function CalendarHeatmap({ data }: CalendarHeatmapProps) {
             {/* Legend */}
             <div className="flex items-center gap-1 mt-3 text-[10px] text-muted-foreground">
                 <span>Loss</span>
-                <div className="h-2.5 w-2.5 rounded-sm bg-rose-500"></div>
-                <div className="h-2.5 w-2.5 rounded-sm bg-rose-500/40"></div>
+                <div className="h-2.5 w-2.5 rounded-sm bg-[var(--destructive)]"></div>
+                <div className="h-2.5 w-2.5 rounded-sm bg-[var(--destructive)]/40"></div>
                 <div className="h-2.5 w-2.5 rounded-sm bg-secondary/30"></div>
-                <div className="h-2.5 w-2.5 rounded-sm bg-emerald-500/40"></div>
-                <div className="h-2.5 w-2.5 rounded-sm bg-emerald-500"></div>
+                <div className="h-2.5 w-2.5 rounded-sm bg-[var(--success)]/40"></div>
+                <div className="h-2.5 w-2.5 rounded-sm bg-[var(--success)]"></div>
                 <span>Profit</span>
             </div>
         </Card>

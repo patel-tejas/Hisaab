@@ -50,8 +50,8 @@ export function Header({ onNewTrade }: HeaderProps) {
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="relative size-9 shrink-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
         >
-          <Sun className="!size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-amber-500" />
-          <Moon className="absolute !size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-indigo-400" />
+          <Sun className="!size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-[var(--warning)]" />
+          <Moon className="absolute !size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-[var(--primary)]" />
           <span className="sr-only">Toggle theme</span>
         </Button>
 

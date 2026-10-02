@@ -39,16 +39,16 @@ export function HeroPnl({ totalPnl, totalTrades, winRate }: HeroPnlProps) {
     return (
         <Card className="p-6 glass-card relative overflow-hidden group h-full">
             {/* Background glow */}
-            <div className={`absolute -top-20 -right-20 w-60 h-60 rounded-full blur-3xl opacity-20 ${isProfit ? "bg-emerald-500" : "bg-rose-500"}`}></div>
+            <div className={`absolute -top-20 -right-20 w-60 h-60 rounded-full blur-3xl opacity-20 ${isProfit ? "bg-[var(--success)]" : "bg-[var(--destructive)]"}`}></div>
 
             <div className="relative z-10 flex flex-col justify-between h-full">
                 <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Total Portfolio P&L</p>
                     <div className="flex items-baseline gap-3">
-                        <h2 className={`text-4xl md:text-5xl font-bold tracking-tight ${isProfit ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
+                        <h2 className={`text-4xl md:text-5xl font-bold tracking-tight ${isProfit ? "text-[var(--success)] dark:text-[var(--success)]" : "text-[var(--destructive)] dark:text-[var(--destructive)]"}`}>
                             {isProfit ? "+" : ""}₹{displayValue.toLocaleString("en-IN")}
                         </h2>
-                        <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${isProfit ? "bg-emerald-500/10 text-emerald-500 dark:text-emerald-400" : "bg-rose-500/10 text-rose-500 dark:text-rose-400"}`}>
+                        <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${isProfit ? "bg-[var(--success)]/10 text-[var(--success)] dark:text-[var(--success)]" : "bg-[var(--destructive)]/10 text-[var(--destructive)] dark:text-[var(--destructive)]"}`}>
                             {isProfit ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
                             {winRate}% WR
                         </div>

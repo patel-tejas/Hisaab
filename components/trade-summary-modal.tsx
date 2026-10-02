@@ -58,11 +58,10 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-[65vw] max-h-[92vh] overflow-y-auto p-0">
           {/* Header Banner */}
-          <div className={cn(
-            "px-6 py-5 border-b",
+          <div className={cn("px-6 py-5 border-b",
             trade.pnl >= 0
-              ? "bg-green-500/10 border-green-500/20"
-              : "bg-red-500/10 border-red-500/20"
+              ? "bg-[var(--success)]/10 border-[var(--success)]/20"
+              : "bg-[var(--destructive)]/10 border-[var(--destructive)]/20"
           )}>
             <DialogHeader>
               <div className="flex items-center justify-between">
@@ -75,15 +74,13 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className={cn(
-                    "text-3xl font-bold",
-                    (trade.pnl ?? 0) >= 0 ? "text-green-500" : "text-red-500"
+                  <p className={cn("text-3xl font-bold",
+                    (trade.pnl ?? 0) >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]"
                   )}>
                     {(trade.pnl ?? 0) >= 0 ? "+" : ""}₹{(trade.pnl ?? 0).toLocaleString("en-IN")}
                   </p>
-                  <p className={cn(
-                    "text-sm font-medium",
-                    (trade.pnl ?? 0) >= 0 ? "text-green-500/80" : "text-red-500/80"
+                  <p className={cn("text-sm font-medium",
+                    (trade.pnl ?? 0) >= 0 ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80"
                   )}>
                     {(trade.pnlPercent ?? 0) >= 0 ? "+" : ""}{(trade.pnlPercent ?? 0).toFixed(2)}%
                   </p>
@@ -100,7 +97,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
               {/* Trade Overview */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                  <Tag className="h-5 w-5 text-blue-500" />
+                  <Tag className="h-5 w-5 text-[var(--primary)]" />
                   Trade Overview
                 </div>
                 <div className="bg-muted/40 rounded-lg p-4 space-y-3">
@@ -116,12 +113,12 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
               {/* Risk Management */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                  <Shield className="h-5 w-5 text-orange-500" />
+                  <Shield className="h-5 w-5 text-[var(--warning)]" />
                   Risk Management
                 </div>
                 <div className="bg-muted/40 rounded-lg p-4 space-y-3">
-                  <Row label="Stop Loss" value={trade.stopLoss != null ? `₹${trade.stopLoss.toLocaleString("en-IN")}` : "N/A"} valueClass="text-red-500" />
-                  <Row label="Target" value={trade.target != null ? `₹${trade.target.toLocaleString("en-IN")}` : "N/A"} valueClass="text-green-500" />
+                  <Row label="Stop Loss" value={trade.stopLoss != null ? `₹${trade.stopLoss.toLocaleString("en-IN")}` : "N/A"} valueClass="text-[var(--destructive)]" />
+                  <Row label="Target" value={trade.target != null ? `₹${trade.target.toLocaleString("en-IN")}` : "N/A"} valueClass="text-[var(--success)]" />
                   <Row label="Expected R:R" value={expectedRiskReward()} />
                   <Row label="Actual R:R" value={actualRiskReward()} />
                   <Row label="Outcome" value={
@@ -142,7 +139,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             {/* === SECTION 2: Psychology === */}
             <div>
               <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                <Star className="h-5 w-5 text-amber-500" />
+                <Star className="h-5 w-5 text-[var(--warning)]" />
                 Psychology & Evaluation
               </div>
               <div className="bg-muted/40 rounded-lg p-4">
@@ -153,7 +150,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-2 w-20 rounded-full bg-muted overflow-hidden">
                         <div
-                          className="h-full bg-amber-500 rounded-full transition-all"
+                          className="h-full bg-[var(--warning)] rounded-full transition-all"
                           style={{ width: `${trade.entryConfidence * 10}%` }}
                         />
                       </div>
@@ -166,7 +163,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-2 w-20 rounded-full bg-muted overflow-hidden">
                         <div
-                          className="h-full bg-green-500 rounded-full transition-all"
+                          className="h-full bg-[var(--success)] rounded-full transition-all"
                           style={{ width: `${trade.satisfaction * 10}%` }}
                         />
                       </div>
@@ -176,11 +173,9 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                   {/* Emotional State */}
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground mb-1">Emotional State</p>
-                    <span className={cn(
-                      "text-sm font-semibold capitalize px-2 py-0.5 rounded-full",
-                      trade.emotionalState === "calm" ? "bg-green-500/20 text-green-500" :
-                        trade.emotionalState === "overconfident" ? "bg-amber-500/20 text-amber-500" :
-                          "bg-red-500/20 text-red-500"
+                    <span className={cn("text-sm font-semibold capitalize px-2 py-0.5 rounded-full",
+                      trade.emotionalState === "calm" ? "bg-[var(--success)]/20 text-[var(--success)]" :
+                        trade.emotionalState === "overconfident" ? "bg-[var(--warning)]/20 text-[var(--warning)]" :"bg-[var(--destructive)]/20 text-[var(--destructive)]"
                     )}>
                       {trade.emotionalState}
                     </span>
@@ -197,7 +192,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             {/* === SECTION 3: Journal / Analysis === */}
             <div>
               <div className="flex items-center gap-2 font-semibold text-foreground mb-3">
-                <FileText className="h-5 w-5 text-purple-500" />
+                <FileText className="h-5 w-5 text-[var(--primary)]" />
                 Trade Analysis & Notes
               </div>
               <div className="bg-muted/40 rounded-lg p-4 space-y-4">
@@ -227,7 +222,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
                 {trade.mistakes && trade.mistakes.length > 0 && (
                   <div>
                     <h4 className="text-xs uppercase text-muted-foreground font-semibold mb-2 flex items-center gap-1">
-                      <AlertTriangle className="h-5 w-5 text-amber-500" /> Mistakes
+                      <AlertTriangle className="h-5 w-5 text-[var(--warning)]" /> Mistakes
                     </h4>
                     <ul className="list-disc list-inside text-sm text-foreground/80 space-y-1">
                       {trade.mistakes.map((mistake, index) => (
@@ -282,7 +277,7 @@ export function TradeSummaryModal({ trade, open, onOpenChange }: TradeSummaryMod
             <img
               src={selectedImage || ""}
               alt="Full screen"
-              className="max-w-full max-h-[90vh] object-contain rounded-md shadow-2xl"
+              className="max-w-full max-h-[90vh] object-contain rounded-md"
             />
             <button
               className="absolute -top-12 right-0 md:-right-4 md:top-0 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors backdrop-blur-sm z-50"

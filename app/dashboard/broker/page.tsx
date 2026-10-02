@@ -131,11 +131,11 @@ export default function BrokerPage() {
             {/* Dhan Card */}
             <Card
                 onClick={() => setSelectedBroker("dhan")}
-                className="group relative overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300 border-cyan-500/20 hover:border-cyan-500/40"
+                className="group relative overflow-hidden cursor-pointer hover: transition-all duration-300 border-cyan-500/20 hover:border-cyan-500/40"
             >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="p-6 flex flex-col items-center text-center space-y-4">
-                    <div className="h-16 w-16 rounded-2xl overflow-hidden border border-cyan-500/20 relative shadow-lg shadow-cyan-500/10 group-hover:scale-105 transition-transform">
+                    <div className="h-16 w-16 rounded-2xl overflow-hidden border border-cyan-500/20 relative shadow-cyan-500/10 group-hover:scale-105 transition-transform">
                         <Image src="/dhan_logo.jpg" alt="Dhan" fill className="object-cover" />
                     </div>
                     <div>
@@ -143,7 +143,7 @@ export default function BrokerPage() {
                         <p className="text-xs text-muted-foreground">Indian Stock Market</p>
                     </div>
                     {dhan ? (
-                        <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full">
+                        <div className="flex items-center gap-2 text-xs font-medium text-[var(--success)] bg-[var(--success)]/10 px-3 py-1.5 rounded-full">
                             <CheckCircle2 className="h-5 w-5" /> Connected
                         </div>
                     ) : (
@@ -176,7 +176,7 @@ export default function BrokerPage() {
                             <h3 className="text-lg font-bold text-muted-foreground">{broker.name}</h3>
                             <p className="text-xs text-muted-foreground">Coming Soon</p>
                         </div>
-                        <div className="px-3 py-1.5 rounded-full bg-muted/50 text-[10px] uppercase font-bold text-muted-foreground">
+                        <div className="label-mono px-3 py-1.5 rounded-full bg-muted/50 text-muted-foreground">
                             Integration Soon
                         </div>
                     </div>
@@ -202,7 +202,7 @@ export default function BrokerPage() {
                     {/* Broker title bar */}
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-xl overflow-hidden border border-cyan-500/20 relative shadow-lg shadow-cyan-500/10">
+                            <div className="h-12 w-12 rounded-xl overflow-hidden border border-cyan-500/20 relative shadow-cyan-500/10">
                                 <Image src="/dhan_logo.jpg" alt="Dhan" fill className="object-cover" />
                             </div>
                             <div>
@@ -211,7 +211,7 @@ export default function BrokerPage() {
                             </div>
                         </div>
                         {dhan ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--success)] bg-[var(--success)]/10 px-3 py-1.5 rounded-full border border-[var(--success)]/20">
                                 <CheckCircle2 className="h-5 w-5" /> Connected
                             </span>
                         ) : (
@@ -231,17 +231,17 @@ export default function BrokerPage() {
                             {/* Status Info */}
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Client ID</p>
+                                    <p className="label-mono text-muted-foreground mb-1">Client ID</p>
                                     <p className="text-sm font-mono text-foreground">{dhan.clientId}</p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Status</p>
-                                    <p className="text-sm text-emerald-400 font-medium flex items-center gap-1.5">
-                                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Active
+                                    <p className="label-mono text-muted-foreground mb-1">Status</p>
+                                    <p className="text-sm text-[var(--success)] font-medium flex items-center gap-1.5">
+                                        <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" /> Active
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/30">
-                                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Last Synced</p>
+                                    <p className="label-mono text-muted-foreground mb-1">Last Synced</p>
                                     <p className="text-sm text-foreground flex items-center gap-1.5">
                                         <Clock className="h-5 w-5 text-muted-foreground" />
                                         {dhan.lastSynced
@@ -257,7 +257,7 @@ export default function BrokerPage() {
                                 <Button
                                     onClick={handleSync}
                                     disabled={syncing}
-                                    className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white shadow-lg shadow-cyan-500/20 gap-2"
+                                    className="bg-gradient-to-r from-cyan-600 to-[var(--primary)] hover:from-cyan-700 hover:to-[var(--primary)] text-white shadow-cyan-500/20 gap-2"
                                 >
                                     {syncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
                                     {syncing ? "Syncing..." : "Sync Today's Trades"}
@@ -266,7 +266,7 @@ export default function BrokerPage() {
                                     onClick={handleDisconnect}
                                     disabled={disconnecting}
                                     variant="outline"
-                                    className="gap-2 text-rose-400 border-rose-500/30 hover:bg-rose-500/10"
+                                    className="gap-2 text-[var(--destructive)] border-[var(--destructive)]/30 hover:bg-[var(--destructive)]/10"
                                 >
                                     {disconnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Unlink className="h-4 w-4" />}
                                     Disconnect
@@ -275,18 +275,17 @@ export default function BrokerPage() {
 
                             {/* Sync Result */}
                             {syncResult && (
-                                <div className={cn(
-                                    "p-4 rounded-xl border flex items-start gap-3",
+                                <div className={cn("p-4 rounded-xl border flex items-start gap-3",
                                     syncResult.success
-                                        ? "bg-emerald-500/5 border-emerald-500/20"
-                                        : "bg-rose-500/5 border-rose-500/20"
+                                        ? "bg-[var(--success)]/5 border-[var(--success)]/20"
+                                        : "bg-[var(--destructive)]/5 border-[var(--destructive)]/20"
                                 )}>
                                     {syncResult.success
-                                        ? <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
-                                        : <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+                                        ? <CheckCircle2 className="h-5 w-5 text-[var(--success)] shrink-0 mt-0.5" />
+                                        : <AlertTriangle className="h-5 w-5 text-[var(--destructive)] shrink-0 mt-0.5" />
                                     }
                                     <div>
-                                        <p className={cn("text-sm font-medium", syncResult.success ? "text-emerald-400" : "text-rose-400")}>
+                                        <p className={cn("text-sm font-medium", syncResult.success ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                             {syncResult.message}
                                         </p>
                                         {syncResult.success && syncResult.imported > 0 && (
@@ -299,10 +298,10 @@ export default function BrokerPage() {
                             )}
 
                             {/* Token Expiry Warning */}
-                            <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/15 flex items-start gap-3">
-                                <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                            <div className="p-4 rounded-xl bg-[var(--warning)]/5 border border-[var(--warning)]/15 flex items-start gap-3">
+                                <AlertTriangle className="h-5 w-5 text-[var(--warning)] shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="text-sm font-medium text-amber-400">Access Token Expires Every 24 Hours</p>
+                                    <p className="text-sm font-medium text-[var(--warning)]">Access Token Expires Every 24 Hours</p>
                                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                                         Dhan access tokens expire daily. If sync fails, regenerate your token from{" "}
                                         <a href="https://web.dhan.co" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">
@@ -338,7 +337,7 @@ export default function BrokerPage() {
                             {/* Form */}
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">Dhan Client ID</label>
+                                    <label className="label-mono text-muted-foreground block mb-1.5">Dhan Client ID</label>
                                     <input
                                         type="text"
                                         value={clientId}
@@ -348,7 +347,7 @@ export default function BrokerPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">Access Token</label>
+                                    <label className="label-mono text-muted-foreground block mb-1.5">Access Token</label>
                                     <div className="relative">
                                         <input
                                             type={showToken ? "text" : "password"}
@@ -362,7 +361,7 @@ export default function BrokerPage() {
                                             onClick={() => setShowToken(!showToken)}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                                         >
-                                            {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            {showToken ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
                                         </button>
                                     </div>
                                     <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
@@ -373,15 +372,15 @@ export default function BrokerPage() {
 
                             {/* Error / Success */}
                             {connectError && (
-                                <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 flex items-center gap-2">
-                                    <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0" />
-                                    <p className="text-sm text-rose-400">{connectError}</p>
+                                <div className="p-3 rounded-xl bg-[var(--destructive)]/5 border border-[var(--destructive)]/20 flex items-center gap-2">
+                                    <AlertTriangle className="h-5 w-5 text-[var(--destructive)] shrink-0" />
+                                    <p className="text-sm text-[var(--destructive)]">{connectError}</p>
                                 </div>
                             )}
                             {connectSuccess && (
-                                <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-2">
-                                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-                                    <p className="text-sm text-emerald-400">{connectSuccess}</p>
+                                <div className="p-3 rounded-xl bg-[var(--success)]/5 border border-[var(--success)]/20 flex items-center gap-2">
+                                    <CheckCircle2 className="h-5 w-5 text-[var(--success)] shrink-0" />
+                                    <p className="text-sm text-[var(--success)]">{connectSuccess}</p>
                                 </div>
                             )}
 
@@ -389,7 +388,7 @@ export default function BrokerPage() {
                             <Button
                                 onClick={handleConnect}
                                 disabled={connecting || !clientId.trim() || !accessToken.trim()}
-                                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white shadow-lg shadow-cyan-500/20 gap-2 w-full sm:w-auto"
+                                className="bg-gradient-to-r from-cyan-600 to-[var(--primary)] hover:from-cyan-700 hover:to-[var(--primary)] text-white shadow-cyan-500/20 gap-2 w-full sm:w-auto"
                             >
                                 {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
                                 {connecting ? "Verifying & Connecting..." : "Connect Dhan Account"}
@@ -413,7 +412,7 @@ export default function BrokerPage() {
                         <div key={i} className="p-4 rounded-xl bg-muted/20 border border-border/30">
                             <div className="flex items-center gap-2 mb-2">
                                 <item.icon className="h-5 w-5 text-cyan-400" />
-                                <p className="text-xs font-bold text-foreground uppercase tracking-wider">{item.title}</p>
+                                <p className="label-mono text-foreground">{item.title}</p>
                             </div>
                             <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                         </div>
@@ -427,10 +426,13 @@ export default function BrokerPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
-                    <Link2 className="h-8 w-8 text-cyan-400" /> Broker Connections
-                </h1>
-                <p className="text-sm text-muted-foreground">Connect your trading account to auto-import trades</p>
+                <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <Link2 />
+            </span>
+            Broker Connections
+          </h1>
+                <p className="mt-3 text-sm text-muted-foreground">Connect your trading account to auto-import trades</p>
             </div>
 
             {selectedBroker === "dhan" ? renderDhanDetails() : renderBrokerList()}

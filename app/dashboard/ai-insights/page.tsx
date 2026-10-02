@@ -105,7 +105,7 @@ export default function AiInsightsPage() {
     return (
       <div className="pb-10 space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-400">
+          <div className="rounded-xl border border-[var(--destructive)]/20 bg-[var(--destructive)]/5 px-4 py-3 text-sm text-[var(--destructive)]">
             {error}
           </div>
         )}
@@ -133,11 +133,13 @@ export default function AiInsightsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
-            <Brain className="h-8 w-8 text-primary" />
+          <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <Brain />
+            </span>
             AI Trading Coach
           </h1>
-          <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
+          <div className="mt-3 flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
             {metrics.dataRange && (
               <span>
                 {metrics.dataRange.totalTrades} trades · {metrics.dataRange.from} –{" "}
@@ -167,8 +169,8 @@ export default function AiInsightsPage() {
       </div>
 
       {data.stale && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3">
-          <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-400">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[var(--warning)]/25 bg-[var(--warning)]/5 px-4 py-3">
+          <div className="flex items-start gap-2 text-sm text-[var(--warning)] dark:text-[var(--warning)]">
             <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
             <span>Trades changed since this analysis. Refresh for an up-to-date coaching report.</span>
           </div>
@@ -203,10 +205,9 @@ export default function AiInsightsPage() {
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={cn(
-              "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
+            className={cn("flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
               activeTab === tab.id
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
