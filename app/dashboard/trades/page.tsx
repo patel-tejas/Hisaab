@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, ArrowUpDown, Search, ArrowUpRight, ArrowDownRight, ChevronDown, ImageIcon, CalendarIcon, Loader2, Clock, Link2, Zap } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Search, ArrowUpRight, ArrowDownRight, ChevronDown, ImageIcon, CalendarIcon, Loader2, Clock, Link2, Zap, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -259,7 +259,12 @@ export default function TradesPage() {
               Delete ({selectedTrades.length})
             </Button>
           )}
-          {/* ... buttons ... */}
+          <Button asChild variant="outline" className="rounded-xl h-10 px-4 gap-2">
+            <a href="/api/trades/export" download>
+              <Download className="h-4 w-4" />
+              Export CSV
+            </a>
+          </Button>
           <Button
             onClick={handleDhanSync}
             disabled={brokerSyncing}
