@@ -143,11 +143,16 @@ export default function BacktesterPage() {
     if (isLoading) {
         return (
             <div className="space-y-6 animate-in fade-in duration-300">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <FlaskConical />
+            </span>
+            Strategy Backtester
+          </h1></div>
                 <Card className="relative overflow-hidden">
-                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-indigo-500 animate-pulse" />
+                    <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-15 bg-[var(--primary)] animate-pulse" />
                     <div className="relative z-10 flex flex-col items-center py-24">
-                        <Loader2 className="h-10 w-10 text-indigo-400 animate-spin mb-4" />
+                        <Loader2 className="h-10 w-10 text-[var(--primary)] animate-spin mb-4" />
                         <p className="text-lg font-semibold text-foreground">Loading your trades...</p>
                     </div>
                 </Card>
@@ -158,9 +163,14 @@ export default function BacktesterPage() {
     if (trades.length === 0) {
         return (
             <div className="space-y-6">
-                <div><h1 className="font-display text-3xl tracking-tight text-foreground flex items-center gap-3"><FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester</h1></div>
+                <div><h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <FlaskConical />
+            </span>
+            Strategy Backtester
+          </h1></div>
                 <Card className="p-8 text-center">
-                    <FlaskConical className="h-12 w-12 text-indigo-400 mx-auto mb-4" />
+                    <FlaskConical className="h-12 w-12 text-[var(--primary)] mx-auto mb-4" />
                     <p className="text-muted-foreground">Add some trades first to compare strategies.</p>
                 </Card>
             </div>
@@ -173,16 +183,19 @@ export default function BacktesterPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
             {/* Header */}
             <div>
-                <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground mb-1 flex items-center gap-3">
-                    <FlaskConical className="h-8 w-8 text-indigo-400" /> Strategy Backtester
-                </h1>
-                <p className="text-sm text-muted-foreground">Compare your strategies head-to-head with data</p>
+                <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem] flex items-center gap-4">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 text-foreground shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_8%,transparent)] [&>svg]:size-5">
+              <FlaskConical />
+            </span>
+            Strategy Backtester
+          </h1>
+                <p className="mt-3 text-sm text-muted-foreground">Compare your strategies head-to-head with data</p>
             </div>
 
             {/* Strategy Selector */}
             <Card className="p-5">
                 <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Select Strategies to Compare</h4>
+                    <h4 className="label-mono text-muted-foreground">Select Strategies to Compare</h4>
                     <div className="flex gap-2">
                         <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-7">Select All</Button>
                         <Button variant="ghost" size="sm" onClick={clearAll} className="text-xs h-7">Clear</Button>
@@ -226,7 +239,7 @@ export default function BacktesterPage() {
                                     <div className="grid grid-cols-2 gap-2 text-xs">
                                         <div>
                                             <p className="text-muted-foreground">Total P&L</p>
-                                            <p className={cn("font-bold text-base", stat.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <p className={cn("font-bold text-base", stat.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 {stat.pnl >= 0 ? "+" : ""}₹{stat.pnl.toLocaleString("en-IN")}
                                             </p>
                                         </div>
@@ -240,7 +253,7 @@ export default function BacktesterPage() {
                                         </div>
                                         <div>
                                             <p className="text-muted-foreground">Avg P&L</p>
-                                            <p className={cn("font-bold", stat.avgPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <p className={cn("font-bold", stat.avgPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 ₹{stat.avgPnl.toLocaleString("en-IN")}
                                             </p>
                                         </div>
@@ -254,8 +267,8 @@ export default function BacktesterPage() {
                     <div className="grid gap-6 md:grid-cols-2">
                         {/* Total P&L Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <BarChart3 className="h-5 w-5" /> Total P&L by Strategy
+                            <h4 className="label-mono text-[var(--success)] mb-4 flex items-center gap-1.5">
+                                <BarChart3 className="size-3.5" /> Total P&L by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={pnlChartData} layout="vertical">
@@ -278,8 +291,8 @@ export default function BacktesterPage() {
 
                         {/* Win Rate Bar Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <Target className="h-5 w-5" /> Win Rate by Strategy
+                            <h4 className="label-mono text-[var(--primary)] mb-4 flex items-center gap-1.5">
+                                <Target className="size-3.5" /> Win Rate by Strategy
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={winRateChartData} layout="vertical">
@@ -298,8 +311,8 @@ export default function BacktesterPage() {
 
                         {/* Avg P&L Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-violet-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-5 w-5" /> Avg P&L Per Trade
+                            <h4 className="label-mono text-[var(--primary)] mb-4 flex items-center gap-1.5">
+                                <TrendingUp className="size-3.5" /> Avg P&L Per Trade
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <BarChart data={avgPnlChartData} layout="vertical">
@@ -322,8 +335,8 @@ export default function BacktesterPage() {
 
                         {/* Cumulative P&L Line Chart */}
                         <Card className="p-5">
-                            <h4 className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                                <TrendingUp className="h-5 w-5" /> Cumulative P&L Over Time
+                            <h4 className="label-mono text-cyan-400 mb-4 flex items-center gap-1.5">
+                                <TrendingUp className="size-3.5" /> Cumulative P&L Over Time
                             </h4>
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={cumulativeData}>
@@ -355,7 +368,7 @@ export default function BacktesterPage() {
 
                     {/* Detailed Table */}
                     <Card className="p-5 overflow-x-auto">
-                        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Detailed Comparison</h4>
+                        <h4 className="label-mono text-muted-foreground mb-4">Detailed Comparison</h4>
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border text-xs text-muted-foreground">
@@ -382,17 +395,17 @@ export default function BacktesterPage() {
                                                 {s}
                                             </td>
                                             <td className="text-right py-2.5 px-3">{stat.count}</td>
-                                            <td className="text-right py-2.5 px-3 text-emerald-500">{stat.wins}</td>
-                                            <td className="text-right py-2.5 px-3 text-rose-500">{stat.losses}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--success)]">{stat.wins}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--destructive)]">{stat.losses}</td>
                                             <td className="text-right py-2.5 px-3 font-medium">{winRate}%</td>
-                                            <td className={cn("text-right py-2.5 px-3 font-bold", stat.pnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <td className={cn("text-right py-2.5 px-3 font-bold", stat.pnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 {stat.pnl >= 0 ? "+" : ""}₹{stat.pnl.toLocaleString("en-IN")}
                                             </td>
-                                            <td className={cn("text-right py-2.5 px-3", stat.avgPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                            <td className={cn("text-right py-2.5 px-3", stat.avgPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
                                                 ₹{stat.avgPnl.toLocaleString("en-IN")}
                                             </td>
-                                            <td className="text-right py-2.5 px-3 text-emerald-500">+₹{stat.maxWin.toLocaleString("en-IN")}</td>
-                                            <td className="text-right py-2.5 px-3 text-rose-500">₹{stat.maxLoss.toLocaleString("en-IN")}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--success)]">+₹{stat.maxWin.toLocaleString("en-IN")}</td>
+                                            <td className="text-right py-2.5 px-3 text-[var(--destructive)]">₹{stat.maxLoss.toLocaleString("en-IN")}</td>
                                         </tr>
                                     )
                                 })}

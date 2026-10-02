@@ -40,5 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Agent skills installed by `npx skills add` (machine-local store).
+# skills-lock.json IS committed so anyone can reproduce the install; the store
+# and its symlinks are not, because the symlinks are absolute paths.
+.agents/
+.claude/skills/supabase
+.claude/skills/supabase-postgres-best-practices
+
 # guardrail verify build
 /.verify-dist

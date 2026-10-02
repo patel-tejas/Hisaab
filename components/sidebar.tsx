@@ -23,13 +23,12 @@ export function Sidebar() {
   const { collapsed, toggle } = useSidebar()
 
   return (
-    <aside className={cn(
-      "fixed left-4 top-4 bottom-4 z-40 rounded-2xl glass border border-border flex flex-col shadow-2xl transition-all duration-300 ease-in-out",
+    <aside className={cn("fixed left-4 top-4 bottom-4 z-40 rounded-2xl glass border border-border flex flex-col transition-all duration-300 ease-in-out",
       collapsed ? "w-[72px]" : "w-60"
     )}>
       {/* Branding */}
       <div className={cn("flex h-20 items-center gap-3 border-b border-border mx-2", collapsed ? "justify-center px-2" : "px-6")}>
-        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-primary-foreground shadow-lg shadow-indigo-500/30">
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary)] text-primary-foreground shadow-[var(--primary)]/30">
           <Sparkles className="h-5 w-5 fill-current" />
           <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-white/20"></div>
         </div>
@@ -52,11 +51,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               title={collapsed ? item.label : undefined}
-              className={cn(
-                "group relative flex items-center rounded-xl text-sm font-medium transition-all duration-300 overflow-hidden",
+              className={cn("group relative flex items-center rounded-xl text-sm font-medium transition-all duration-300 overflow-hidden",
                 collapsed ? "justify-center p-3" : "gap-3 px-4 py-3",
                 isActive
-                  ? "text-primary-foreground bg-primary shadow-lg shadow-primary/25"
+                  ? "text-primary-foreground bg-primary shadow-primary/25"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
@@ -75,8 +73,7 @@ export function Sidebar() {
         <Link
           href="/dashboard/settings"
           title={collapsed ? "Settings" : undefined}
-          className={cn(
-            "flex items-center w-full rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all",
+          className={cn("flex items-center w-full rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all",
             collapsed ? "justify-center p-3" : "gap-3 px-4 py-3"
           )}
         >
@@ -85,8 +82,7 @@ export function Sidebar() {
         </Link>
         <button
           onClick={toggle}
-          className={cn(
-            "flex items-center w-full rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all mt-1",
+          className={cn("flex items-center w-full rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all mt-1",
             collapsed ? "justify-center p-3" : "gap-3 px-4 py-3"
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}

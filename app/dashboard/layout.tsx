@@ -20,7 +20,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <SidebarInset className="h-svh max-h-svh min-h-0 overflow-hidden md:h-[calc(100svh-1rem)] md:max-h-[calc(100svh-1rem)]">
         <Header onNewTrade={() => setIsAddTradeOpen(true)} />
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-          <div className="animate-in fade-in slide-in-from-bottom-4 p-4 duration-700 md:p-6">
+          <div className="animate-in fade-in slide-in-from-bottom-4 px-5 py-6 duration-500 md:px-8 md:py-10">
             {children}
           </div>
         </div>

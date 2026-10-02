@@ -71,7 +71,7 @@ export function GuardrailBadge({ report, className }: { report?: GuardrailReport
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-30 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-border bg-popover p-4 text-left shadow-xl">
+        <div className="absolute left-0 top-full z-30 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-border bg-popover p-16 text-left shadow-xl">
           <p className="text-xs font-semibold text-foreground">Checked against your trades</p>
           <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
             {report.claimsVerified}/{report.claimsChecked} numbers in the text matched your data, and{" "}

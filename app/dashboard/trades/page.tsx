@@ -236,12 +236,12 @@ export default function TradesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl tracking-tight text-foreground">Trade History</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">Trade History</h1>
+          <p className="mt-3 text-sm text-muted-foreground mt-1">
             {filteredTrades.length} trades •
-            <span className="text-emerald-500 ml-1">{winCount}W</span> /
-            <span className="text-rose-500 ml-1">{lossCount}L</span> •
-            <span className={cn("ml-1 font-medium", netPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+            <span className="text-[var(--success)] ml-1">{winCount}W</span> /
+            <span className="text-[var(--destructive)] ml-1">{lossCount}L</span> •
+            <span className={cn("ml-1 font-medium", netPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
               Net: {netPnl >= 0 ? "+" : ""}₹{netPnl.toLocaleString("en-IN")}
             </span>
           </p>
@@ -271,7 +271,7 @@ export default function TradesPage() {
           </Button>
           <Button
             onClick={() => { setTradeToEdit(null); setIsAddTradeOpen(true); }}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 h-10 px-5 transition-all hover:scale-[1.02]"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-primary/20 h-10 px-5 transition-all hover:scale-[1.02]"
           >
             <Plus className="mr-2 h-5 w-5" />
             New Trade
@@ -283,8 +283,8 @@ export default function TradesPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {/* Net P&L */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Net P&L</p>
-          <div className={cn("mt-2 text-2xl font-bold", netPnl >= 0 ? "text-emerald-500" : "text-rose-500")}>
+          <p className="label-mono text-muted-foreground">Net P&L</p>
+          <div className={cn("mt-2 text-2xl font-bold", netPnl >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>
             {netPnl >= 0 ? "+" : ""}₹{netPnl.toLocaleString("en-IN")}
           </div>
           <p className="mt-1 text-[10px] text-muted-foreground">Realized Profit</p>
@@ -292,8 +292,8 @@ export default function TradesPage() {
 
         {/* Brokerage */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Charges</p>
-          <div className="mt-2 text-2xl font-bold text-amber-500">
+          <p className="label-mono text-muted-foreground">Charges</p>
+          <div className="mt-2 text-2xl font-bold text-[var(--warning)]">
             ₹{totalBrokerage.toLocaleString("en-IN")}
           </div>
           <p className="mt-1 text-[10px] text-muted-foreground">Est. Brokerage & Taxes</p>
@@ -301,15 +301,15 @@ export default function TradesPage() {
 
         {/* Total Trades */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total Trades</p>
+          <p className="label-mono text-muted-foreground">Total Trades</p>
           <div className="mt-2 text-2xl font-bold text-foreground">{filteredTrades.length}</div>
           <p className="mt-1 text-[10px] text-muted-foreground">{winCount} Wins • {lossCount} Losses</p>
         </Card>
 
         {/* Gross P&L */}
         <Card className="glass-card gap-1 bg-linear-to-br from-background to-muted/20 px-5 py-5">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gross P&L</p>
-          <div className={cn("mt-2 text-2xl font-bold", totalPnl >= 0 ? "text-emerald-500/80" : "text-rose-500/80")}>
+          <p className="label-mono text-muted-foreground">Gross P&L</p>
+          <div className={cn("mt-2 text-2xl font-bold", totalPnl >= 0 ? "text-[var(--success)]/80" : "text-[var(--destructive)]/80")}>
             {totalPnl >= 0 ? "+" : ""}₹{totalPnl.toLocaleString("en-IN")}
           </div>
           <p className="mt-1 text-[10px] text-muted-foreground">Before Charges</p>
@@ -318,9 +318,8 @@ export default function TradesPage() {
 
       {/* Sync Message */}
       {syncMessage && (
-        <div className={cn(
-          "p-3 rounded-xl border flex items-center gap-2 text-sm animate-in fade-in slide-in-from-top-2 duration-300",
-          syncMessage.type === "success" ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400" : "bg-rose-500/5 border-rose-500/20 text-rose-400"
+        <div className={cn("p-3 rounded-xl border flex items-center gap-2 text-sm animate-in fade-in slide-in-from-top-2 duration-300",
+          syncMessage.type === "success" ? "bg-[var(--success)]/5 border-[var(--success)]/20 text-[var(--success)]" : "bg-[var(--destructive)]/5 border-[var(--destructive)]/20 text-[var(--destructive)]"
         )}>
           {syncMessage.type === "success" ? <Zap className="h-5 w-5 shrink-0" /> : <Link2 className="h-5 w-5 shrink-0" />}
           {syncMessage.text}
@@ -451,16 +450,16 @@ export default function TradesPage() {
                     aria-label="Select all"
                   />
                 </TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Date</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Symbol</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Direction</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Entry / Exit</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">P&L</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">R:R</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Strategy</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Duration</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Outcome</TableHead>
-                <TableHead className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground w-24">Actions</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Date</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Symbol</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Direction</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Entry / Exit</TableHead>
+                <TableHead className="label-mono text-muted-foreground">P&L</TableHead>
+                <TableHead className="label-mono text-muted-foreground">R:R</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Strategy</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Duration</TableHead>
+                <TableHead className="label-mono text-muted-foreground">Outcome</TableHead>
+                <TableHead className="label-mono text-muted-foreground w-24">Actions</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -468,8 +467,7 @@ export default function TradesPage() {
               {visibleTrades.map((trade) => (
                 <TableRow
                   key={trade._id}
-                  className={cn(
-                    "cursor-pointer transition-colors border-b border-border/50 group",
+                  className={cn("cursor-pointer transition-colors border-b border-border/50 group",
                     selectedTrades.includes(trade._id) ? "bg-muted/50 hover:bg-muted/60" : "hover:bg-muted/30"
                   )}
                   onClick={() => setSelectedTrade(trade)}
@@ -495,11 +493,10 @@ export default function TradesPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold",
+                    <div className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold",
                       trade.type === "long"
-                        ? "bg-indigo-500/10 text-indigo-500 dark:text-indigo-400"
-                        : "bg-orange-500/10 text-orange-500 dark:text-orange-400"
+                        ? "bg-[var(--primary)]/10 text-[var(--primary)] dark:text-[var(--primary)]"
+                        : "bg-[var(--warning)]/10 text-[var(--warning)] dark:text-[var(--warning)]"
                     )}>
                       {trade.type === "long" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                       {trade.type === "long" ? "LONG" : "SHORT"}
@@ -514,10 +511,10 @@ export default function TradesPage() {
                   </TableCell>
 
                   <TableCell>
-                    <div className={cn("font-semibold text-sm", trade.pnl >= 0 ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400")}>
+                    <div className={cn("font-semibold text-sm", trade.pnl >= 0 ? "text-[var(--success)] dark:text-[var(--success)]" : "text-[var(--destructive)] dark:text-[var(--destructive)]")}>
                       {trade.pnl >= 0 ? "+" : ""}₹{trade.pnl.toLocaleString("en-IN")}
                     </div>
-                    <div className={cn("text-[11px]", trade.pnl >= 0 ? "text-emerald-500/70" : "text-rose-500/70")}>
+                    <div className={cn("text-[11px]", trade.pnl >= 0 ? "text-[var(--success)]/70" : "text-[var(--destructive)]/70")}>
                       {trade.pnl >= 0 ? "+" : ""}{trade.pnlPercent.toFixed(2)}%
                     </div>
                   </TableCell>
@@ -541,12 +538,7 @@ export default function TradesPage() {
 
                   <TableCell>
                     <Badge
-                      className={cn("font-medium text-[11px] rounded-md border-0", {
-                        "bg-emerald-500/10 text-emerald-500 dark:text-emerald-400": trade.outcome === "success",
-                        "bg-rose-500/10 text-rose-500 dark:text-rose-400": trade.outcome === "mistake",
-                        "bg-zinc-500/10 text-zinc-400": trade.outcome === "breakeven",
-                        "bg-amber-500/10 text-amber-500 dark:text-amber-400": trade.outcome === "followed_plan",
-                        "bg-blue-500/10 text-blue-500 dark:text-blue-400": trade.outcome === "partial",
+                      className={cn("font-medium text-[11px] rounded-md border-0", {"bg-[var(--success)]/10 text-[var(--success)] dark:text-[var(--success)]": trade.outcome === "success","bg-[var(--destructive)]/10 text-[var(--destructive)] dark:text-[var(--destructive)]": trade.outcome === "mistake","bg-[var(--muted-foreground)]/10 text-[var(--muted-foreground)]": trade.outcome === "breakeven","bg-[var(--warning)]/10 text-[var(--warning)] dark:text-[var(--warning)]": trade.outcome === "followed_plan","bg-[var(--primary)]/10 text-[var(--primary)] dark:text-[var(--primary)]": trade.outcome === "partial",
                       })}
                     >
                       {outcomeLabels[trade.outcome] || trade.outcome}

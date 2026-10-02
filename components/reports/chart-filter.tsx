@@ -53,10 +53,9 @@ export function PillFilter({ options, value, onChange }: PillFilterProps) {
                 <button
                     key={opt}
                     onClick={() => onChange(opt)}
-                    className={cn(
-                        "px-3 py-1 rounded-md text-xs font-medium transition-all",
+                    className={cn("px-3 py-1 rounded-md text-xs font-medium transition-all",
                         value === opt
-                            ? "bg-background text-foreground shadow-sm"
+                            ? "bg-background text-foreground"
                             : "text-muted-foreground hover:text-foreground"
                     )}
                 >

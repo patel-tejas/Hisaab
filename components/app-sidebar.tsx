@@ -11,9 +11,11 @@ import {
   Link2,
   CalendarClock,
   FlaskConical,
+  Sparkles,
   Settings2,
 } from "lucide-react"
 
+import { BrandMark } from "@/components/brand-mark"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -34,6 +36,7 @@ const navMain = [
   { title: "Brokers", url: "/dashboard/broker", icon: Link2 },
   { title: "Daily Planner", url: "/dashboard/planner", icon: CalendarClock },
   { title: "Backtester", url: "/dashboard/backtester", icon: FlaskConical },
+  { title: "Eve Agent", url: "/dashboard/agent", icon: Sparkles },
 ]
 
 const navSecondary = [
@@ -43,16 +46,20 @@ const navSecondary = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" collapsible="icon" {...props}>
-      <SidebarHeader className="gap-0 px-3 pt-3 pb-2">
+      <SidebarHeader className="gap-0 px-3 pb-3 pt-4">
         <Link
           href="/dashboard"
-          className="flex h-10 items-center gap-2.5 rounded-lg px-1 outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent focus-visible:ring-2"
+          className="magnetic flex items-center gap-3 rounded-xl px-1.5 py-1 outline-none ring-sidebar-ring hover:bg-sidebar-accent focus-visible:ring-2"
+          aria-label="Hisaab home"
         >
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-md border border-sidebar-border bg-sidebar-accent text-xs font-semibold text-sidebar-foreground">
-            H
-          </div>
-          <span className="truncate font-display text-[1.65rem] leading-none tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-            Hisaab
+          <BrandMark size={34} />
+          <span className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
+            <span className="truncate font-display text-2xl leading-none tracking-tight text-foreground">
+              Hisaab
+            </span>
+            <span className="label-mono mt-1 text-[9px] tracking-[0.18em]">
+              Trading journal
+            </span>
           </span>
         </Link>
       </SidebarHeader>

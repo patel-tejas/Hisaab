@@ -1,125 +1,138 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* LIGHT MODE - Clean & Airy */
-  --background: #ffffff;
-  --foreground: #0f172a;
-  /* Slate 900 */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  /*
+   * LIGHT — "daylight gallery"
+   *
+   * The same neutral family as dark mode, warmed slightly. The previous
+   * revision mixed Slate (cool/blue) here with Zinc (neutral) in dark mode,
+   * so the two themes never felt like one product.
+   */
+  --background: #f7f7f8;
+  --foreground: #0f1011;      /* Obsidian as ink */
 
-  --primary: #6366f1;
-  /* Indigo 500 */
+  --card: #ffffff;
+  --card-foreground: #0f1011;
+  --popover: #ffffff;
+  --popover-foreground: #0f1011;
+
+  /* DESIGN.md: the primary action is the highest-contrast pair in the system,
+     never a chromatic fill. Inverted for light mode. */
+  --primary: #0f1011;
   --primary-foreground: #ffffff;
 
-  --secondary: #f1f5f9;
-  /* Slate 100 */
-  --secondary-foreground: #0f172a;
+  --secondary: #eeeef0;
+  --secondary-foreground: #0f1011;
 
-  --muted: #f8fafc;
-  /* Slate 50 */
-  --muted-foreground: #64748b;
-  /* Slate 500 */
+  --muted: #f0f0f2;
+  --muted-foreground: #6a6b6b;   /* Fog */
 
-  --accent: #e0e7ff;
-  /* Indigo 100 */
-  --accent-foreground: #4338ca;
-  /* Indigo 700 */
+  --accent: #eaeaec;
+  --accent-foreground: #0f1011;
 
-  --destructive: #ef4444;
+  /* Desaturated. Saturation stays under ~70% so data signals read as
+     information rather than alarm. */
+  --destructive: #c2544a;
   --destructive-foreground: #ffffff;
-
-  --success: #10b981;
-  /* Emerald 500 */
+  --success: #3f9169;
   --success-foreground: #ffffff;
-
-  --warning: #f59e0b;
+  --warning: #b07d33;
   --warning-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  /* Slate 200 */
-  --input: #e2e8f0;
-  --ring: #6366f1;
+  --border: #e3e3e6;
+  --input: #e3e3e6;
+  --ring: #0f1011;
 
+  /* 0.75rem keeps the DESIGN.md ladder intact through Tailwind's scale:
+     rounded-sm = 8px (buttons, inputs, nav) · rounded-xl = 16px (cards). */
   --radius: 0.75rem;
-  /* More rounded */
+
+  /* Chart: one data accent (Cyan Signal) plus the desaturated semantics.
+     Not a rainbow. */
+  --chart-1: #0f1011;
+  --chart-2: #3f9169;
+  --chart-3: #c2544a;
+  --chart-4: #b07d33;
+  --chart-5: #0086a8;
 
   --sidebar-bg: #ffffff;
-  --sidebar-active: #e0e7ff;
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar-active: #eeeef0;
+  --sidebar: #f7f7f8;
+  --sidebar-foreground: #3f4041;
+  --sidebar-primary: #0f1011;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eeeef0;
+  --sidebar-accent-foreground: #0f1011;
+  --sidebar-border: #e3e3e6;
+  --sidebar-ring: #0f1011;
 }
 
 .dark {
-  /* DARK MODE - Deep Space (Zinc Palette for coherent "Black" theme) */
-  --background: #09090b;
-  /* Zinc 950 */
-  --foreground: #fafafa;
-  /* Zinc 50 */
+  /*
+   * DARK — Origin "midnight gallery of quiet wealth" (see DESIGN.md).
+   *
+   * The marketing site already shipped this system; the app never adopted it
+   * and ran on generic Zinc + indigo instead. These tokens put the whole
+   * dashboard on the same ladder, so every shadcn component inherits it.
+   *
+   * Surfaces step by COLOR, not by shadow — that is the system's defining
+   * rule. Obsidian canvas -> elevated panel -> Graphite block -> Steel hover.
+   */
+  --background: #0f1011;      /* Obsidian — canvas */
+  --foreground: #f5f5f7;      /* Cloud — headings. Never pure #fff. */
 
-  --card: #18181b;
-  /* Zinc 900 */
-  --card-foreground: #fafafa;
+  --card: #191a1b;            /* elevated panel, one quiet step off canvas */
+  --card-foreground: #f5f5f7;
+  --popover: #1d1e1f;
+  --popover-foreground: #f5f5f7;
 
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
+  /* White-on-black is the only primary action (21:1). This replaces the
+     indigo that made the UI read as generic. */
+  --primary: #ffffff;
+  --primary-foreground: #0f1011;
 
-  --primary: #818cf8;
-  /* Indigo 400 */
-  --primary-foreground: #ffffff;
+  --secondary: #2e2e2e;       /* Graphite — inner blocks, inputs, badges */
+  --secondary-foreground: #f5f5f7;
 
-  --secondary: #27272a;
-  /* Zinc 800 */
-  --secondary-foreground: #fafafa;
+  --muted: #212223;
+  --muted-foreground: #9f9fa0;   /* Ash — body copy and descriptions */
 
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  /* Zinc 400 */
+  --accent: #3f4041;          /* Steel — hover / pressed */
+  --accent-foreground: #f5f5f7;
 
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
+  --destructive: #e0685f;
+  --destructive-foreground: #0f1011;
+  --success: #63c69b;
+  --success-foreground: #0f1011;
+  --warning: #d6a45f;
+  --warning-foreground: #0f1011;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  /* A quiet separation line, not a bright rule. */
+  --border: #262728;
+  --input: #2e2e2e;
+  --ring: #6a6b6b;
 
-  --success: #10b981;
-  --success-foreground: #ffffff;
+  --sidebar-bg: #0f1011;
+  --sidebar-active: #2e2e2e;
 
-  --warning: #f59e0b;
-  --warning-foreground: #ffffff;
+  --chart-1: #f5f5f7;
+  --chart-2: #63c69b;
+  --chart-3: #e0685f;
+  --chart-4: #d6a45f;
+  --chart-5: #00b3dd;         /* Cyan Signal — reserved for data lines */
 
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #818cf8;
-
-  --sidebar-bg: #09090b;
-  --sidebar-active: #27272a;
-
-  /* Charts - Neon Vibes */
-  --chart-1: #818cf8;
-  --chart-2: #34d399;
-  --chart-3: #f87171;
-  --chart-4: #fbbf24;
-  --chart-5: #a78bfa;
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: #0f1011;
+  --sidebar-foreground: #9f9fa0;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #0f1011;
+  --sidebar-accent: #212223;
+  --sidebar-accent-foreground: #f5f5f7;
+  --sidebar-border: #262728;
+  --sidebar-ring: #6a6b6b;
 }
 
 @theme inline {
@@ -238,27 +251,238 @@
 
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Lining tabular figures so columns of money and percentages align and
+       stop jittering as they re-render. This interface is mostly numbers. */
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Headings carry weight through size and tracking, not through bold.
+     Bolding the display voice is explicitly against the system. */
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Keyboard focus must stay visible — it is an accessibility requirement,
+     and the default ring was invisible against Obsidian. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--foreground) 22%, transparent);
+  }
+
+  /* A restrained scrollbar. The default chrome was a bright bar against a
+     near-black canvas and read as a rendering artifact. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 16%, transparent) transparent;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 14%, transparent);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 26%, transparent);
+    background-clip: content-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /*
-   * Global Lucide icon defaults.
-   * h-* and w-* Tailwind utilities control sizing.
-   * size-* utilities also work for consistent scaling.
+   * Icons.
+   *
+   * A 2px stroke at small sizes is the single loudest "stock template" tell —
+   * premium interfaces use precise, light linework. 1.5 reads sharp at 16-20px
+   * without going wispy. Sizing still comes from size-* utilities.
    */
   svg.lucide {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
+    stroke-width: 1.5;
+  }
+
+  /* Larger glyphs need proportionally lighter strokes to keep optical weight
+     even against display type. */
+  svg.lucide[class*="size-8"],
+  svg.lucide[class*="size-9"],
+  svg.lucide[class*="size-10"],
+  svg.lucide[class*="h-8"],
+  svg.lucide[class*="h-9"],
+  svg.lucide[class*="h-10"] {
+    stroke-width: 1.25;
   }
 }
 
 @layer utilities {
+  /*
+   * ── Double-bezel enclosure ───────────────────────────────────────────
+   *
+   * A premium container is not one box. It is a plate seated in a tray: an
+   * outer shell with a hairline, a small inset, and a large radius; then an
+   * inner core with its own surface, its own top highlight, and a radius
+   * reduced by exactly the inset so the curves stay concentric.
+   *
+   *   <div class="bezel">
+   *     <div class="bezel-core panel-p"> … </div>
+   *   </div>
+   *
+   * Reserved for containers that should read as hardware — the primary
+   * modules on a page. Ordinary cards stay on `.panel`.
+   */
+  .bezel {
+    padding: 6px;
+    border-radius: 1.5rem;
+    background: color-mix(in oklab, var(--foreground) 4%, transparent);
+    border: 1px solid color-mix(in oklab, var(--foreground) 7%, transparent);
+  }
+
+  .bezel-core {
+    /* 1.5rem shell radius − 6px inset = concentric inner curve. */
+    border-radius: calc(1.5rem - 6px);
+    background: var(--card);
+    border: 1px solid color-mix(in oklab, var(--foreground) 6%, transparent);
+    /* A single-pixel top highlight reads as light catching a machined edge. */
+    box-shadow: inset 0 1px 0 0 color-mix(in oklab, var(--foreground) 7%, transparent);
+  }
+
+  /*
+   * ── Motion ───────────────────────────────────────────────────────────
+   * One spring curve for the whole app. `ease-out` and `linear` are the
+   * defaults that make interfaces feel weightless and cheap.
+   */
+  .ease-spring {
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /* Magnetic press: the surface yields under the cursor. */
+  .magnetic {
+    transition: transform 400ms cubic-bezier(0.32, 0.72, 0, 1),
+                background-color 250ms cubic-bezier(0.32, 0.72, 0, 1),
+                border-color 250ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .magnetic:active { transform: scale(0.985); }
+
+  /*
+   * ── Origin surface ladder ────────────────────────────────────────────
+   * Elevation is a colour step, never a shadow. Use these instead of
+   * hand-picking background and border utilities per component, so every panel
+   * sits at a known level.
+   *
+   *   panel        level 1 — the standard container
+   *   panel-inset  level 2 — a block inside a panel (stats, code, tables)
+   *   panel-quiet  level 0.5 — a recessed well (empty states, logs)
+   */
+  .panel {
+    @apply rounded-2xl border border-border/70 bg-card;
+  }
+
+  .panel-inset {
+    @apply rounded-xl border border-border/60 bg-secondary/40;
+  }
+
+  .panel-quiet {
+    @apply rounded-xl border border-border/50 bg-muted/40;
+  }
+
+  /* Card padding is 32px in the system; 20px on small screens so dense
+     dashboards stay usable. Written as the px-named spacing tokens below
+     (`p-32` = 32px): `@theme` redefines `--spacing-8` as 8px, so the stock
+     `md:p-8` rendered 8px, not 32. */
+  .panel-p {
+    @apply p-5 md:p-32;
+  }
+
+  .panel-px { @apply px-5 md:px-32; }
+  .panel-py { @apply py-5 md:py-32; }
+
+  /*
+   * The system's label voice: Roboto Mono, uppercase, 10-12px, tracked
+   * 0.016-0.182em. Every eyebrow/label in the app should use this rather
+   * than re-declaring font-mono + uppercase + tracking each time.
+   */
+  .label-mono {
+    font-family: var(--font-mono-label), ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Data readouts: mono, tabular, tight. */
+  .numeric {
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /*
+   * Interactive feedback. The audit flagged missing hover/active states as a
+   * top reason an interface feels dead; this gives every clickable surface
+   * the same physics.
+   */
+  .interactive {
+    @apply transition-[background-color,border-color,transform,opacity] duration-200 ease-out;
+  }
+
+  .interactive:hover { @apply bg-accent/60; }
+  .interactive:active { transform: translateY(1px); }
+
+  /*
+   * A fixed, non-interactive grain overlay. Pure flat vectors read as
+   * sterile on large dark canvases; this breaks the flatness without
+   * becoming a visible texture.
+   */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Staggered entry — elements cascade rather than all mounting at once. */
+  .stagger > * {
+    animation: rise-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 45ms; }
+  .stagger > *:nth-child(3) { animation-delay: 90ms; }
+  .stagger > *:nth-child(4) { animation-delay: 135ms; }
+  .stagger > *:nth-child(5) { animation-delay: 180ms; }
+  .stagger > *:nth-child(6) { animation-delay: 225ms; }
+
   .glass {
     @apply bg-background/60 backdrop-blur-xl border border-border/50;
   }
 
   .glass-card {
-    @apply bg-card/80 backdrop-blur-lg border border-border/50 shadow-xl;
+    /* Elevation by surface step, not shadow. Backdrop blur is the one true
+       depth cue the system allows (DESIGN.md -> Elevation). */
+    @apply bg-card/70 backdrop-blur-xl border border-border/70;
   }
 
   /* Marketing / Origin system */
@@ -383,4 +607,33 @@
 
 *::-webkit-scrollbar-thumb:hover {
   background: rgba(128, 128, 128, 0.45);
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/*
+ * ── Eve agent motion ─────────────────────────────────────────────────
+ * Shared by the Eve chat: the pixel-grid loader, its shimmering label,
+ * menus that pop from the composer, and turns that rise into place.
+ */
+@keyframes pixel-on {
+  0%, 100% { opacity: 0.15; }
+  35% { opacity: 1; }
+}
+
+@keyframes shimmer-text {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

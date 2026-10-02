@@ -37,15 +37,15 @@ export function KpiStrip({ metrics }: { metrics: InsightsMetrics }) {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {items.map((item) => (
         <Card key={item.label} className="glass-card p-5">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <p className="label-mono text-muted-foreground">
             {item.label}
           </p>
           <p
             className={cn(
               "mt-1 text-xl font-semibold tabular-nums",
-              item.tone === "pos" && "text-emerald-500",
-              item.tone === "neg" && "text-red-400",
-              item.tone === "warn" && "text-amber-500"
+              item.tone === "pos" && "text-[var(--success)]",
+              item.tone === "neg" && "text-[var(--destructive)]",
+              item.tone === "warn" && "text-[var(--warning)]"
             )}
           >
             {item.value}

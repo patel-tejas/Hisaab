@@ -47,18 +47,18 @@ export function WinLossChart({ winCount, lossCount, winRate }: WinLossChartProps
                 {/* Center label */}
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
                     <span className="text-3xl font-bold text-foreground">{winRate}%</span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Win Rate</span>
+                    <span className="label-mono text-muted-foreground">Win Rate</span>
                 </div>
             </div>
 
             <div className="flex items-center justify-between mt-2 pt-3 border-t border-border">
                 <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-[var(--success)]"></div>
                     <span className="text-xs text-muted-foreground">Wins</span>
                     <span className="text-xs font-bold text-foreground">{winCount}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-rose-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-[var(--destructive)]"></div>
                     <span className="text-xs text-muted-foreground">Losses</span>
                     <span className="text-xs font-bold text-foreground">{lossCount}</span>
                 </div>

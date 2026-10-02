@@ -61,7 +61,7 @@ export function WhatIfChart({
                   if (!active || !payload?.length) return null
                   const row = payload[0].payload as (typeof data)[number]
                   return (
-                    <div className="rounded-lg border border-border bg-card p-3 text-xs shadow-md max-w-[240px]">
+                    <div className="rounded-lg border border-border bg-card p-3 text-xs max-w-[240px]">
                       <p className="font-semibold mb-1">{row.fullName}</p>
                       <p>Current: {formatInr(row.current)}</p>
                       <p>Projected: {formatInr(row.projected)}</p>

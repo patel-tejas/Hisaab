@@ -51,7 +51,7 @@ function StatRow({
                     <span
                         className={cn(
                             "flex items-center gap-0.5 text-xs font-semibold rounded-full px-1.5 py-0.5",
-                            isUp ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"
+                            isUp ? "text-[var(--success)] bg-[var(--success)]/10" : "text-[var(--destructive)] bg-[var(--destructive)]/10"
                         )}
                     >
                         {isUp ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownRight className="h-5 w-5" />}
@@ -73,12 +73,12 @@ export function MonthlyComparison({ comparison }: MonthlyComparisonProps) {
 
     return (
         <Card className="p-5 glass-card relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-10 bg-blue-500" />
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full blur-3xl opacity-10 bg-[var(--primary)]" />
 
             <div className="flex items-center justify-between mb-4 relative z-10">
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Calendar className="h-5 w-5 text-blue-500" />
+                    <div className="h-8 w-8 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center">
+                        <Calendar className="h-5 w-5 text-[var(--primary)]" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-foreground">Monthly Comparison</h3>
@@ -93,8 +93,8 @@ export function MonthlyComparison({ comparison }: MonthlyComparisonProps) {
                         pnlChange === 0
                             ? "bg-muted text-muted-foreground"
                             : isPositive
-                                ? "bg-emerald-500/10 text-emerald-500"
-                                : "bg-rose-500/10 text-rose-500"
+                                ? "bg-[var(--success)]/10 text-[var(--success)]"
+                                : "bg-[var(--destructive)]/10 text-[var(--destructive)]"
                     )}
                 >
                     {isPositive ? (
