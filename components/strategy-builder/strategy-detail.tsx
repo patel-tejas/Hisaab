@@ -10,7 +10,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Archive, Loader2, Pencil, Play } from "lucide-react";
+import { Archive, Loader2, Pencil, Play, Scale } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/page-header";
@@ -19,11 +19,18 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatMetric } from "@/components/eve/metrics";
 import { cn } from "@/lib/utils";
-import { researchMonths, strategiesApi, type SpecChange, type StrategyDetail as Detail } from "./api";
+import {
+  researchMonths,
+  strategiesApi,
+  type SpecChange,
+  type StrategyDetail as Detail,
+  type Verdict,
+} from "./api";
 import { Choice } from "./field";
 import { MetricsStrip } from "./metrics-strip";
 import { IssueList } from "./spec-card";
 import { StatusBadge } from "./status-badge";
+import { VerdictCard } from "./verdict-card";
 
 function show(v: unknown): string {
   if (v === null || v === undefined) return "none";
@@ -53,7 +60,8 @@ export function StrategyDetail({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [months, setMonths] = useState<string[]>([]);
   const [month, setMonth] = useState("");
-  const [busy, setBusy] = useState<"backtest" | "archive" | null>(null);
+  const [busy, setBusy] = useState<"backtest" | "archive" | "evaluate" | null>(null);
+  const [holdout, setHoldout] = useState("");
 
   const load = useCallback(() => {
     strategiesApi
@@ -67,7 +75,9 @@ export function StrategyDetail({ id }: { id: string }) {
     researchMonths()
       .then((e) => {
         setMonths(e.months);
-        setMonth((m) => m || e.months[e.months.length - 1] || "");
+        // Default to the first month: the later ones are best kept unseen
+        // for the honest check.
+        setMonth((m) => m || e.months[0] || "");
       })
       .catch(() => {});
   }, [load]);
@@ -81,6 +91,21 @@ export function StrategyDetail({ id }: { id: string }) {
       load();
     } catch (err) {
       toast.error("Backtest failed", { description: err instanceof Error ? err.message : String(err) });
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function evaluate(month: string) {
+    if (!month) return;
+    setBusy("evaluate");
+    try {
+      const res = await strategiesApi.evaluate(id, month);
+      const notify = res.verdict.label === "survived_holdout" ? toast.success : toast.warning;
+      notify(res.verdict.headline, { description: `Trial ${res.trial_count}` });
+      load();
+    } catch (err) {
+      toast.error("Evaluation failed", { description: err instanceof Error ? err.message : String(err) });
     } finally {
       setBusy(null);
     }
@@ -121,6 +146,15 @@ export function StrategyDetail({ id }: { id: string }) {
 
   const { strategy, version, versions, backtests } = data;
   const archived = strategy.status === "archived";
+  // The engine refuses any month this strategy was backtested on (any
+  // version); offer only the ones this version has not been tuned on and let
+  // it explain if an earlier version used one.
+  const tunedOn = new Set(backtests.filter((b) => b.kind === "in_sample").map((b) => b.params?.month));
+  const evaluatedOn = new Set(backtests.filter((b) => b.kind === "holdout").map((b) => b.params?.month));
+  const holdoutChoices = months.filter((m) => !tunedOn.has(m) && !evaluatedOn.has(m));
+  const holdoutMonth = holdoutChoices.includes(holdout) ? holdout : (holdoutChoices[0] ?? "");
+  const latestHoldout = backtests.find((b) => b.kind === "holdout" && b.verdict);
+  const hasInSample = tunedOn.size > 0;
 
   return (
     <div>
@@ -155,6 +189,17 @@ export function StrategyDetail({ id }: { id: string }) {
 
       <div className="grid gap-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
         <div className="min-w-0 space-y-24">
+          {latestHoldout && (
+            <Card className="space-y-12 p-20">
+              <p className="label-mono">Honest check · v{version.version}</p>
+              <VerdictCard
+                verdict={latestHoldout.verdict as unknown as Verdict}
+                holdoutMetrics={latestHoldout.metrics}
+                createdAt={latestHoldout.created_at}
+              />
+            </Card>
+          )}
+
           <Card className="space-y-12 p-20">
             <p className="label-mono">Rules · v{version.version}</p>
             <p className="text-sm leading-relaxed">{version.summary}</p>
@@ -171,7 +216,8 @@ export function StrategyDetail({ id }: { id: string }) {
                 {backtests.map((b) => (
                   <div key={b.id} className="space-y-8 border-b border-border/60 pb-16 last:border-b-0 last:pb-0">
                     <p className="text-xs text-muted-foreground">
-                      {b.params?.month} · {b.params?.timeframe} · {b.kind === "in_sample" ? "in-sample" : b.kind} ·{" "}
+                      {b.params?.month} · {b.params?.timeframe} ·{" "}
+                      {b.kind === "in_sample" ? "in-sample" : b.kind === "holdout" ? `holdout: ${String(b.verdict?.headline ?? "")}` : b.kind} ·{" "}
                       {new Date(b.created_at).toLocaleString("en-IN")}
                       {typeof b.verdict?.trials === "number" ? ` · trial ${b.verdict.trials}` : ""}
                     </p>
@@ -217,6 +263,38 @@ export function StrategyDetail({ id }: { id: string }) {
               Recorded against v{version.version} and counted as trial {strategy.trial_count + 1}.
               {backtests[0]?.metrics ? ` Last net ${formatMetric("net_pnl", backtests[0].metrics.net_pnl ?? null)}.` : ""}
             </p>
+          </Card>
+
+          <Card className="space-y-12 p-20">
+            <p className="label-mono flex items-center gap-1.5">
+              <Scale className="size-3.5" /> Honest check
+            </p>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Runs this version once on a month it was never backtested on, corrects for the{" "}
+              {strategy.trial_count} tr{strategy.trial_count === 1 ? "y" : "ies"} so far, and compares with buy and hold.
+            </p>
+            {!hasInSample ? (
+              <p className="text-xs">Backtest this version on one month first.</p>
+            ) : holdoutChoices.length === 0 ? (
+              <p className="text-xs">
+                {evaluatedOn.size
+                  ? "This version has been checked on every unseen month. Its verdict is on the left."
+                  : "Every month with data has been used for tuning, so none is left unseen."}
+              </p>
+            ) : (
+              <>
+                <Choice ariaLabel="Holdout month" value={holdoutMonth} options={holdoutChoices} onChange={setHoldout} />
+                <Button
+                  variant="outline"
+                  className="h-32 w-full gap-1.5 rounded-lg px-3 text-xs"
+                  disabled={busy !== null || archived}
+                  onClick={() => void evaluate(holdoutMonth)}
+                >
+                  {busy === "evaluate" ? <Loader2 className="size-3.5 animate-spin" /> : <Scale className="size-3.5" />}
+                  Evaluate on {holdoutMonth}
+                </Button>
+              </>
+            )}
           </Card>
         </aside>
       </div>

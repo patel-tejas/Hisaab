@@ -100,7 +100,8 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
     researchMonths()
       .then((e) => {
         setEnv(e);
-        setMonth((m) => m || e.months[e.months.length - 1] || "");
+        // The first month: later ones are best kept unseen for the honest check.
+        setMonth((m) => m || e.months[0] || "");
       })
       .catch(() => setEnv({ months: [], engineOk: false, modelId: "", modelOk: false, raw: {} }));
   }, []);

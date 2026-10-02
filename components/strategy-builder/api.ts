@@ -145,6 +145,38 @@ export type SavedBacktest = {
   strategy_status: StrategyStatus;
 };
 
+export type VerdictLabel =
+  | "too_few_trades"
+  | "failed_holdout"
+  | "not_significant"
+  | "lags_buy_and_hold"
+  | "survived_holdout";
+
+export type Verdict = {
+  label: VerdictLabel;
+  headline: string;
+  reasons: string[];
+  trials: number;
+  in_sample_trades: number;
+  holdout_trades: number;
+  deflated_sharpe: { deflated_sharpe: number; observed_sharpe_annualised: number; n_trials: number } | null;
+  benchmark: { gross_pnl: number | null; points: number | null } | null;
+  holdout_reused: boolean;
+  caveat: string;
+  in_sample_month: string;
+  holdout_month: string;
+  in_sample_metrics?: Partial<BacktestMetrics>;
+};
+
+export type Evaluation = {
+  strategy_id: string;
+  version: number;
+  trial_count: number;
+  in_sample: { month: string; metrics: BacktestMetrics };
+  holdout: { month: string; metrics: BacktestMetrics };
+  verdict: Verdict;
+};
+
 export const strategiesApi = {
   list: (status = "") =>
     request<{ strategies: StrategyRow[]; count: number }>(
@@ -161,6 +193,11 @@ export const strategiesApi = {
     }),
   archive: (id: string) =>
     request<{ strategy_id: string; status: StrategyStatus }>(`/api/eve/strategies/${id}`, { method: "DELETE" }),
+  evaluate: (id: string, holdout_month: string, version = 0) =>
+    request<Evaluation>(`/api/eve/strategies/${id}/evaluate`, {
+      method: "POST",
+      body: JSON.stringify({ holdout_month, version }),
+    }),
   backtest: (id: string, month: string, version = 0) =>
     request<SavedBacktest>(`/api/eve/strategies/${id}/backtests`, {
       method: "POST",
