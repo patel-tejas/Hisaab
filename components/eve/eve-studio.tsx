@@ -19,6 +19,8 @@ import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AgentOverview, type AgentStatus } from "@/components/eve/agent-overview";
 import { ChatPanel } from "@/components/eve/chat-panel";
 import { ParamSliders } from "@/components/eve/param-sliders";
 import { ResultsPanel, ResultsSkeleton } from "@/components/eve/results-panel";
@@ -37,11 +39,7 @@ import {
 } from "@/lib/eve/strategy";
 import type { ProposeStrategyOutput } from "@/lib/eve/tools";
 
-type Status = {
-  bridge: { url: string; ok: boolean; tools?: number; error?: string };
-  model: { id: string; provider: string; ok: boolean; keyPresent: boolean; detail: string };
-  months: Record<string, Record<string, number>>;
-};
+type Status = AgentStatus;
 
 /** Call one read-only quant tool. Throws with the bridge's own message. */
 async function callTool<T>(name: string, args: Record<string, unknown>): Promise<T> {
@@ -59,6 +57,8 @@ async function callTool<T>(name: string, args: Record<string, unknown>): Promise
 
 export function EveStudio() {
   const [status, setStatus] = useState<Status | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [tab, setTab] = useState<"studio" | "agent">("studio");
   const [params, setParams] = useState<StrategyParams | null>(null);
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [running, setRunning] = useState(false);
@@ -72,12 +72,20 @@ export function EveStudio() {
   const bridgeOk = status?.bridge.ok ?? false;
   const ready = bridgeOk && (status?.model.ok ?? false);
 
-  useEffect(() => {
+  const fetchStatus = useCallback(() => {
     fetch("/api/eve/status")
       .then((r) => (r.ok ? r.json() : null))
       .then(setStatus)
-      .catch(() => setStatus(null));
+      .catch(() => setStatus(null))
+      .finally(() => setStatusLoading(false));
   }, []);
+
+  useEffect(fetchStatus, [fetchStatus]);
+
+  const refreshStatus = useCallback(() => {
+    setStatusLoading(true);
+    fetchStatus();
+  }, [fetchStatus]);
 
   // Seed the config from the newest available month once the status lands, so
   // nothing is hardcoded to a month that may not exist.
@@ -191,6 +199,8 @@ export function EveStudio() {
     }
   }, [params]);
 
+  const onSeedConsumed = useCallback(() => setSeedMessage(null), []);
+
   const askEve = useCallback(() => {
     if (!params) return;
     setSeedMessage(
@@ -205,123 +215,147 @@ export function EveStudio() {
    * its own scroller — made the page taller than the viewport and pushed the
    * header off screen.
    */
-  const COLUMN = "h-[min(68vh,42rem)]";
+  const COLUMN = "h-[min(72vh,46rem)]";
 
   return (
-    <div>
+    <Tabs value={tab} onValueChange={(v) => setTab(v as "studio" | "agent")}>
       <PageHeader
         eyebrow="Strategy studio"
         title="Eve Agent"
         description="Describe a strategy in plain English. Test it on real NIFTY futures data."
         actions={
-          <div className="flex flex-col items-end gap-1.5">
-            <StatusDot
-              ok={bridgeOk}
-              label={bridgeOk ? `engine · ${status?.bridge.tools} tools` : "engine offline"}
-              title={status?.bridge.error ?? status?.bridge.url}
-            />
-            <StatusDot
-              ok={status?.model.ok ?? false}
-              label={`${status?.model.provider ?? "groq"} · ${status?.model.id ?? "…"}`}
-              title={status?.model.detail ?? "checking…"}
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() => setTab("agent")}
+            title="Open the Agent tab"
+            className="interactive flex h-9 items-center gap-16 rounded-lg border border-border/70 px-3.5"
+          >
+            <StatusDot ok={status ? bridgeOk : undefined} label="Engine" title={status?.bridge.error ?? status?.bridge.url} />
+            <StatusDot ok={status ? (status.model.ok ?? false) : undefined} label="Model" title={status?.model.detail} />
+          </button>
         }
       />
 
-      {/*
-        One state at a time. Previously an offline engine produced three
-        competing half-empty cards — a warning banner, a disabled chat, and a
-        lonely "start the engine" note — which is what made the page read as a
-        prototype.
-      */}
-      {status && !ready ? (
-        <EngineSetup
-          bridgeOk={bridgeOk}
-          bridgeUrl={status.bridge.url}
-          modelOk={status.model.ok}
-          modelDetail={status.model.detail}
-        />
-      ) : (
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-          <div className={cn("bezel", COLUMN)}>
-            <div className="bezel-core flex h-full flex-col overflow-hidden">
-              <ChatPanel
-                onLoadStrategy={loadStrategy}
-                loadedKey={params ? JSON.stringify(params) : null}
-                seedMessage={seedMessage}
-                onSeedConsumed={() => setSeedMessage(null)}
-                ready={ready}
-              />
-            </div>
-          </div>
+      <TabsList className="mb-6 h-10 gap-1 rounded-xl border border-border/60 bg-secondary/40 p-1">
+        <TabsTrigger value="studio" className={TAB}>
+          Studio
+        </TabsTrigger>
+        <TabsTrigger value="agent" className={TAB}>
+          Agent
+          <span
+            className={cn(
+              "size-1.5 rounded-full",
+              !status ? "bg-muted-foreground" : ready ? "bg-[var(--success)]" : "bg-[var(--warning)]",
+            )}
+          />
+        </TabsTrigger>
+      </TabsList>
 
-          <ScrollArea className={COLUMN}>
-            <div className="space-y-4 pr-3">
-              {params ? (
-                <>
-                  <Card className="panel-p">
-                    <ParamSliders
-                      params={params}
-                      months={months}
-                      onChange={setParams}
-                      disabled={!bridgeOk}
+      <TabsContent value="studio" className="mt-0">
+        {/*
+          One state at a time. An offline engine gets one setup screen rather
+          than three competing half-empty cards.
+        */}
+        {status && !ready ? (
+          <EngineSetup
+            bridgeOk={bridgeOk}
+            bridgeUrl={status.bridge.url}
+            modelOk={status.model.ok}
+            modelDetail={status.model.detail}
+          />
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+            <div className={cn("bezel", COLUMN)}>
+              <div className="bezel-core flex h-full flex-col overflow-hidden">
+                <ChatPanel
+                  onLoadStrategy={loadStrategy}
+                  loadedKey={params ? JSON.stringify(params) : null}
+                  seedMessage={seedMessage}
+                  onSeedConsumed={onSeedConsumed}
+                  ready={ready}
+                  status={{
+                    months: status?.months ?? {},
+                    modelId: status?.model.id ?? "checking…",
+                    modelOk: status?.model.ok ?? false,
+                  }}
+                />
+              </div>
+            </div>
+
+            <ScrollArea className={COLUMN}>
+              <div className="space-y-6 pr-3">
+                {params ? (
+                  <>
+                    <Card className="panel-p">
+                      <ParamSliders
+                        params={params}
+                        months={months}
+                        onChange={setParams}
+                        disabled={!bridgeOk}
+                      />
+                      <div className="mt-6 flex gap-2 border-t border-border/60 pt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="interactive flex-1 gap-1.5"
+                          onClick={askEve}
+                          disabled={!ready}
+                        >
+                          <MessageSquarePlus className="size-3.5" /> Ask Eve about this
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="interactive gap-1.5"
+                          onClick={exportCsv}
+                          disabled={exporting || !bridgeOk}
+                        >
+                          <Download className="size-3.5" />
+                          {exporting ? "Exporting…" : "CSV"}
+                        </Button>
+                      </div>
+                    </Card>
+
+                    <VerdictPanel
+                      significance={significance}
+                      validation={validation}
+                      loading={verdictLoading}
+                      onRun={runVerdict}
+                      monthCount={months.length}
                     />
-                    <div className="mt-6 flex gap-2 border-t border-border/60 pt-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="interactive flex-1 gap-1.5"
-                        onClick={askEve}
-                        disabled={!ready}
-                      >
-                        <MessageSquarePlus className="size-3.5" /> Ask Eve about this
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="interactive gap-1.5"
-                        onClick={exportCsv}
-                        disabled={exporting || !bridgeOk}
-                      >
-                        <Download className="size-3.5" />
-                        {exporting ? "Exporting…" : "CSV"}
-                      </Button>
-                    </div>
+
+                    {running && !result ? (
+                      <ResultsSkeleton />
+                    ) : result ? (
+                      <div className={cn(running && "opacity-60 transition-opacity")}>
+                        <ResultsPanel result={result} />
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <Card className="panel-p">
+                    <p className="label-mono">No data</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      No processed months were found. Download and process a month
+                      before running a backtest.
+                    </p>
                   </Card>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
+      </TabsContent>
 
-                  <VerdictPanel
-                    significance={significance}
-                    validation={validation}
-                    loading={verdictLoading}
-                    onRun={runVerdict}
-                    monthCount={months.length}
-                  />
-
-                  {running && !result ? (
-                    <ResultsSkeleton />
-                  ) : result ? (
-                    <div className={cn(running && "opacity-60 transition-opacity")}>
-                      <ResultsPanel result={result} />
-                    </div>
-                  ) : null}
-                </>
-              ) : (
-                <Card className="panel-p">
-                  <p className="label-mono">No data</p>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    No processed months were found. Download and process a month
-                    before running a backtest.
-                  </p>
-                </Card>
-              )}
-            </div>
-          </ScrollArea>
-        </div>
-      )}
-    </div>
+      <TabsContent value="agent" className="mt-0">
+        <AgentOverview status={status} loading={statusLoading} onRefresh={refreshStatus} />
+      </TabsContent>
+    </Tabs>
   );
 }
+
+const TAB =
+  "h-32 gap-2 rounded-lg px-3.5 text-sm text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_7%,transparent)]";
 
 /**
  * The engine is a separate local process, so "not running" is an ordinary
@@ -420,7 +454,8 @@ function StatusDot({
   label,
   title,
 }: {
-  ok: boolean;
+  /** undefined while the status is still loading */
+  ok: boolean | undefined;
   label: string;
   title?: string;
 }) {
@@ -429,7 +464,7 @@ function StatusDot({
       <span
         className={cn(
           "size-1.5 rounded-full",
-          ok ? "bg-[var(--success)]" : "bg-[var(--destructive)]",
+          ok === undefined ? "bg-muted-foreground" : ok ? "bg-[var(--success)]" : "bg-[var(--destructive)]",
         )}
       />
       {label}
