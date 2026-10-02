@@ -1,4 +1,5 @@
 import { z } from "zod"
+import type { GuardrailReport } from "../guardrail/types"
 
 export const ANALYSIS_WINDOW_DAYS = 365
 export const TRADE_HARD_CAP = 500
@@ -6,6 +7,10 @@ export const MIN_TRADES_FOR_INSIGHTS = 3
 export const RATE_LIMIT_MS = 15 * 60 * 1000
 export const GROQ_MODEL = "openai/gpt-oss-20b"
 export const GROQ_TIMEOUT_MS = 45_000
+/** Total time budget for generation including one guardrail repair round. */
+export const GENERATION_BUDGET_MS = 52_000
+/** A repair round runs when the first answer has at least this many errors. */
+export const REPAIR_ERROR_THRESHOLD = 2
 
 export interface InsightTrade {
   id: string
@@ -64,11 +69,49 @@ export interface SkillScores {
   discipline: number
 }
 
+export type RiskLevel = "low" | "medium" | "high"
+export type TrendDirection = "improving" | "declining" | "stable"
+export type TraderLevel = "beginner" | "intermediate" | "advanced" | "expert"
+
+/**
+ * Verdicts computed in code from the metrics. The model explains these; it
+ * does not get to decide them, and the guardrail enforces that.
+ */
+export interface InsightSignals {
+  bestStrategy: string | null
+  worstStrategy: string | null
+  bestDay: string | null
+  worstDay: string | null
+  bestTimeSlot: string | null
+  worstTimeSlot: string | null
+  /** Minimum trades a bucket needs before it can be called best/worst. */
+  minBucketTrades: number
+  highConfWinRate: number
+  highConfTrades: number
+  overconfidenceBias: boolean
+  isOvertrading: boolean
+  tiltRisk: RiskLevel
+  emotionalTrend: TrendDirection
+  traderLevel: TraderLevel
+  /** Mean of the five skill scores, 0..100. */
+  compositeScore: number
+  /** 0..100, higher is healthier (Sharpe up, drawdown relative to P&L down). */
+  riskScore: number
+  monthEndProjection: number
+  remainingTradingDays: number
+  forecastConfidence: RiskLevel
+  avgTradesPerDay: number
+  recommendedMaxTrades: number
+  recommendedMinConfidence: number | null
+  sampleSize: "small" | "moderate" | "large"
+}
+
 export interface InsightsMetrics {
   totalTrades: number
   totalPnl: number
   winRate: number
   winCount: number
+  /** Trades with P&L below zero. Breakevens are counted separately. */
   lossCount: number
   avgPnl: number
   biggestWin: number
@@ -119,6 +162,21 @@ export interface InsightsMetrics {
     totalDays: number
     totalTrades: number
   }
+  // Fields below were added with the guardrail; rows saved before it lack them.
+  breakevenCount?: number
+  avgWin?: number
+  avgLoss?: number
+  /** Gross profit / gross loss. 0 when there are no losses to divide by. */
+  profitFactor?: number
+  /** Average win / average loss (absolute). */
+  payoffRatio?: number
+  /** Expected P&L per trade = WR × avg win − LR × avg loss. Equals avgPnl up to rounding. */
+  expectancy?: number
+  longestWinStreak?: number
+  longestLossStreak?: number
+  timeOfDay?: BucketStat[]
+  symbols?: BucketStat[]
+  signals?: InsightSignals
 }
 
 const riskLevel = z.enum(["low", "medium", "high"]).catch("medium")
@@ -132,8 +190,8 @@ export const actionItemSchema = z.object({
 
 export const insightsPayloadSchema = z.object({
   overallSummary: z.string().default(""),
-  strengths: z.array(z.string()).max(5).default([]),
-  weaknesses: z.array(z.string()).max(5).default([]),
+  strengths: z.array(z.string()).default([]).transform((a) => a.slice(0, 5)),
+  weaknesses: z.array(z.string()).default([]).transform((a) => a.slice(0, 5)),
   patterns: z.object({
     bestSetup: z.string().default(""),
     worstSetup: z.string().default(""),
@@ -169,18 +227,18 @@ export const insightsPayloadSchema = z.object({
   }).optional(),
   whatIfScenarios: z.array(z.object({
     scenario: z.string(),
-    currentPnl: z.number(),
-    projectedPnl: z.number(),
-    difference: z.number(),
+    currentPnl: z.coerce.number(),
+    projectedPnl: z.coerce.number(),
+    difference: z.coerce.number(),
     advice: z.string().default(""),
     assumptions: z.string().optional(),
-  })).max(3).default([]),
+  })).default([]).transform((a) => a.slice(0, 3)),
   tradeDuration: z.object({
     finding: z.string().default(""),
     optimalDuration: z.string().default(""),
     advice: z.string().default(""),
   }).optional(),
-  personalizedRules: z.array(z.string()).max(5).default([]),
+  personalizedRules: z.array(z.string()).default([]).transform((a) => a.slice(0, 5)),
   performanceForecast: z.object({
     projection: z.string().default(""),
     monthEndTarget: z.number().default(0),
@@ -199,9 +257,13 @@ export const insightsPayloadSchema = z.object({
     assessment: z.string().default(""),
     advice: z.string().default(""),
   }).optional(),
-  actionItems: z.array(z.union([z.string(), actionItemSchema])).max(5).default([]),
+  actionItems: z.array(z.union([z.string(), actionItemSchema])).default([]).transform((a) => a.slice(0, 5)),
   traderLevel: traderLevel,
-  confidenceScore: z.number().min(0).max(100).default(50),
+  confidenceScore: z.number().min(0).max(100).catch(50).default(50),
+  /** Set by the guardrail after generation; never taken from the model. */
+  validation: z
+    .custom<GuardrailReport>((v) => typeof v === "object" && v !== null && "status" in v)
+    .optional(),
 })
 
 export type InsightsPayload = z.infer<typeof insightsPayloadSchema>

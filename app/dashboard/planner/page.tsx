@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useCallback } from "react"
+import { GuardrailBadge } from "@/components/ai-insights/guardrail-badge"
+import type { GuardrailReport } from "@/lib/ai/guardrail/types"
 import {
     CalendarClock, RefreshCw, Loader2, Target, Brain, Shield,
     Clock, Zap, AlertTriangle, TrendingUp, Flame, Eye,
@@ -25,6 +27,7 @@ interface PlannerData {
     marketFocus?: string
     summary?: string
     parseError?: boolean
+    validation?: GuardrailReport
 }
 
 /* ─── Cache ─── */
@@ -188,7 +191,10 @@ export default function DailyPlannerPage() {
             </span>
             Daily Planner
           </h1>
-                    <p className="mt-3 text-sm text-muted-foreground">{todayName}</p>
+                    <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        <p className="text-sm text-muted-foreground">{todayName}</p>
+                        <GuardrailBadge report={data.validation} />
+                    </div>
                 </div>
                 <Button variant="outline" onClick={fetchPlan} disabled={loading} className="gap-2">
                     <RefreshCw className={cn("h-5 w-5", loading && "animate-spin")} /> Refresh

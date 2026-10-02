@@ -29,6 +29,7 @@ import {
   TiltMeter,
 } from "@/components/ai-insights/behavior-charts"
 import { ActionPlaybook } from "@/components/ai-insights/action-playbook"
+import { GuardrailBadge } from "@/components/ai-insights/guardrail-badge"
 import {
   GenerateEmptyState,
   InsightsSkeleton,
@@ -151,6 +152,7 @@ export default function AiInsightsPage() {
                 Updated {lastUpdated}
               </span>
             )}
+            <GuardrailBadge report={insights.validation} />
           </div>
         </div>
         <Button

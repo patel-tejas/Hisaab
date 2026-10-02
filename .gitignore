@@ -46,3 +46,6 @@ next-env.d.ts
 .agents/
 .claude/skills/supabase
 .claude/skills/supabase-postgres-best-practices
+
+# guardrail verify build
+/.verify-dist
