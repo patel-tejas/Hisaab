@@ -3,7 +3,7 @@
 /** The user's saved strategies, newest first, with each one's latest result. */
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Blocks, Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatMetric } from "@/components/eve/metrics";
 import { cn } from "@/lib/utils";
 import { strategiesApi, type StrategyRow } from "./api";
+import { KillSwitch, useControls } from "./kill-switch";
 import { StatusBadge } from "./status-badge";
 
 const FILTERS = [
@@ -25,15 +26,20 @@ export function StrategyList() {
   const [filter, setFilter] = useState<string>("");
   const [rows, setRows] = useState<StrategyRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { controls, setControls } = useControls();
 
-  useEffect(() => {
-    setRows(null);
+  const reload = useCallback(() => {
     setError(null);
     strategiesApi
       .list(filter)
       .then((r) => setRows(filter ? r.strategies : r.strategies.filter((s) => s.status !== "archived")))
       .catch((err: Error) => setError(err.message));
   }, [filter]);
+
+  useEffect(() => {
+    setRows(null);
+    reload();
+  }, [reload]);
 
   return (
     <div>
@@ -43,11 +49,20 @@ export function StrategyList() {
         title="Strategies"
         description="Your own rules, built by describing them to Eve or by hand. Every change is a new version, and every backtest is kept."
         actions={
+          <>
+          <KillSwitch
+            controls={controls}
+            onChange={(c) => {
+              setControls(c);
+              reload(); // paper runs may have just stopped
+            }}
+          />
           <Button asChild className="h-32 rounded-lg px-3 text-xs gap-1.5">
             <Link href="/dashboard/strategies/new">
               <Plus className="size-3.5" /> New strategy
             </Link>
           </Button>
+          </>
         }
       />
 

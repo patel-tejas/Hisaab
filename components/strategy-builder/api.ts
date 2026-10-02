@@ -177,6 +177,25 @@ export type Evaluation = {
   verdict: Verdict;
 };
 
+export type Controls = {
+  engaged: boolean;
+  own: { engaged: boolean; reason: string | null };
+  global: { engaged: boolean; reason: string | null };
+  stopped_paper_runs?: string[];
+};
+
+export type PaperStart = { strategy_id: string; status: StrategyStatus; paper_started_at: string; message: string };
+
+export type PaperResults =
+  | { status: "waiting"; bars: number; latest_data: string; paper_started_at: string; message: string }
+  | { status: "updated" | "unchanged"; bars: number; until: string; paper_started_at: string; metrics: BacktestMetrics };
+
+export const controlsApi = {
+  get: () => request<Controls>("/api/eve/controls"),
+  set: (engaged: boolean, reason = "") =>
+    request<Controls>("/api/eve/controls", { method: "POST", body: JSON.stringify({ engaged, reason }) }),
+};
+
 export const strategiesApi = {
   list: (status = "") =>
     request<{ strategies: StrategyRow[]; count: number }>(
@@ -197,6 +216,18 @@ export const strategiesApi = {
     request<Evaluation>(`/api/eve/strategies/${id}/evaluate`, {
       method: "POST",
       body: JSON.stringify({ holdout_month, version }),
+    }),
+  startPaper: (id: string) =>
+    request<PaperStart>(`/api/eve/strategies/${id}/paper`, { method: "POST", body: JSON.stringify({ action: "start" }) }),
+  stopPaper: (id: string) =>
+    request<{ status: StrategyStatus }>(`/api/eve/strategies/${id}/paper`, {
+      method: "POST",
+      body: JSON.stringify({ action: "stop" }),
+    }),
+  paperResults: (id: string) =>
+    request<PaperResults>(`/api/eve/strategies/${id}/paper`, {
+      method: "POST",
+      body: JSON.stringify({ action: "refresh" }),
     }),
   backtest: (id: string, month: string, version = 0) =>
     request<SavedBacktest>(`/api/eve/strategies/${id}/backtests`, {

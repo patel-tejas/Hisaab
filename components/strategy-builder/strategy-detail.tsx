@@ -10,7 +10,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Archive, Loader2, Pencil, Play, Scale } from "lucide-react";
+import { Archive, FlaskConical, Loader2, Pencil, Play, RefreshCw, Scale, Square } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/page-header";
@@ -24,8 +24,10 @@ import {
   strategiesApi,
   type SpecChange,
   type StrategyDetail as Detail,
+  type PaperResults,
   type Verdict,
 } from "./api";
+import { KillSwitch, useControls } from "./kill-switch";
 import { Choice } from "./field";
 import { MetricsStrip } from "./metrics-strip";
 import { IssueList } from "./spec-card";
@@ -60,7 +62,9 @@ export function StrategyDetail({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [months, setMonths] = useState<string[]>([]);
   const [month, setMonth] = useState("");
-  const [busy, setBusy] = useState<"backtest" | "archive" | "evaluate" | null>(null);
+  const [busy, setBusy] = useState<"backtest" | "archive" | "evaluate" | "paper" | null>(null);
+  const [paper, setPaper] = useState<PaperResults | null>(null);
+  const { controls, setControls } = useControls();
   const [holdout, setHoldout] = useState("");
 
   const load = useCallback(() => {
@@ -111,6 +115,28 @@ export function StrategyDetail({ id }: { id: string }) {
     }
   }
 
+  async function paperAction(action: "start" | "stop" | "refresh") {
+    if (action === "start" && !window.confirm("Start paper trading this version? Its rules are frozen; saving a new version stops the run. No orders are placed.")) return;
+    setBusy("paper");
+    try {
+      if (action === "start") {
+        await strategiesApi.startPaper(id);
+        toast.success("Paper trading started", { description: "Only bars processed from now on count." });
+      } else if (action === "stop") {
+        await strategiesApi.stopPaper(id);
+        setPaper(null);
+        toast.success("Paper trading stopped");
+      } else {
+        setPaper(await strategiesApi.paperResults(id));
+      }
+      load();
+    } catch (err) {
+      toast.error("Paper trading", { description: err instanceof Error ? err.message : String(err) });
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function archive() {
     if (!window.confirm("Archive this strategy? Its versions and backtests are kept.")) return;
     setBusy("archive");
@@ -155,6 +181,8 @@ export function StrategyDetail({ id }: { id: string }) {
   const holdoutMonth = holdoutChoices.includes(holdout) ? holdout : (holdoutChoices[0] ?? "");
   const latestHoldout = backtests.find((b) => b.kind === "holdout" && b.verdict);
   const hasInSample = tunedOn.size > 0;
+  const onPaper = strategy.status === "paper";
+  const latestPaper = backtests.find((b) => b.kind === "paper");
 
   return (
     <div>
@@ -170,6 +198,13 @@ export function StrategyDetail({ id }: { id: string }) {
         actions={
           <>
             <StatusBadge status={strategy.status} />
+            <KillSwitch
+              controls={controls}
+              onChange={(c) => {
+                setControls(c);
+                load();
+              }}
+            />
             {!archived && (
               <>
                 <Button asChild variant="outline" className="h-32 rounded-lg px-3 text-xs gap-1.5">
@@ -263,6 +298,67 @@ export function StrategyDetail({ id }: { id: string }) {
               Recorded against v{version.version} and counted as trial {strategy.trial_count + 1}.
               {backtests[0]?.metrics ? ` Last net ${formatMetric("net_pnl", backtests[0].metrics.net_pnl ?? null)}.` : ""}
             </p>
+          </Card>
+
+          <Card className="space-y-12 p-20">
+            <p className="label-mono flex items-center gap-1.5">
+              <FlaskConical className="size-3.5" /> Paper trading
+            </p>
+            {onPaper ? (
+              <>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Running v{version.version} since{" "}
+                  {strategy.paper_started_at ? new Date(strategy.paper_started_at).toLocaleString("en-IN") : "now"}. Only
+                  bars processed after that count. No orders are placed.
+                </p>
+                {paper?.status === "waiting" && <p className="text-xs">{paper.message}</p>}
+                {(paper && paper.status !== "waiting" ? paper.metrics : latestPaper?.metrics) && (
+                  <MetricsStrip
+                    metrics={(paper && paper.status !== "waiting" ? paper.metrics : latestPaper?.metrics) ?? {}}
+                    keys={["net_pnl", "total_trades", "win_rate"]}
+                    className="sm:grid-cols-3"
+                  />
+                )}
+                <div className="grid grid-cols-2 gap-8">
+                  <Button
+                    variant="outline"
+                    className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                    disabled={busy !== null}
+                    onClick={() => void paperAction("refresh")}
+                  >
+                    {busy === "paper" ? <Loader2 className="size-3.5 animate-spin" /> : <RefreshCw className="size-3.5" />}
+                    Update
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                    disabled={busy !== null}
+                    onClick={() => void paperAction("stop")}
+                  >
+                    <Square className="size-3.5" /> Stop
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  A forward test with no money: this version&apos;s rules are frozen and run only on data that arrives
+                  after you start.
+                </p>
+                {controls?.engaged ? (
+                  <p className="text-xs text-[var(--destructive)]">The kill switch is engaged, so nothing can start.</p>
+                ) : !latestHoldout ? (
+                  <p className="text-xs">Run the honest check first, so the verdict is on record.</p>
+                ) : null}
+                <Button
+                  className="h-32 w-full gap-1.5 rounded-lg px-3 text-xs"
+                  disabled={busy !== null || archived || !latestHoldout || !!controls?.engaged}
+                  onClick={() => void paperAction("start")}
+                >
+                  <FlaskConical className="size-3.5" /> Start paper trading
+                </Button>
+              </>
+            )}
           </Card>
 
           <Card className="space-y-12 p-20">
