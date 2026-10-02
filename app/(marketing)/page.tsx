@@ -31,7 +31,7 @@ export default function LandingPage() {
 
           <section
             id="features"
-            className="relative flex min-h-[100svh] flex-col justify-center px-5 py-24 sm:px-8"
+            className="relative px-[20px] pb-[40px] pt-[120px] sm:px-[32px] lg:pt-[140px]"
           >
             <div
               aria-hidden
@@ -48,13 +48,6 @@ export default function LandingPage() {
             />
 
             <div className="relative z-[1] mx-auto w-full max-w-[1200px]">
-              <h2 className="mx-auto max-w-[720px] text-center font-display text-display-sm text-pure">
-                Everything that belongs in a journal
-              </h2>
-              <p className="mx-auto mt-5 max-w-[480px] text-center font-marketing text-[18px] font-light text-ash">
-                Six modules. One quiet ledger.
-              </p>
-
               <FeatureModules />
             </div>
           </section>
