@@ -1,0 +1,343 @@
+{
+ "example": {
+  "spec": {
+   "schema_version": "eve.strategy/1",
+   "name": "EMA 9/21 cross with RSI filter",
+   "timeframe": "15m",
+   "direction": "long_only",
+   "entry": {
+    "long": {
+     "all": [
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "ema",
+        "params": {
+         "period": 9
+        }
+       },
+       "cmp": "crosses_above",
+       "rhs": {
+        "kind": "indicator",
+        "name": "ema",
+        "params": {
+         "period": 21
+        }
+       }
+      },
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "rsi",
+        "params": {
+         "period": 14
+        }
+       },
+       "cmp": "lt",
+       "rhs": {
+        "kind": "const",
+        "value": 70
+       }
+      }
+     ],
+     "any": []
+    },
+    "short": null
+   },
+   "exit": {
+    "long": {
+     "all": [],
+     "any": [
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "ema",
+        "params": {
+         "period": 9
+        }
+       },
+       "cmp": "crosses_below",
+       "rhs": {
+        "kind": "indicator",
+        "name": "ema",
+        "params": {
+         "period": 21
+        }
+       }
+      }
+     ]
+    },
+    "short": null
+   },
+   "risk": {
+    "stop": {
+     "mode": "pct",
+     "value": 1.0
+    },
+    "target": {
+     "mode": "r_multiple",
+     "value": 2.0
+    },
+    "trail": {
+     "mode": "none"
+    },
+    "time_stop_bars": null
+   },
+   "session": {
+    "entry_start": "09:30",
+    "entry_end": "14:30",
+    "eod_squareoff": true,
+    "squareoff_time": "15:15"
+   },
+   "sizing": {
+    "lots": 1
+   },
+   "execution": {
+    "slippage": "normal"
+   },
+   "meta": {
+    "source": "chat",
+    "defaulted": [
+     "/risk/target",
+     "/session/entry_end"
+    ]
+   }
+  },
+  "summary": "Long-only NIFTY futures strategy on 15-minute bars. Buy when EMA(9) crosses above EMA(21) and RSI(14) is below 70. Exit the long when EMA(9) crosses below EMA(21). Stop-loss 1% from entry. Target 2R (x the stop distance). New entries 09:30-14:30; square off at 15:15. 1 lot, normal slippage.",
+  "errors": [],
+  "warnings": []
+ },
+ "both": {
+  "spec": {
+   "name": "Day levels both ways",
+   "timeframe": "5m",
+   "direction": "both",
+   "entry": {
+    "long": {
+     "all": [
+      {
+       "lhs": {
+        "kind": "price",
+        "field": "close"
+       },
+       "cmp": "crosses_above",
+       "rhs": {
+        "kind": "level",
+        "name": "prev_day_high"
+       }
+      }
+     ],
+     "any": [
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "macd",
+        "output": "hist"
+       },
+       "cmp": "gt",
+       "rhs": {
+        "kind": "const",
+        "value": 0
+       }
+      },
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "ema_angle",
+        "params": {
+         "period": 9
+        }
+       },
+       "cmp": "rising",
+       "bars": 3
+      }
+     ]
+    },
+    "short": {
+     "all": [
+      {
+       "lhs": {
+        "kind": "change_pct",
+        "ref": "session_open"
+       },
+       "cmp": "lte",
+       "rhs": {
+        "kind": "const",
+        "value": -0.75
+       }
+      },
+      {
+       "lhs": {
+        "kind": "price",
+        "field": "close",
+        "offset": 1
+       },
+       "cmp": "lt",
+       "rhs": {
+        "kind": "indicator",
+        "name": "bbands",
+        "params": {
+         "period": 20,
+         "stddev": 2.5
+        },
+        "output": "lower"
+       }
+      }
+     ]
+    }
+   },
+   "exit": {
+    "short": {
+     "any": [
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "rsi"
+       },
+       "cmp": "falling"
+      }
+     ]
+    }
+   },
+   "risk": {
+    "stop": {
+     "mode": "atr",
+     "value": 1.5
+    },
+    "target": {
+     "mode": "points",
+     "value": 24350.55
+    },
+    "trail": {
+     "mode": "breakeven_then_atr",
+     "value": 2
+    },
+    "time_stop_bars": 12
+   },
+   "session": {
+    "entry_start": "10:00",
+    "entry_end": "14:45",
+    "eod_squareoff": false,
+    "squareoff_time": "15:15"
+   },
+   "sizing": {
+    "lots": 3
+   },
+   "execution": {
+    "slippage": "stress"
+   }
+  },
+  "summary": "Long-and-short NIFTY futures strategy on 5-minute bars. Buy when the close crosses above yesterday's high, and any of: MACD(12,26,9) histogram is above 0; EMA angle(9,1) is rising over 3 bars. Sell short when the % change vs today's open is at or below -0.75% and the close 1 bar ago is below lower Bollinger Bands(20,2.5). Cover the short when RSI(14) is falling vs the previous bar. Stop-loss 1.5 x ATR from entry. Target 24350.5 points from entry. Stop moves to breakeven at 1R, then trails 2 x ATR. Exit after 12 bars in the trade. New entries 10:00-14:45; positions may be held overnight. 3 lots, stress slippage.",
+  "errors": [],
+  "warnings": []
+ },
+ "short_vwap": {
+  "spec": {
+   "name": "VWAP fade",
+   "timeframe": "1m",
+   "direction": "short_only",
+   "entry": {
+    "short": {
+     "all": [
+      {
+       "lhs": {
+        "kind": "price",
+        "field": "high"
+       },
+       "cmp": "gte",
+       "rhs": {
+        "kind": "level",
+        "name": "vwap",
+        "offset": 2
+       }
+      },
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "sma",
+        "params": {
+         "period": 50
+        }
+       },
+       "cmp": "falling",
+       "bars": 1
+      }
+     ]
+    }
+   },
+   "risk": {
+    "stop": {
+     "mode": "pct",
+     "value": 0.4
+    },
+    "target": {
+     "mode": "pct",
+     "value": 0.8
+    },
+    "trail": {
+     "mode": "atr",
+     "value": 1
+    }
+   }
+  },
+  "summary": "Short-only NIFTY futures strategy on 1-minute bars. Sell short when the high is at or above VWAP 2 bars ago and SMA(50) is falling vs the previous bar. Stop-loss 0.4% from entry. Target 0.8% from entry. Trailing stop 1 x ATR. New entries 09:15-15:00; square off at 15:15. 1 lot, normal slippage.",
+  "errors": [],
+  "warnings": []
+ },
+ "bad": {
+  "spec": {
+   "name": "bad",
+   "direction": "long_only",
+   "entry": {
+    "long": {
+     "all": [
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "rsi",
+        "params": {
+         "period": 500
+        }
+       },
+       "cmp": "lt",
+       "rhs": {
+        "kind": "const",
+        "value": 30
+       }
+      },
+      {
+       "lhs": {
+        "kind": "indicator",
+        "name": "macd",
+        "params": {
+         "fast": 30,
+         "slow": 20
+        }
+       },
+       "cmp": "gt",
+       "rhs": {
+        "kind": "const",
+        "value": 0
+       }
+      }
+     ]
+    }
+   },
+   "session": {
+    "entry_start": "09:30",
+    "entry_end": "15:20"
+   }
+  },
+  "summary": null,
+  "errors": [
+   "/entry/long/all/0/lhs/params/period",
+   "/entry/long/all/1/lhs/params/fast",
+   "/session/entry_end"
+  ],
+  "warnings": [
+   "/entry",
+   "/exit/long",
+   "/risk/stop"
+  ]
+ }
+}

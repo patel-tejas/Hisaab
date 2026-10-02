@@ -11,9 +11,9 @@
 
 import { NextResponse } from "next/server";
 
-import { BRIDGE_URL, bridgeStatus, fetchManifest } from "@/lib/eve/bridge";
+import { BRIDGE_URL, bridgeHeaders, bridgeStatus, fetchManifest } from "@/lib/eve/bridge";
 import { listSkills } from "@/lib/eve/skills";
-import { getAuthUser } from "@/lib/supabase-auth";
+import { getAuthContext } from "@/lib/supabase-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -118,8 +118,8 @@ export type EveStatus = {
 };
 
 export async function GET() {
-  const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await getAuthContext();
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const [bridge, model] = await Promise.all([bridgeStatus(), checkModel()]);
 
@@ -135,7 +135,7 @@ export async function GET() {
     try {
       const res = await fetch(`${BRIDGE_URL}/tools/list_research_months`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: bridgeHeaders({ token: auth.token }),
         body: "{}",
         cache: "no-store",
         signal: AbortSignal.timeout(5000),

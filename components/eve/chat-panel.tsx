@@ -5,7 +5,9 @@
  *
  * Streaming via the AI SDK's `useChat`. Tool calls render as timed steps, the
  * grounding check runs once per finished answer, and a `propose_strategy` part
- * becomes a Strategy Card rather than a JSON dump.
+ * becomes a Strategy Card rather than a JSON dump. A `propose_strategy_spec`
+ * part becomes a Spec Card (the strategy builder's spec), and
+ * `ask_clarification` becomes a question with tappable answers.
  *
  * The conversation is kept in this browser's localStorage so leaving the page
  * (to check a trade, say) does not throw it away. "New chat" starts over.
@@ -27,8 +29,10 @@ import { ToolSteps, humanizeTool, toolRunning, type AnyToolPart } from "@/compon
 import { EveAvatar } from "@/components/eve/eve-avatar";
 import type { GroundingReport } from "@/lib/eve/bridge";
 import type { ProposeStrategyOutput } from "@/lib/eve/tools";
+import type { ClarificationOutput, ProposeSpecOutput } from "@/lib/eve/strategy-tools";
+import { ClarifyCard, SpecCard } from "@/components/strategy-builder/spec-card";
 
-const STORAGE_KEY = "hisaab.eve.chat.v1";
+const DEFAULT_STORAGE_KEY = "hisaab.eve.chat.v1";
 
 const EXAMPLES = [
   "Buy when the 9 EMA crosses above the 21 and it's rising steeply",
@@ -38,7 +42,15 @@ const EXAMPLES = [
 ];
 
 /** Tool parts whose output is documentation or input, not computed evidence. */
-const UNGROUNDABLE = new Set(["load_skill", "propose_strategy"]);
+const UNGROUNDABLE = new Set([
+  "load_skill",
+  "propose_strategy",
+  "propose_strategy_spec",
+  "ask_clarification",
+]);
+
+/** "studio": the Agent tab. "builder": the Strategies builder (spec tools only). */
+export type ChatMode = "studio" | "builder";
 
 export type ChatStatus = {
   months: Record<string, Record<string, number>>;
@@ -63,6 +75,10 @@ function followUpsFor(toolNames: string[]) {
   const used = new Set(toolNames);
   const out: string[] = [];
   if (used.has("propose_strategy")) out.push("Is this strategy statistically significant?");
+  if (used.has("propose_strategy_spec")) {
+    out.push("Add a stop-loss and a target to it");
+    out.push("Make it trade short as well");
+  }
   if (used.has("parameter_search") && !used.has("validate_parameter_search"))
     out.push("Validate that search with deflated Sharpe and PBO");
   if ([...used].some((n) => n.startsWith("backtest") || n.startsWith("run_backtest")) && !used.has("backtest_significance"))
@@ -72,42 +88,66 @@ function followUpsFor(toolNames: string[]) {
   return [...new Set(out)].slice(0, 3);
 }
 
-function loadMessages(): UIMessage[] {
+function loadMessages(key: string): UIMessage[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(key);
     return raw ? (JSON.parse(raw) as UIMessage[]) : [];
   } catch {
     return [];
   }
 }
 
-export function ChatPanel(props: {
-  onLoadStrategy: (proposal: ProposeStrategyOutput) => void;
+type ChatProps = {
+  /** Loads a `propose_strategy` config into the slider workbench (studio only). */
+  onLoadStrategy?: (proposal: ProposeStrategyOutput) => void;
   loadedKey: string | null;
+  /** Loads a `propose_strategy_spec` result into the builder. Without it the
+   *  card offers "Open in builder" instead. */
+  onLoadSpec?: (out: ProposeSpecOutput) => void;
+  loadedSpecHash?: string | null;
   seedMessage: string | null;
   onSeedConsumed: () => void;
   ready: boolean;
   status: ChatStatus;
-}) {
+  mode?: ChatMode;
+  storageKey?: string;
+  examples?: string[];
+  title?: string;
+  /** Builder only: the spec in the form right now, sent with each message so
+   *  "make the stop tighter" edits what the user is looking at. */
+  currentSpec?: unknown;
+};
+
+export function ChatPanel(props: ChatProps) {
+  const storageKey = props.storageKey ?? DEFAULT_STORAGE_KEY;
   // Saved messages are read after mount (localStorage is client-only) and the
   // thread mounts once they are known, so useChat starts from them.
   const [saved, setSaved] = useState<UIMessage[] | null>(null);
   const [chatId, setChatId] = useState("eve");
 
   useEffect(() => {
-    setSaved(loadMessages());
-  }, []);
+    setSaved(loadMessages(storageKey));
+  }, [storageKey]);
 
   const newChat = useCallback(() => {
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(storageKey);
     } catch {}
     setSaved([]);
     setChatId(`eve-${Date.now()}`);
-  }, []);
+  }, [storageKey]);
 
   if (saved === null) return <div className="min-h-0 flex-1" />;
-  return <ChatThread key={chatId} id={chatId} initialMessages={saved} onNewChat={newChat} {...props} />;
+  return (
+    <ChatThread
+      key={chatId}
+      id={chatId}
+      initialMessages={saved}
+      onNewChat={newChat}
+      {...props}
+      storageKey={storageKey}
+    />
+  );
 }
 
 function ChatThread({
@@ -116,24 +156,34 @@ function ChatThread({
   onNewChat,
   onLoadStrategy,
   loadedKey,
+  onLoadSpec,
+  loadedSpecHash,
   seedMessage,
   onSeedConsumed,
   ready,
   status: env,
-}: {
+  mode = "studio",
+  storageKey,
+  examples = EXAMPLES,
+  title = "Strategy research",
+  currentSpec,
+}: ChatProps & {
   id: string;
   initialMessages: UIMessage[];
   onNewChat: () => void;
-  onLoadStrategy: (proposal: ProposeStrategyOutput) => void;
-  loadedKey: string | null;
-  seedMessage: string | null;
-  onSeedConsumed: () => void;
-  ready: boolean;
-  status: ChatStatus;
+  storageKey: string;
 }) {
   // The default transport posts to `/api/chat`; Hisaab's route is namespaced
   // under `/api/eve/`, so it must be named explicitly or every send 404s.
-  const [transport] = useState(() => new DefaultChatTransport({ api: "/api/eve/chat" }));
+  const specRef = useRef(currentSpec);
+  specRef.current = currentSpec;
+  const [transport] = useState(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/eve/chat",
+        body: () => ({ mode, ...(specRef.current ? { current_spec: specRef.current } : {}) }),
+      }),
+  );
   const { messages, sendMessage, regenerate, status, error, stop } = useChat({
     id,
     messages: initialMessages,
@@ -157,11 +207,11 @@ function ChatThread({
   useEffect(() => {
     if (busy || messages.length === 0) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+      localStorage.setItem(storageKey, JSON.stringify(messages));
     } catch {
       // Full or blocked storage only costs history, never the live chat.
     }
-  }, [messages, busy]);
+  }, [messages, busy, storageKey]);
 
   // "Ask Eve about this" from the sliders injects the current config here, so
   // the conversation can discuss the state the user actually tweaked to.
@@ -243,7 +293,7 @@ function ChatThread({
       <div className="flex h-48 shrink-0 items-center gap-2.5 border-b border-border/60 px-5 md:px-6">
         <EveAvatar size={22} />
         <span className="text-sm font-medium">Eve</span>
-        <span className="label-mono hidden sm:inline">Strategy research</span>
+        <span className="label-mono hidden sm:inline">{title}</span>
         {messages.length > 0 && (
           <button
             type="button"
@@ -276,7 +326,7 @@ function ChatThread({
             </p>
 
             <ul className="panel-inset stagger mt-6 divide-y divide-border/50 overflow-hidden">
-              {EXAMPLES.map((example) => (
+              {examples.map((example) => (
                 <li key={example}>
                   <button
                     onClick={() => submit(example)}
@@ -306,6 +356,9 @@ function ChatThread({
                   onFollowUp={submit}
                   onLoadStrategy={onLoadStrategy}
                   loadedKey={loadedKey}
+                  onLoadSpec={onLoadSpec}
+                  loadedSpecHash={loadedSpecHash ?? null}
+                  busy={busy}
                 />
               ),
             )}
@@ -370,6 +423,9 @@ function AssistantMessage({
   onFollowUp,
   onLoadStrategy,
   loadedKey,
+  onLoadSpec,
+  loadedSpecHash,
+  busy,
 }: {
   message: UIMessage;
   grounding?: GroundingReport;
@@ -377,15 +433,20 @@ function AssistantMessage({
   isLast: boolean;
   onRetry: () => void;
   onFollowUp: (text: string) => void;
-  onLoadStrategy: (proposal: ProposeStrategyOutput) => void;
+  onLoadStrategy?: (proposal: ProposeStrategyOutput) => void;
   loadedKey: string | null;
+  onLoadSpec?: (out: ProposeSpecOutput) => void;
+  loadedSpecHash: string | null;
+  busy: boolean;
 }) {
   // Consecutive tool parts render as one group of steps; text renders as
   // prose; a strategy proposal renders as its card.
   type Block =
     | { kind: "text"; text: string }
     | { kind: "tools"; parts: AnyToolPart[] }
-    | { kind: "proposal"; proposal: ProposeStrategyOutput };
+    | { kind: "proposal"; proposal: ProposeStrategyOutput }
+    | { kind: "spec"; out: ProposeSpecOutput }
+    | { kind: "clarify"; out: ClarificationOutput };
   const blocks: Block[] = [];
   for (const part of message.parts) {
     if (part.type === "text") {
@@ -400,6 +461,23 @@ function AssistantMessage({
         "params" in toolPart.output
       ) {
         blocks.push({ kind: "proposal", proposal: toolPart.output as ProposeStrategyOutput });
+        continue;
+      }
+      const name = getToolName(toolPart);
+      if (
+        (name === "propose_strategy_spec" || name === "ask_clarification") &&
+        toolPart.state === "output-available" &&
+        toolPart.output &&
+        typeof toolPart.output === "object"
+      ) {
+        // The engine check stays visible as a tool step; the card follows.
+        if (name === "propose_strategy_spec") {
+          const prev = blocks[blocks.length - 1];
+          if (prev?.kind === "tools") prev.parts.push(toolPart);
+          else blocks.push({ kind: "tools", parts: [toolPart] });
+        }
+        if (name === "propose_strategy_spec") blocks.push({ kind: "spec", out: toolPart.output as ProposeSpecOutput });
+        else blocks.push({ kind: "clarify", out: toolPart.output as ClarificationOutput });
         continue;
       }
       const prev = blocks[blocks.length - 1];
@@ -428,8 +506,22 @@ function AssistantMessage({
             <StrategyCard
               key={i}
               proposal={block.proposal}
-              onLoad={onLoadStrategy}
+              onLoad={onLoadStrategy ?? (() => {})}
               isLoaded={loadedKey === JSON.stringify(block.proposal.params)}
+            />
+          ) : block.kind === "spec" ? (
+            <SpecCard
+              key={i}
+              out={block.out}
+              onLoad={onLoadSpec}
+              isLoaded={!!loadedSpecHash && loadedSpecHash === block.out.spec_hash}
+            />
+          ) : block.kind === "clarify" ? (
+            <ClarifyCard
+              key={i}
+              out={block.out}
+              disabled={!isLast || busy}
+              onAnswer={onFollowUp}
             />
           ) : (
             <div

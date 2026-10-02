@@ -10,6 +10,7 @@ import { tool, type ToolSet } from "ai";
 import { z } from "zod";
 
 import { getSkill, listSkills, skillSkeleton, splitSections } from "@/lib/eve/skills";
+import { strategyTools, type StrategyToolContext } from "@/lib/eve/strategy-tools";
 import {
   PARAM_BOUNDS,
   SIGNAL_MODES,
@@ -23,7 +24,7 @@ import {
  * The tools that render as UI rather than as a JSON blob. The chat panel
  * special-cases these, so keep the list here next to their definitions.
  */
-export const UI_TOOLS = ["propose_strategy"] as const;
+export const UI_TOOLS = ["propose_strategy", "propose_strategy_spec", "ask_clarification"] as const;
 
 /**
  * Tools whose output must be kept out of the grounding check.
@@ -33,7 +34,12 @@ export const UI_TOOLS = ["propose_strategy"] as const;
  * appear grounded on numbers that came from prose rather than from a
  * computation. `propose_strategy` echoes parameters, which are inputs.
  */
-export const UNGROUNDABLE_TOOLS = ["load_skill", "propose_strategy"] as const;
+export const UNGROUNDABLE_TOOLS = [
+  "load_skill",
+  "propose_strategy",
+  "propose_strategy_spec",
+  "ask_clarification",
+] as const;
 
 export function isUngroundable(name: string): boolean {
   return (UNGROUNDABLE_TOOLS as readonly string[]).includes(name);
@@ -187,6 +193,6 @@ const loadSkill = tool({
   },
 });
 
-export function hisaabTools(): ToolSet {
-  return { propose_strategy: proposeStrategy, load_skill: loadSkill };
+export function hisaabTools(ctx: StrategyToolContext = { auth: {} }): ToolSet {
+  return { propose_strategy: proposeStrategy, load_skill: loadSkill, ...strategyTools(ctx) };
 }

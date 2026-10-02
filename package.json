@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "verify:ai": "tsc -p tsconfig.verify.json && node .verify-dist/scripts/verify-ai-guardrail.js"
+    "verify:ai": "tsc -p tsconfig.verify.json && node .verify-dist/scripts/verify-ai-guardrail.js",
+    "verify:spec": "tsc -p tsconfig.verify.json && node .verify-dist/scripts/verify-strategy-spec.js"
   },
   "dependencies": {
     "@ai-sdk/groq": "^4.0.26",
