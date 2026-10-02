@@ -11,7 +11,8 @@
 
 import { NextResponse } from "next/server";
 
-import { BRIDGE_URL, bridgeStatus } from "@/lib/eve/bridge";
+import { BRIDGE_URL, bridgeStatus, fetchManifest } from "@/lib/eve/bridge";
+import { listSkills } from "@/lib/eve/skills";
 import { getAuthUser } from "@/lib/supabase-auth";
 
 export const runtime = "nodejs";
@@ -110,6 +111,10 @@ export type EveStatus = {
   bridge: { url: string; ok: boolean; tools?: number; error?: string };
   model: ModelStatus;
   months: Record<string, Record<string, number>>;
+  /** Bridge tool names and descriptions, for the Agent tab. Empty when it is down. */
+  tools: { name: string; description: string }[];
+  /** Skills Eve can load on demand (lib/eve/skills). */
+  skills: { name: string; description: string; category: string }[];
 };
 
 export async function GET() {
@@ -119,7 +124,14 @@ export async function GET() {
   const [bridge, model] = await Promise.all([bridgeStatus(), checkModel()]);
 
   let months: Record<string, Record<string, number>> = {};
+  let tools: EveStatus["tools"] = [];
   if (bridge.ok) {
+    try {
+      tools = (await fetchManifest()).map(({ name, description }) => ({ name, description }));
+    } catch {
+      // The Agent tab lists tools when it can; the count still shows.
+    }
+
     try {
       const res = await fetch(`${BRIDGE_URL}/tools/list_research_months`, {
         method: "POST",
@@ -140,5 +152,17 @@ export async function GET() {
   }
 
   // Note: the key itself is never returned — only whether it works.
-  return NextResponse.json({ bridge: { url: BRIDGE_URL, ...bridge }, model, months });
+  const skills = listSkills().map(({ name, description, category }) => ({
+    name,
+    description,
+    category,
+  }));
+
+  return NextResponse.json({
+    bridge: { url: BRIDGE_URL, ...bridge },
+    model,
+    months,
+    tools,
+    skills,
+  });
 }
