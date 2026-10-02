@@ -2,14 +2,98 @@ import type {
   BucketStat,
   ConfidenceBucket,
   EquityPoint,
+  InsightSignals,
   InsightTrade,
   InsightsMetrics,
+  RiskLevel,
   SkillScores,
+  TraderLevel,
 } from "./types"
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-function toBucket(map: Record<string, { pnl: number; count: number; wins: number }>): BucketStat[] {
+/**
+ * trade_date is a plain `YYYY-MM-DD`. `new Date("2026-09-01")` is UTC midnight,
+ * so read it back in UTC too; local getters shift the weekday for anyone west
+ * of UTC.
+ */
+export function tradeDay(date: string): { key: string; weekday: string; monthKey: string; time: number } {
+  const key = date.slice(0, 10)
+  const d = new Date(`${key}T00:00:00Z`)
+  return {
+    key,
+    weekday: DAY_NAMES[d.getUTCDay()] ?? "Unknown",
+    monthKey: key.slice(0, 7),
+    time: d.getTime(),
+  }
+}
+
+/** Entry-time slot for Indian market hours (09:15–15:30 IST). */
+export function timeSlot(entryTime: string | null): string | null {
+  if (!entryTime) return null
+  const hour = parseInt(entryTime.split(":")[0], 10)
+  if (!Number.isFinite(hour)) return null
+  if (hour < 10) return "09:00-10:00"
+  if (hour < 11) return "10:00-11:00"
+  if (hour < 12) return "11:00-12:00"
+  if (hour < 13) return "12:00-13:00"
+  if (hour < 14) return "13:00-14:00"
+  return "14:00-15:30"
+}
+
+type Agg = Record<string, { pnl: number; count: number; wins: number }>
+
+function bump(map: Agg, key: string, pnl: number) {
+  if (!map[key]) map[key] = { pnl: 0, count: 0, wins: 0 }
+  map[key].pnl += pnl
+  map[key].count++
+  if (pnl > 0) map[key].wins++
+}
+
+/**
+ * Best and worst bucket by total P&L, ignoring buckets with too few trades
+ * to mean anything. Falls back to every bucket when none qualify.
+ */
+export function bestWorst(buckets: BucketStat[], minTrades: number): { best: string | null; worst: string | null } {
+  const eligible = buckets.filter((b) => b.count >= minTrades)
+  const pool = eligible.length > 0 ? eligible : buckets
+  if (pool.length === 0) return { best: null, worst: null }
+  const sorted = [...pool].sort((a, b) => b.pnl - a.pnl)
+  return {
+    best: sorted[0].key,
+    worst: sorted.length > 1 ? sorted[sorted.length - 1].key : null,
+  }
+}
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100
+}
+
+function weekdaysLeftInMonth(now: Date): number {
+  let count = 0
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+  while (d.getMonth() === now.getMonth()) {
+    const wd = d.getDay()
+    if (wd !== 0 && wd !== 6) count++
+    d.setDate(d.getDate() + 1)
+  }
+  return count
+}
+
+export function inferTraderLevel(m: { totalPnl: number; winRate: number; sharpeRatio: number }): TraderLevel {
+  if (m.totalPnl >= 500000 && m.winRate >= 50 && m.sharpeRatio >= 1) return "expert"
+  if (m.totalPnl >= 300000 && m.winRate >= 48) return "advanced"
+  if (m.totalPnl >= 50000 || m.winRate >= 45) return "intermediate"
+  return "beginner"
+}
+
+export function riskHealthScore(m: { sharpeRatio: number; maxDrawdown: number; totalPnl: number }): number {
+  const sharpeAdj = Math.min(30, m.sharpeRatio * 15)
+  const ddPenalty = Math.min(40, (m.maxDrawdown / Math.max(1, Math.abs(m.totalPnl))) * 40)
+  return clampScore(50 - ddPenalty + sharpeAdj)
+}
+
+function toBucket(map: Agg): BucketStat[] {
   return Object.entries(map)
     .map(([key, d]) => ({
       key,
@@ -44,30 +128,34 @@ function deriveSkillScores(m: {
   }
 }
 
-export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
+export function computeMetrics(trades: InsightTrade[], now: Date = new Date()): InsightsMetrics {
   if (trades.length === 0) {
     return emptyMetrics()
   }
 
   const chronological = [...trades].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.id.localeCompare(b.id)
+    (a, b) => tradeDay(a.date).time - tradeDay(b.date).time || a.id.localeCompare(b.id)
   )
 
-  const now = new Date()
-  const thisMonthKey = `${now.getFullYear()}-${now.getMonth()}`
-  const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-  const lastMonthKey = `${lastMonthDate.getFullYear()}-${lastMonthDate.getMonth()}`
+  const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+  const thisMonthKey = monthKey(now)
+  const lastMonthKey = monthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1))
 
   let totalPnl = 0
   let winCount = 0
   let lossCount = 0
+  let breakevenCount = 0
+  let grossProfit = 0
+  let grossLoss = 0
   let biggestWin = -Infinity
   let biggestLoss = Infinity
   let sumSq = 0
 
-  const stratMap: Record<string, { pnl: number; count: number; wins: number }> = {}
-  const dayMap: Record<string, { pnl: number; count: number; wins: number }> = {}
-  const emotionMap: Record<string, { pnl: number; count: number; wins: number }> = {}
+  const stratMap: Agg = {}
+  const dayMap: Agg = {}
+  const emotionMap: Agg = {}
+  const slotMap: Agg = {}
+  const symbolMap: Agg = {}
   const confMap: Record<number, { count: number; wins: number; pnl: number }> = {}
   const dateTradeMap: Record<string, { count: number; pnl: number; wins: number }> = {}
   const mistakeAgg: Record<string, { count: number; totalPnl: number }> = {}
@@ -82,6 +170,9 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
   // Sequential / tilt
   const afterLossStreak: Record<number, { wins: number; count: number }> = {}
   let lossStreak = 0
+  let winRun = 0
+  let longestWinStreak = 0
+  let longestLossStreak = 0
 
   // Duration
   let shortWins = 0, shortCount = 0, longWins = 0, longCount = 0
@@ -94,30 +185,28 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
   for (const t of chronological) {
     const pnl = t.pnl
     totalPnl += pnl
-    if (pnl > 0) winCount++
-    else lossCount++
+    if (pnl > 0) {
+      winCount++
+      grossProfit += pnl
+    } else if (pnl < 0) {
+      lossCount++
+      grossLoss += -pnl
+    } else {
+      breakevenCount++
+    }
     if (pnl > biggestWin) biggestWin = pnl
     if (pnl < biggestLoss) biggestLoss = pnl
     if (pnl < 0) losses.push(pnl)
 
-    // Strategy / day / emotion / confidence
-    const strat = t.strategy || "Unknown"
-    if (!stratMap[strat]) stratMap[strat] = { pnl: 0, count: 0, wins: 0 }
-    stratMap[strat].pnl += pnl
-    stratMap[strat].count++
-    if (pnl > 0) stratMap[strat].wins++
+    const td = tradeDay(t.date)
 
-    const day = DAY_NAMES[new Date(t.date).getDay()]
-    if (!dayMap[day]) dayMap[day] = { pnl: 0, count: 0, wins: 0 }
-    dayMap[day].pnl += pnl
-    dayMap[day].count++
-    if (pnl > 0) dayMap[day].wins++
-
-    const emotion = t.emotionalState || "Unknown"
-    if (!emotionMap[emotion]) emotionMap[emotion] = { pnl: 0, count: 0, wins: 0 }
-    emotionMap[emotion].pnl += pnl
-    emotionMap[emotion].count++
-    if (pnl > 0) emotionMap[emotion].wins++
+    // Strategy / day / emotion / time / symbol / confidence
+    bump(stratMap, t.strategy || "Unknown", pnl)
+    bump(dayMap, td.weekday, pnl)
+    bump(emotionMap, t.emotionalState || "Unknown", pnl)
+    const slot = timeSlot(t.entryTime)
+    if (slot) bump(slotMap, slot, pnl)
+    if (t.symbol) bump(symbolMap, t.symbol.toUpperCase(), pnl)
 
     const conf = t.entryConfidence || 3
     if (!confMap[conf]) confMap[conf] = { count: 0, wins: 0, pnl: 0 }
@@ -125,7 +214,7 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
     confMap[conf].pnl += pnl
     if (pnl > 0) confMap[conf].wins++
 
-    const dayKey = new Date(t.date).toDateString()
+    const dayKey = td.key
     if (!dateTradeMap[dayKey]) dateTradeMap[dayKey] = { count: 0, pnl: 0, wins: 0 }
     dateTradeMap[dayKey].count++
     dateTradeMap[dayKey].pnl += pnl
@@ -154,8 +243,15 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
       afterLossStreak[lossStreak].count++
       if (pnl > 0) afterLossStreak[lossStreak].wins++
     }
-    if (pnl <= 0) lossStreak++
-    else lossStreak = 0
+    if (pnl <= 0) {
+      lossStreak++
+      winRun = 0
+    } else {
+      lossStreak = 0
+      winRun++
+    }
+    if (lossStreak > longestLossStreak) longestLossStreak = lossStreak
+    if (winRun > longestWinStreak) longestWinStreak = winRun
 
     // Duration
     if (t.entryTime && t.exitTime) {
@@ -175,8 +271,7 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
     }
 
     // Month buckets
-    const d = new Date(t.date)
-    const mk = `${d.getFullYear()}-${d.getMonth()}`
+    const mk = td.monthKey
     if (mk === thisMonthKey) {
       thisMonthTrades++
       thisMonthPnl += pnl
@@ -221,9 +316,7 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
   // Current streak (from newest)
   let currentStreak = 0
   let streakType: "win" | "loss" | "" = ""
-  const newestFirst = [...trades].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
+  const newestFirst = [...chronological].reverse()
   for (const t of newestFirst) {
     if (currentStreak === 0) {
       streakType = t.pnl > 0 ? "win" : "loss"
@@ -311,10 +404,10 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
   const mistakeRate = mistakeCount / n
   const overtradingGap = Math.max(0, lowDayWR - highDayWR)
 
-  const tradeDates = chronological.map((t) => new Date(t.date).getTime())
+  const tradeDates = chronological.map((t) => tradeDay(t.date).time)
   const earliest = new Date(Math.min(...tradeDates))
   const latest = new Date(Math.max(...tradeDates))
-  const uniqueDays = new Set(chronological.map((t) => new Date(t.date).toDateString())).size
+  const uniqueDays = dayEntries.length
 
   const avgRecoveryTrades =
     recoveryData.length > 0
@@ -323,6 +416,20 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
 
   const thisMonthDailyAvg =
     thisMonthDays.size > 0 ? Math.round(thisMonthPnl / thisMonthDays.size) : 0
+
+  const strategies = toBucket(stratMap)
+  const dayOfWeek = toBucket(dayMap)
+  const timeOfDay = toBucket(slotMap)
+  const symbols = toBucket(symbolMap).slice(0, 10)
+
+  const avgWin = winCount > 0 ? Math.round(grossProfit / winCount) : 0
+  const avgLossAbsRounded = lossCount > 0 ? Math.round(grossLoss / lossCount) : 0
+  const profitFactor = grossLoss > 0 ? round2(grossProfit / grossLoss) : 0
+  const payoffRatio = avgLossAbsRounded > 0 ? round2(avgWin / avgLossAbsRounded) : 0
+  const expectancy = Math.round(
+    (winCount / n) * (winCount > 0 ? grossProfit / winCount : 0) -
+      (lossCount / n) * (lossCount > 0 ? grossLoss / lossCount : 0)
+  )
 
   const skillScores = deriveSkillScores({
     winRate,
@@ -334,6 +441,78 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
     confCalibration,
     mistakeRate,
   })
+
+  // ── Verdicts computed in code (the model explains them, it does not decide them) ──
+  const minBucketTrades = n >= 30 ? 5 : n >= 10 ? 3 : 1
+  const strat = bestWorst(strategies, minBucketTrades)
+  const days = bestWorst(dayOfWeek, minBucketTrades)
+  const slots = bestWorst(timeOfDay, minBucketTrades)
+
+  const highConfTrades = highConf.reduce((s, c) => s + c.count, 0)
+  const highConfWinRate = Math.round(highConfWR * 100)
+  const overconfidenceBias = highConfTrades >= 3 && highConfWinRate + 5 < winRate
+
+  const isOvertrading = highDays.length > 0 && highDayWR + 5 < lowDayWR
+
+  const tiltRisk: RiskLevel = tiltRiskScore >= 3 ? "high" : tiltRiskScore === 2 ? "medium" : "low"
+
+  const satFirst = avg(first10, "satisfaction")
+  const satSecond = avg(second10, "satisfaction")
+  const emotionalTrend =
+    satSecond > satFirst + 0.3 ? "improving" : satSecond < satFirst - 0.3 ? "declining" : "stable"
+
+  const totalPnlRounded = Math.round(totalPnl)
+  const remainingTradingDays = weekdaysLeftInMonth(now)
+  const monthEndProjection = Math.round(thisMonthPnl + thisMonthDailyAvg * remainingTradingDays)
+  const forecastConfidence: RiskLevel =
+    thisMonthDays.size < 5 ? "low" : thisMonthDays.size >= 10 && sharpe >= 0.2 ? "medium" : "low"
+
+  const avgTradesPerDay = dayEntries.length > 0 ? Math.round((n / dayEntries.length) * 10) / 10 : 0
+  const recommendedMaxTrades = Math.max(
+    1,
+    Math.min(10, isOvertrading ? 3 : Math.max(1, Math.round(avgTradesPerDay)))
+  )
+
+  // Lowest confidence floor that maximises P&L while keeping a meaningful sample.
+  let recommendedMinConfidence: number | null = null
+  let bestFloorPnl = -Infinity
+  const floorSample = Math.max(3, Math.round(n * 0.2))
+  for (let level = 1; level <= 5; level++) {
+    const kept = chronological.filter((t) => (t.entryConfidence || 3) >= level)
+    if (kept.length < floorSample) break
+    const p = kept.reduce((s, t) => s + t.pnl, 0)
+    if (p > bestFloorPnl) {
+      bestFloorPnl = p
+      recommendedMinConfidence = level
+    }
+  }
+
+  const scores = Object.values(skillScores)
+  const signals: InsightSignals = {
+    bestStrategy: strat.best,
+    worstStrategy: strat.worst,
+    bestDay: days.best,
+    worstDay: days.worst,
+    bestTimeSlot: slots.best,
+    worstTimeSlot: slots.worst,
+    minBucketTrades,
+    highConfWinRate,
+    highConfTrades,
+    overconfidenceBias,
+    isOvertrading,
+    tiltRisk,
+    emotionalTrend,
+    traderLevel: inferTraderLevel({ totalPnl: totalPnlRounded, winRate, sharpeRatio: sharpe }),
+    compositeScore: clampScore(scores.reduce((s, v) => s + v, 0) / scores.length),
+    riskScore: riskHealthScore({ sharpeRatio: sharpe, maxDrawdown: Math.round(maxDrawdown), totalPnl: totalPnlRounded }),
+    monthEndProjection,
+    remainingTradingDays,
+    forecastConfidence,
+    avgTradesPerDay,
+    recommendedMaxTrades,
+    recommendedMinConfidence,
+    sampleSize: n < 20 ? "small" : n < 100 ? "moderate" : "large",
+  }
 
   return {
     totalTrades: n,
@@ -351,8 +530,8 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
     avgRecoveryTrades,
     recoveryInstances: recoveryData.length,
     equityCurve: downsampleEquity(equityCurve, 60),
-    strategies: toBucket(stratMap),
-    dayOfWeek: toBucket(dayMap),
+    strategies,
+    dayOfWeek,
     emotions: toBucket(emotionMap),
     confidenceBuckets,
     overtrading: {
@@ -394,8 +573,8 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
       timedCount: shortCount + longCount,
     },
     emotionalTrend: {
-      avgSatFirst: avg(first10, "satisfaction"),
-      avgSatSecond: avg(second10, "satisfaction"),
+      avgSatFirst: satFirst,
+      avgSatSecond: satSecond,
       avgConfFirst: avg(first10, "entryConfidence"),
       avgConfSecond: avg(second10, "entryConfidence"),
     },
@@ -426,6 +605,17 @@ export function computeMetrics(trades: InsightTrade[]): InsightsMetrics {
       totalDays: uniqueDays,
       totalTrades: n,
     },
+    breakevenCount,
+    avgWin,
+    avgLoss: -avgLossAbsRounded,
+    profitFactor,
+    payoffRatio,
+    expectancy,
+    longestWinStreak,
+    longestLossStreak,
+    timeOfDay,
+    symbols,
+    signals,
   }
 }
 
