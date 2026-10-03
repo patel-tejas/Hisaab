@@ -14,7 +14,7 @@ import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 
 import { buildTools, fetchManifest } from "@/lib/eve/bridge";
 import { systemPrompt } from "@/lib/eve/prompt";
 import { hisaabTools } from "@/lib/eve/tools";
-import { getAuthUser } from "@/lib/supabase-auth";
+import { getAuthContext } from "@/lib/supabase-auth";
 
 // The tool loop calls a local Python service; keep it on Node, not Edge.
 export const runtime = "nodejs";
@@ -32,8 +32,8 @@ function errorResponse(message: string, hint: string, status = 500) {
 export async function POST(req: Request) {
   // The bridge has no auth of its own and a 300s timeout per call, so this
   // gate is the only thing standing in front of it.
-  const user = await getAuthUser();
-  if (!user) return errorResponse("Unauthorized", "Sign in to use the Eve agent.", 401);
+  const auth = await getAuthContext();
+  if (!auth) return errorResponse("Unauthorized", "Sign in to use the Eve agent.", 401);
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
@@ -45,17 +45,36 @@ export async function POST(req: Request) {
   }
 
   let messages: UIMessage[];
+  let mode: "studio" | "builder" = "studio";
+  let currentSpec: string | null = null;
   try {
-    ({ messages } = (await req.json()) as { messages: UIMessage[] });
+    const body = (await req.json()) as { messages: UIMessage[]; mode?: string; current_spec?: unknown };
+    messages = body.messages;
+    if (body.mode === "builder") mode = "builder";
+    if (mode === "builder" && body.current_spec && typeof body.current_spec === "object") {
+      const json = JSON.stringify(body.current_spec);
+      // A spec is ~2 KB; anything far larger is not one.
+      if (json.length <= 12_000) currentSpec = json;
+    }
   } catch {
     return errorResponse("Request body was not valid JSON.", "", 400);
   }
 
   // Fetched per request so a tool added in Python shows up on the next turn
   // without restarting Next. It is a localhost call on a tiny payload.
+  const model = process.env.EVE_MODEL || DEFAULT_MODEL;
+  // Every bridge call in this turn carries the user's token, so the engine's
+  // gate knows whose strategies it is reading and saving.
+  const bridgeAuth = { token: auth.token, requestId: crypto.randomUUID(), model };
   let tools;
   try {
-    tools = { ...buildTools(await fetchManifest()), ...hisaabTools() };
+    tools = {
+      ...buildTools(await fetchManifest(), bridgeAuth),
+      ...hisaabTools({ auth: bridgeAuth, apiKey, model }),
+    };
+    // The builder works on specs only; the EMA slider workbench is not on
+    // that page, so its proposal tool would have nowhere to land.
+    if (mode === "builder") delete tools.propose_strategy;
   } catch (err) {
     return errorResponse(
       err instanceof Error ? err.message : "Quant bridge unreachable.",
@@ -70,11 +89,10 @@ export async function POST(req: Request) {
     apiKey,
     ...(process.env.GROQ_BASE_URL ? { baseURL: process.env.GROQ_BASE_URL } : {}),
   });
-  const model = process.env.EVE_MODEL || DEFAULT_MODEL;
 
   const result = streamText({
     model: groq(model),
-    system: systemPrompt(),
+    system: systemPrompt(mode, currentSpec),
     messages: await convertToModelMessages(messages),
     tools,
     // Without a multi-step stop condition the run ends at the first tool call

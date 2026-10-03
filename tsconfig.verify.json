@@ -9,5 +9,8 @@
     "outDir": ".verify-dist",
     "rootDir": "."
   },
-  "files": ["scripts/verify-ai-guardrail.ts"]
+  "files": [
+    "scripts/verify-ai-guardrail.ts",
+    "scripts/verify-strategy-spec.ts"
+  ]
 }

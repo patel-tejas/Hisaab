@@ -13,8 +13,8 @@
 
 import { NextResponse } from "next/server";
 
-import { callTool, coerceArgs, fetchManifest, isReadTool } from "@/lib/eve/bridge";
-import { getAuthUser } from "@/lib/supabase-auth";
+import { callTool, coerceArgs, fetchManifest, isReadTool, isToolError } from "@/lib/eve/bridge";
+import { getAuthContext } from "@/lib/supabase-auth";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -23,8 +23,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ name: string }> },
 ) {
-  const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await getAuthContext();
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { name } = await params;
   if (!isReadTool(name)) {
@@ -64,13 +64,19 @@ export async function POST(
     );
   }
 
-  const result = await callTool(name, coerceArgs(args, schema));
+  const result = await callTool(name, coerceArgs(args, schema), {
+    token: auth.token,
+    surface: "ui",
+  });
 
   // `callTool` returns bridge errors rather than throwing, so that the chat
   // loop can self-correct. On this path there is no model to self-correct, so
   // map it back to a real status code for the UI.
-  if (result && typeof result === "object" && "error" in result) {
-    return NextResponse.json(result, { status: 502 });
+  if (isToolError(result)) {
+    // 4xx from the gate (bad spec, rate limit) is the caller's to fix;
+    // anything else is the engine failing.
+    const status = result.status && result.status < 500 ? result.status : 502;
+    return NextResponse.json(result, { status });
   }
   return NextResponse.json({ tool: name, result });
 }

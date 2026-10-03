@@ -12,15 +12,43 @@
  * Architecture principle: AI orchestrates, Python calculates. Nothing in this
  * file computes a number.
  *
- * Server-only. The bridge listens on 127.0.0.1 with no auth and a CORS
- * allowlist of `localhost:3000`, so the browser must never call it directly —
- * every request goes through an auth-gated route handler.
+ * Server-only. Every request goes through an auth-gated route handler, which
+ * hands its caller to the bridge's common gate (Eve Phase 15):
+ *   - `X-Eve-Internal: EVE_INTERNAL_SECRET` proves the call comes from this
+ *     server (required once the engine sets the same secret);
+ *   - `Authorization: Bearer <Supabase access token>` says which user it is
+ *     for. The engine verifies it and scopes saved strategies to that user,
+ *     and its PostgREST calls run under the same token, so RLS applies too;
+ *   - `X-Eve-Surface: ui` marks calls a human made by clicking in the UI.
+ *     Only those may reach UI-only tools such as archiving; the chat route
+ *     never sends it, so the model cannot either.
  */
 
 import { jsonSchema, tool, type ToolSet } from "ai";
 import type { JSONSchema7 } from "@ai-sdk/provider";
 
 export const BRIDGE_URL = process.env.QUANT_BRIDGE_URL ?? "http://127.0.0.1:8010";
+
+/** Who a bridge call is for. Built by route handlers from the session. */
+export type BridgeAuth = {
+  /** The signed-in user's Supabase access token. */
+  token?: string | null;
+  /** "ui" only for calls a human triggered by clicking; never from chat. */
+  surface?: "chat" | "ui";
+  requestId?: string;
+  model?: string;
+};
+
+export function bridgeHeaders(auth: BridgeAuth = {}): Record<string, string> {
+  const headers: Record<string, string> = { "content-type": "application/json" };
+  const secret = process.env.EVE_INTERNAL_SECRET;
+  if (secret) headers["x-eve-internal"] = secret;
+  if (auth.token) headers.authorization = `Bearer ${auth.token}`;
+  if (auth.surface === "ui") headers["x-eve-surface"] = "ui";
+  if (auth.requestId) headers["x-request-id"] = auth.requestId;
+  if (auth.model) headers["x-eve-model"] = auth.model;
+  return headers;
+}
 
 /** Shape of one entry in the bridge's `/tools` manifest. */
 export type ToolManifestEntry = {
@@ -42,7 +70,18 @@ export type BridgeStatus = { ok: true; tools: number } | { ok: false; error: str
  * out unconditionally. They stay reachable only through an explicitly confirmed
  * call on the deterministic path.
  */
-export const WRITE_TOOLS = ["download_month_data", "process_month_data"] as const;
+export const WRITE_TOOLS = [
+  "download_month_data",
+  "process_month_data",
+  "validate_dataset",
+] as const;
+
+/**
+ * Bridge tools the chat does not get directly. `validate_strategy_spec`
+ * carries the full spec schema (~7 KB); `propose_strategy_spec` (lib/eve/tools)
+ * calls it itself, so offering both would pay for that schema twice a turn.
+ */
+export const CHAT_HIDDEN_TOOLS = ["validate_strategy_spec"] as const;
 
 /**
  * Read-only tools the deterministic path may call on behalf of the UI.
@@ -60,6 +99,12 @@ export const READ_TOOLS = [
   "walk_forward_test",
   "backtest_significance",
   "validate_parameter_search",
+  // Strategy builder (Eve Phase 15): stateless spec tools.
+  "describe_strategy_vocabulary",
+  "validate_strategy_spec",
+  "preview_strategy_signals",
+  "backtest_strategy_spec",
+  "strategy_significance",
 ] as const;
 
 export type ReadTool = (typeof READ_TOOLS)[number];
@@ -84,7 +129,7 @@ export async function bridgeStatus(): Promise<BridgeStatus> {
 }
 
 export async function fetchManifest(): Promise<ToolManifestEntry[]> {
-  const res = await fetch(`${BRIDGE_URL}/tools`, { cache: "no-store" });
+  const res = await fetch(`${BRIDGE_URL}/tools`, { cache: "no-store", headers: bridgeHeaders() });
   if (!res.ok) {
     throw new Error(
       `quant bridge /tools returned ${res.status}. Is it running on ${BRIDGE_URL}?`,
@@ -135,12 +180,13 @@ export function coerceArgs(
 export async function callTool(
   name: string,
   args: Record<string, unknown>,
+  auth: BridgeAuth = {},
 ): Promise<unknown> {
   let res: Response;
   try {
     res = await fetch(`${BRIDGE_URL}/tools/${name}`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: bridgeHeaders(auth),
       body: JSON.stringify(args ?? {}),
       signal: AbortSignal.timeout(310_000),
     });
@@ -162,12 +208,23 @@ export async function callTool(
   // tool result instead of throwing. Throwing would abort the whole stream and
   // lose the chance to self-correct.
   if (!res.ok) {
+    const b = body as { error?: string; issues?: unknown };
     return {
-      error:
-        (body as { error?: string }).error ?? `quant bridge error (status ${res.status})`,
+      error: b.error ?? `quant bridge error (status ${res.status})`,
+      status: res.status,
+      // JSON-Pointer paths for a bad strategy spec, so the caller can fix
+      // exactly that field.
+      ...(b.issues ? { issues: b.issues } : {}),
     };
   }
   return (body as { result?: unknown }).result ?? body;
+}
+
+/** True when `callTool` returned an error object rather than a result. */
+export function isToolError(
+  value: unknown,
+): value is { error: string; status?: number; issues?: { path: string; message: string }[] } {
+  return !!value && typeof value === "object" && "error" in value;
 }
 
 /**
@@ -176,10 +233,13 @@ export async function callTool(
  * `jsonSchema()` wraps the Python-derived schema without a zod re-declaration.
  * Write tools are dropped here regardless of what the bridge published.
  */
-export function buildTools(manifest: ToolManifestEntry[]): ToolSet {
+export function buildTools(manifest: ToolManifestEntry[], auth: BridgeAuth = {}): ToolSet {
   const tools: ToolSet = {};
+  // The chat never claims the "ui" surface, whatever the caller passed.
+  const chatAuth: BridgeAuth = { ...auth, surface: "chat" };
   for (const entry of manifest) {
     if ((WRITE_TOOLS as readonly string[]).includes(entry.name)) continue;
+    if ((CHAT_HIDDEN_TOOLS as readonly string[]).includes(entry.name)) continue;
     tools[entry.name] = tool({
       description: entry.description,
       inputSchema: jsonSchema(entry.parameters),
@@ -187,6 +247,7 @@ export function buildTools(manifest: ToolManifestEntry[]): ToolSet {
         callTool(
           entry.name,
           coerceArgs((args ?? {}) as Record<string, unknown>, entry.parameters),
+          chatAuth,
         ),
     });
   }
@@ -218,7 +279,7 @@ export async function checkGrounding(
 ): Promise<GroundingReport> {
   const res = await fetch(`${BRIDGE_URL}/grounding/check`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: bridgeHeaders(),
     body: JSON.stringify({ answer, tool_results: toolResults }),
     signal: AbortSignal.timeout(15_000),
   });

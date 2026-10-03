@@ -363,6 +363,297 @@ create policy "Users can update own ai insights" on public.ai_insights
 create policy "Users can delete own ai insights" on public.ai_insights
     for delete to authenticated using ((select auth.uid()) = user_id);
 
+-- ============================================================ 4s. STRATEGY BUILDER (algo_*)
+--
+-- Eve's strategy builder stores users' engine strategies here: declarative
+-- `eve.strategy/1` specs (JSON rules, never code), their immutable versions,
+-- the backtests run on each version, the gate's audit trail and the kill
+-- switches. Phase 15 in Eve_Agentic_Trading.
+--
+-- Deliberately NOT public.strategies: that table is the journal's tag list
+-- (trades.strategy matches it by name). A tag labels past trades; a spec is
+-- testable rules. The algo_ prefix keeps the two apart.
+--
+-- Writes normally come from the Eve engine's gate, which calls PostgREST with
+-- the USER's access token, so every policy below still applies -- RLS is the
+-- backstop if the gate ever has a bug. Only algo_tool_audit inserts use the
+-- service role.
+--
+-- The status enum has no 'live' value on purpose: no row, bug or injected
+-- tool argument can mark a strategy live until a later migration adds the
+-- value alongside an approvals table and a legal review of SEBI's retail
+-- algo framework.
+
+do $$ begin
+    create type public.algo_strategy_status as enum
+        ('draft', 'validated', 'backtested', 'paper', 'archived');
+exception when duplicate_object then null; end $$;
+
+create table if not exists public.algo_strategies (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    name text not null check (char_length(name) between 1 and 80),
+    description text check (description is null or char_length(description) <= 500),
+    status public.algo_strategy_status not null default 'draft',
+    current_version_id uuid,
+    source text not null default 'chat' check (source in ('chat', 'form', 'import')),
+    -- Every revision and every backtest is a trial. Shown next to results so a
+    -- spec tuned over many chat turns is visibly downgraded (multiple testing).
+    trial_count integer not null default 0 check (trial_count >= 0),
+    paper_started_at timestamptz,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    unique (user_id, name)
+);
+
+create table if not exists public.algo_strategy_versions (
+    id uuid primary key default gen_random_uuid(),
+    strategy_id uuid not null references public.algo_strategies(id) on delete cascade,
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    version integer not null check (version >= 1),
+    spec jsonb not null check (jsonb_typeof(spec) = 'object'),
+    spec_schema_version text not null default 'eve.strategy/1',
+    spec_hash text not null,
+    nl_summary text not null,          -- template-rendered by the engine, not model prose
+    validation jsonb,                  -- errors / warnings with JSON-Pointer paths
+    parent_version_id uuid references public.algo_strategy_versions(id),
+    created_at timestamptz not null default now(),
+    unique (strategy_id, version)
+);
+
+do $$ begin
+    alter table public.algo_strategies
+        add constraint algo_strategies_current_version_fk
+        foreign key (current_version_id)
+        references public.algo_strategy_versions(id) on delete set null;
+exception when duplicate_object then null; end $$;
+
+create table if not exists public.algo_backtests (
+    id uuid primary key default gen_random_uuid(),
+    strategy_version_id uuid not null references public.algo_strategy_versions(id) on delete cascade,
+    user_id uuid not null references public.profiles(id) on delete cascade,
+    kind text not null default 'in_sample' check (kind in ('in_sample', 'holdout', 'paper')),
+    params jsonb not null,             -- month(s), timeframe, slippage, lot size
+    metrics jsonb not null,            -- engine output, never model text
+    verdict jsonb,                     -- significance / trials-adjusted verdict
+    engine_version text,
+    data_version text,
+    run_card_hash text,
+    status text not null check (status in ('ok', 'error')),
+    created_at timestamptz not null default now()
+);
+
+create table if not exists public.algo_tool_audit (
+    id bigserial primary key,
+    user_id uuid references public.profiles(id) on delete set null,
+    tool text not null,
+    tier text not null,
+    decision text not null,
+    result_status text,
+    http_status integer,
+    surface text,
+    args_hash text,
+    args_redacted jsonb,
+    latency_ms integer,
+    request_id text,
+    model text,
+    error text,
+    created_at timestamptz not null default now()
+);
+
+-- One row per user (their own switch) plus one row with user_id null: the
+-- global switch, writable only with the service role.
+create table if not exists public.algo_trading_controls (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references public.profiles(id) on delete cascade,
+    kill_switch boolean not null default false,
+    reason text,
+    updated_at timestamptz not null default now(),
+    unique nulls not distinct (user_id)
+);
+
+-- Every FK indexed, plus the list-page access paths.
+create index if not exists idx_algo_strategies_user_updated
+    on public.algo_strategies (user_id, updated_at desc);
+create index if not exists idx_algo_strategies_current_version
+    on public.algo_strategies (current_version_id);
+create index if not exists idx_algo_versions_strategy
+    on public.algo_strategy_versions (strategy_id, version desc);
+create index if not exists idx_algo_versions_user_hash
+    on public.algo_strategy_versions (user_id, spec_hash);
+create index if not exists idx_algo_versions_parent
+    on public.algo_strategy_versions (parent_version_id);
+create index if not exists idx_algo_backtests_version
+    on public.algo_backtests (strategy_version_id, created_at desc);
+create index if not exists idx_algo_backtests_user
+    on public.algo_backtests (user_id);
+create index if not exists idx_algo_audit_user_created
+    on public.algo_tool_audit (user_id, created_at desc);
+
+drop trigger if exists algo_strategies_set_updated_at on public.algo_strategies;
+create trigger algo_strategies_set_updated_at before update on public.algo_strategies
+    for each row execute function private.set_updated_at();
+
+-- Status and version rules, enforced in the database whoever the caller is:
+--   * current_version_id must be a version of THIS strategy
+--   * moving to a new version while on paper drops back to 'validated'
+--     (a paper run is tied to the exact rules it started with)
+--   * 'paper' needs an ok backtest on the current version and no kill switch
+--   * trial_count never goes down
+create or replace function private.guard_algo_strategy()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+    if new.current_version_id is distinct from old.current_version_id
+       and new.current_version_id is not null
+       and not exists (
+           select 1 from public.algo_strategy_versions v
+           where v.id = new.current_version_id and v.strategy_id = new.id
+       ) then
+        raise exception 'current_version_id must be a version of this strategy';
+    end if;
+
+    if new.trial_count < old.trial_count then
+        raise exception 'trial_count cannot decrease';
+    end if;
+
+    if old.status = 'paper'
+       and new.current_version_id is distinct from old.current_version_id then
+        new.status := 'validated';
+        new.paper_started_at := null;
+    end if;
+
+    if new.status = 'paper' and old.status is distinct from 'paper' then
+        if not exists (
+            select 1 from public.algo_backtests b
+            where b.strategy_version_id = new.current_version_id and b.status = 'ok'
+        ) then
+            raise exception 'paper trading needs an ok backtest on the current version';
+        end if;
+        if exists (
+            select 1 from public.algo_trading_controls c
+            where c.kill_switch and (c.user_id is null or c.user_id = new.user_id)
+        ) then
+            raise exception 'a kill switch is engaged';
+        end if;
+        new.paper_started_at := now();
+    end if;
+    if new.status is distinct from 'paper' then
+        new.paper_started_at := null;
+    end if;
+    return new;
+end;
+$$;
+
+revoke execute on function private.guard_algo_strategy() from public, anon, authenticated;
+
+drop trigger if exists guard_algo_strategy on public.algo_strategies;
+create trigger guard_algo_strategy before update on public.algo_strategies
+    for each row execute function private.guard_algo_strategy();
+
+-- Engaging a kill switch stops every paper run it covers, immediately.
+create or replace function private.algo_kill_switch_stops_paper()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+    if new.kill_switch then
+        update public.algo_strategies s
+        set status = 'validated'
+        where s.status = 'paper' and (new.user_id is null or s.user_id = new.user_id);
+    end if;
+    new.updated_at := now();
+    return new;
+end;
+$$;
+
+revoke execute on function private.algo_kill_switch_stops_paper() from public, anon, authenticated;
+
+drop trigger if exists algo_kill_switch_stops_paper on public.algo_trading_controls;
+create trigger algo_kill_switch_stops_paper before insert or update on public.algo_trading_controls
+    for each row execute function private.algo_kill_switch_stops_paper();
+
+alter table public.algo_strategies enable row level security;
+alter table public.algo_strategy_versions enable row level security;
+alter table public.algo_backtests enable row level security;
+alter table public.algo_tool_audit enable row level security;
+alter table public.algo_trading_controls enable row level security;
+
+-- algo_strategies: owner-only CRUD.
+drop policy if exists "Users can view own algo strategies" on public.algo_strategies;
+drop policy if exists "Users can insert own algo strategies" on public.algo_strategies;
+drop policy if exists "Users can update own algo strategies" on public.algo_strategies;
+drop policy if exists "Users can delete own algo strategies" on public.algo_strategies;
+
+create policy "Users can view own algo strategies" on public.algo_strategies
+    for select to authenticated using ((select auth.uid()) = user_id);
+-- New strategies start as draft/validated; paper is only reachable by update,
+-- where the guard trigger checks for a backtest.
+create policy "Users can insert own algo strategies" on public.algo_strategies
+    for insert to authenticated with check (
+        (select auth.uid()) = user_id and status in ('draft', 'validated')
+    );
+create policy "Users can update own algo strategies" on public.algo_strategies
+    for update to authenticated using ((select auth.uid()) = user_id)
+    with check ((select auth.uid()) = user_id);
+create policy "Users can delete own algo strategies" on public.algo_strategies
+    for delete to authenticated using ((select auth.uid()) = user_id);
+
+-- algo_strategy_versions: select + insert only. No update/delete policy, so
+-- history is immutable for users (a cascade from the parent still removes it).
+drop policy if exists "Users can view own algo versions" on public.algo_strategy_versions;
+drop policy if exists "Users can insert own algo versions" on public.algo_strategy_versions;
+
+create policy "Users can view own algo versions" on public.algo_strategy_versions
+    for select to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can insert own algo versions" on public.algo_strategy_versions
+    for insert to authenticated with check (
+        (select auth.uid()) = user_id
+        and exists (
+            select 1 from public.algo_strategies s
+            where s.id = strategy_id and s.user_id = (select auth.uid())
+        )
+    );
+
+-- algo_backtests: select + insert only, on the user's own versions.
+drop policy if exists "Users can view own algo backtests" on public.algo_backtests;
+drop policy if exists "Users can insert own algo backtests" on public.algo_backtests;
+
+create policy "Users can view own algo backtests" on public.algo_backtests
+    for select to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can insert own algo backtests" on public.algo_backtests
+    for insert to authenticated with check (
+        (select auth.uid()) = user_id
+        and exists (
+            select 1 from public.algo_strategy_versions v
+            where v.id = strategy_version_id and v.user_id = (select auth.uid())
+        )
+    );
+
+-- algo_tool_audit: users read their own trail; only the service role writes.
+drop policy if exists "Users can view own algo audit" on public.algo_tool_audit;
+create policy "Users can view own algo audit" on public.algo_tool_audit
+    for select to authenticated using ((select auth.uid()) = user_id);
+
+-- algo_trading_controls: read your own row and the global one; write only
+-- your own row. The global row (user_id null) needs the service role.
+drop policy if exists "Users can view own or global controls" on public.algo_trading_controls;
+drop policy if exists "Users can insert own controls" on public.algo_trading_controls;
+drop policy if exists "Users can update own controls" on public.algo_trading_controls;
+
+create policy "Users can view own or global controls" on public.algo_trading_controls
+    for select to authenticated using (user_id is null or (select auth.uid()) = user_id);
+create policy "Users can insert own controls" on public.algo_trading_controls
+    for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can update own controls" on public.algo_trading_controls
+    for update to authenticated using ((select auth.uid()) = user_id)
+    with check ((select auth.uid()) = user_id);
+
 -- ============================================================ 5. BACKFILL
 
 -- The trigger only fires on INSERT, so any auth user created before it existed

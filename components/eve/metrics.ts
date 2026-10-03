@@ -38,6 +38,15 @@ export const KPI_ORDER: (keyof BacktestMetrics)[] = [
 ];
 
 const PCT_KEYS = new Set<keyof BacktestMetrics>(["win_rate", "max_drawdown_pct"]);
+
+/**
+ * The engine reports win_rate AND max_drawdown_pct as fractions (0.104 =
+ * 10.4%; see quant/backtest/metrics.py and the `.1%` format in
+ * quant/research/report.py). The guard keeps an already-scaled value as is.
+ */
+function asPercent(value: number): number {
+  return Math.abs(value) <= 1 ? value * 100 : value;
+}
 const INR_KEYS = new Set<keyof BacktestMetrics>(["gross_pnl", "net_pnl", "avg_trade_pnl"]);
 const INT_KEYS = new Set<keyof BacktestMetrics>([
   "total_trades",
@@ -48,12 +57,7 @@ const INT_KEYS = new Set<keyof BacktestMetrics>([
 export function formatMetric(key: keyof BacktestMetrics, value: number | null): string {
   if (value === null || value === undefined || Number.isNaN(value)) return "—";
   if (INR_KEYS.has(key)) return key === "net_pnl" ? formatInr(value) : formatInrPlain(value);
-  if (PCT_KEYS.has(key)) {
-    // The engine reports win_rate as a fraction and drawdown already as a
-    // percent, so scale only the fraction.
-    const pct = key === "win_rate" && Math.abs(value) <= 1 ? value * 100 : value;
-    return `${pct.toFixed(1)}%`;
-  }
+  if (PCT_KEYS.has(key)) return `${asPercent(value).toFixed(1)}%`;
   if (INT_KEYS.has(key)) return Math.round(value).toLocaleString("en-IN");
   if (key === "avg_holding_periods") return `${value.toFixed(1)} bars`;
   return value.toFixed(2);
@@ -77,10 +81,12 @@ export function metricSentiment(
       return value > 0 ? "pos" : value < 0 ? "neg" : "flat";
     case "profit_factor":
       return value >= 1.25 ? "pos" : value >= 1 ? "warn" : "neg";
-    case "max_drawdown_pct":
-      return Math.abs(value) < 10 ? "pos" : Math.abs(value) < 20 ? "warn" : "neg";
+    case "max_drawdown_pct": {
+      const pct = Math.abs(asPercent(value));
+      return pct < 10 ? "pos" : pct < 20 ? "warn" : "neg";
+    }
     case "win_rate": {
-      const pct = Math.abs(value) <= 1 ? value * 100 : value;
+      const pct = asPercent(value);
       return pct >= 50 ? "pos" : pct >= 40 ? "warn" : "neg";
     }
     case "sharpe":

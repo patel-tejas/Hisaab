@@ -13,6 +13,7 @@ import {
   FlaskConical,
   Sparkles,
   Settings2,
+  Blocks,
 } from "lucide-react"
 
 import { BrandMark } from "@/components/brand-mark"
@@ -37,6 +38,7 @@ const navMain = [
   { title: "Daily Planner", url: "/dashboard/planner", icon: CalendarClock },
   { title: "Backtester", url: "/dashboard/backtester", icon: FlaskConical },
   { title: "Eve Agent", url: "/dashboard/agent", icon: Sparkles },
+  { title: "Strategies", url: "/dashboard/strategies", icon: Blocks },
 ]
 
 const navSecondary = [
