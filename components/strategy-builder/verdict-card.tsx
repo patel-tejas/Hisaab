@@ -38,8 +38,8 @@ export function VerdictCard({
   const inSample = verdict.in_sample_metrics ?? {};
 
   return (
-    <div className="space-y-16">
-      <div className={cn("flex items-start gap-12 rounded-lg border px-16 py-12", tone.className)}>
+    <div className="space-y-4">
+      <div className={cn("flex items-start gap-3 rounded-lg border px-4 py-3", tone.className)}>
         <Icon className="mt-0.5 size-5 shrink-0" />
         <div className="min-w-0">
           <p className="text-sm font-medium">{verdict.headline}</p>
@@ -80,7 +80,7 @@ export function VerdictCard({
         </tbody>
       </table>
 
-      <dl className="grid grid-cols-2 gap-12 text-xs">
+      <dl className="grid grid-cols-2 gap-3 text-xs">
         <div>
           <dt className="text-muted-foreground">Tries counted</dt>
           <dd className="mt-0.5 font-mono">{verdict.trials}</dd>

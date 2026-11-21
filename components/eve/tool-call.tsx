@@ -114,7 +114,7 @@ export function ToolStep({ part }: { part: AnyToolPart }) {
         onClick={() => setOpen((v) => !v)}
         className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent/50"
       >
-        <span className="flex size-16 shrink-0 items-center justify-center">
+        <span className="flex size-4 shrink-0 items-center justify-center">
           {running ? (
             <LoaderGrid variant="Orbit" />
           ) : (

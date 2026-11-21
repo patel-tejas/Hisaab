@@ -228,7 +228,7 @@ export function EveStudio() {
             type="button"
             onClick={() => setTab("agent")}
             title="Open the Agent tab"
-            className="interactive flex h-9 items-center gap-16 rounded-lg border border-border/70 px-3.5"
+            className="interactive flex h-9 items-center gap-4 rounded-lg border border-border/70 px-3.5"
           >
             <StatusDot ok={status ? bridgeOk : undefined} label="Engine" title={status?.bridge.error ?? status?.bridge.url} />
             <StatusDot ok={status ? (status.model.ok ?? false) : undefined} label="Model" title={status?.model.detail} />
@@ -355,7 +355,7 @@ export function EveStudio() {
 }
 
 const TAB =
-  "h-32 gap-2 rounded-lg px-3.5 text-sm text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_7%,transparent)]";
+  "h-8 gap-2 rounded-lg px-3.5 text-sm text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-[inset_0_1px_0_0_color-mix(in_oklab,var(--foreground)_7%,transparent)]";
 
 /**
  * The engine is a separate local process, so "not running" is an ordinary

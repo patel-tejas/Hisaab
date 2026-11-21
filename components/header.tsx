@@ -52,7 +52,7 @@ export function Header({ onNewTrade, onOpenCommand }: HeaderProps) {
           onClick={onNewTrade}
           className="hidden h-9 items-center gap-1.5 rounded-2xl! bg-cyan-signal px-4 text-[13px] font-medium text-void shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_4px_12px_rgba(0,179,221,0.22)] transition-opacity duration-200 hover:opacity-90 md:inline-flex"
         >
-          <Plus className="size-5" strokeWidth={2} />
+          <Plus className="size-4" strokeWidth={2} />
           New Trade
         </button>
       </div>

@@ -236,13 +236,13 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
           <>
             {status && <StatusBadge status={status} />}
             {saved && (
-              <Button asChild variant="outline" className="h-32 rounded-lg px-3 text-xs gap-1.5">
+              <Button asChild variant="outline" className="h-8 rounded-lg px-3 text-xs gap-1.5">
                 <Link href={`/dashboard/strategies/${saved.id}`}>
                   <History className="size-3.5" /> History
                 </Link>
               </Button>
             )}
-            <Button className="h-32 rounded-lg px-3 text-xs gap-1.5" disabled={saving || !dirty} onClick={() => void save()}>
+            <Button className="h-8 rounded-lg px-3 text-xs gap-1.5" disabled={saving || !dirty} onClick={() => void save()}>
               {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
               {saved ? (dirty ? "Save new version" : "Saved") : "Save"}
             </Button>
@@ -250,9 +250,9 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
         }
       />
 
-      <div className="grid gap-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
         <Tabs value={tab} onValueChange={(v) => setTab(v as "chat" | "form")} className="min-w-0">
-          <TabsList className="mb-12 h-10 gap-1 rounded-xl border border-border/60 bg-secondary/40 p-1">
+          <TabsList className="mb-3 h-10 gap-1 rounded-xl border border-border/60 bg-secondary/40 p-1">
             <TabsTrigger value="chat" className={TAB}>
               <MessageSquare className="size-3.5" /> Describe it
             </TabsTrigger>
@@ -290,8 +290,8 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
           </TabsContent>
         </Tabs>
 
-        <aside className="space-y-16 lg:sticky lg:top-24 lg:self-start">
-          <Card className="space-y-12 p-20">
+        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <Card className="space-y-3 p-5">
             <p className="label-mono">What will run</p>
             {summary ? (
               <p className="text-sm leading-relaxed">{summary}</p>
@@ -303,8 +303,8 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
             <IssueList title="Warnings" issues={warnings} tone="warning" />
           </Card>
 
-          <Card className="space-y-12 p-20">
-            <div className="flex items-center justify-between gap-12">
+          <Card className="space-y-3 p-5">
+            <div className="flex items-center justify-between gap-3">
               <p className="label-mono">Test</p>
               {saved && <span className="text-[11px] text-muted-foreground">{trials} trial{trials === 1 ? "" : "s"} so far</span>}
             </div>
@@ -318,10 +318,10 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
                 setPreview(null);
               }}
             />
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
-                className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                className="h-8 gap-1.5 rounded-lg px-3 text-xs"
                 disabled={!valid || !month || running !== null || !env?.engineOk}
                 onClick={() => void runPreview()}
               >
@@ -329,7 +329,7 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
                 Signals
               </Button>
               <Button
-                className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                className="h-8 gap-1.5 rounded-lg px-3 text-xs"
                 disabled={!valid || !month || running !== null || saving || !env?.engineOk}
                 onClick={() => void saveAndBacktest()}
               >
@@ -343,7 +343,7 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
             </p>
 
             {preview && (
-              <div className="space-y-1.5 rounded-lg border border-border/60 px-12 py-8 text-xs">
+              <div className="space-y-1.5 rounded-lg border border-border/60 px-3 py-2 text-xs">
                 <p className="text-muted-foreground">
                   {preview.month} · {preview.timeframe} · {preview.bars.toLocaleString("en-IN")} bars
                 </p>
@@ -357,7 +357,7 @@ export function StrategyBuilder({ initial }: { initial?: BuilderInitial }) {
             )}
 
             {result && (
-              <div className="space-y-8">
+              <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">
                   v{result.version} on {result.month}, {result.timeframe}, {result.lots} lot × {result.lot_size}, {result.slippage} slippage
                 </p>

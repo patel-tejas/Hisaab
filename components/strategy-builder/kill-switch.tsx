@@ -69,7 +69,7 @@ export function KillSwitch({
       disabled={busy || globalOnly}
       title={engaged ? (reason ?? "Kill switch engaged") : "Stop every paper-trading strategy now"}
       className={cn(
-        "h-32 gap-1.5 rounded-lg px-3 text-xs",
+        "h-8 gap-1.5 rounded-lg px-3 text-xs",
         engaged
           ? "border-[var(--destructive)]/50 bg-[var(--destructive)]/10 text-[var(--destructive)]"
           : "hover:border-[var(--destructive)]/50 hover:text-[var(--destructive)]",

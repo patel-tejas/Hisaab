@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <div className="-mx-4 -mt-4 md:-mx-6 md:-mt-6">
+      <div className="-mx-5 -mt-6 md:-mx-8 md:-mt-10">
         <MarketTicker />
       </div>
 

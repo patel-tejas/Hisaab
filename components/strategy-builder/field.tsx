@@ -1,9 +1,8 @@
 "use client";
 
 /**
- * Small form primitives for the builder, sized on Hisaab's px spacing
- * tokens (`h-32` = 32px; `h-8` is 8px here, see globals.css, which is also
- * why nothing here uses the `sm` size of Button or SelectTrigger).
+ * Small form primitives for the builder, sized on Tailwind's standard
+ * spacing scale (`h-8` = 32px).
  */
 
 import type React from "react";
@@ -80,7 +79,7 @@ export function Choice<T extends string>({
         aria-invalid={invalid || undefined}
         // The trigger sets its height with data-[size=…]; override in the
         // same form so a passed height (e.g. data-[size=default]:h-7) wins.
-        className={cn("w-full min-w-0 text-xs data-[size=default]:h-32", className)}
+        className={cn("w-full min-w-0 text-xs data-[size=default]:h-8", className)}
       >
         <SelectValue />
       </SelectTrigger>
@@ -136,7 +135,7 @@ export function NumberInput({
         if (Number.isFinite(n)) onChange(n);
       }}
       className={cn(
-        "h-32 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 font-mono text-xs tabular-nums outline-none dark:bg-input/30",
+        "h-8 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 font-mono text-xs tabular-nums outline-none dark:bg-input/30",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-[var(--destructive)]",
         className,
@@ -166,7 +165,7 @@ export function TimeInput({
       max="15:30"
       onChange={(e) => e.target.value && onChange(e.target.value)}
       className={cn(
-        "h-32 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 font-mono text-xs outline-none dark:bg-input/30",
+        "h-8 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 font-mono text-xs outline-none dark:bg-input/30",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "aria-invalid:border-[var(--destructive)]",
       )}
@@ -186,8 +185,8 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-12 border-b border-border/60 py-20 first:pt-0 last:border-b-0 last:pb-0">
-      <div className="flex items-start justify-between gap-12">
+    <section className="space-y-3 border-b border-border/60 py-5 first:pt-0 last:border-b-0 last:pb-0">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-sm font-medium">{title}</h3>
           {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}

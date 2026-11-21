@@ -27,7 +27,7 @@ export function MetricsStrip({
       {keys.map((key) => {
         const value = (metrics[key] ?? null) as number | null;
         return (
-          <div key={key} className="bg-card px-12 py-8">
+          <div key={key} className="bg-card px-3 py-2">
             <dt className="text-[11px] text-muted-foreground">{METRIC_LABELS[key]}</dt>
             <dd className={cn("mt-0.5 font-mono text-sm tabular-nums", TONE[metricSentiment(key, value)])}>
               {formatMetric(key, value)}

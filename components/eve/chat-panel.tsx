@@ -290,7 +290,7 @@ function ChatThread({
      * area can run edge to edge and the composer can sit on a full-width rule.
      */
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex h-48 shrink-0 items-center gap-2.5 border-b border-border/60 px-5 md:px-6">
+      <div className="flex h-12 shrink-0 items-center gap-2.5 border-b border-border/60 px-5 md:px-6">
         <EveAvatar size={22} />
         <span className="text-sm font-medium">Eve</span>
         <span className="label-mono hidden sm:inline">{title}</span>
@@ -299,7 +299,7 @@ function ChatThread({
             type="button"
             onClick={onNewChat}
             disabled={busy}
-            className="interactive ml-auto flex h-32 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50"
+            className="interactive ml-auto flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50"
           >
             <SquarePen className="size-3.5" /> New chat
           </button>
@@ -315,7 +315,7 @@ function ChatThread({
         className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
       >
         {messages.length === 0 ? (
-          <div className="flex min-h-full flex-col justify-center px-5 py-32 md:px-32">
+          <div className="flex min-h-full flex-col justify-center px-5 py-8 md:px-8">
             <p className="label-mono">Start here</p>
             <h2 className="mt-2.5 max-w-[20ch] font-display text-[1.75rem] leading-[1.1] tracking-tight md:text-[2rem]">
               Describe a strategy the way you&apos;d say it out loud.
@@ -331,7 +331,7 @@ function ChatThread({
                   <button
                     onClick={() => submit(example)}
                     disabled={!ready}
-                    className="group flex w-full items-center justify-between gap-16 px-16 py-3 text-left text-sm transition-colors hover:bg-accent/50 disabled:pointer-events-none disabled:opacity-50"
+                    className="group flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm transition-colors hover:bg-accent/50 disabled:pointer-events-none disabled:opacity-50"
                   >
                     <span className="text-muted-foreground group-hover:text-foreground">{example}</span>
                     <ArrowUpRight className="size-3.5 shrink-0 -translate-x-1 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
@@ -372,7 +372,7 @@ function ChatThread({
               </div>
             )}
             {error && (
-              <div className="rounded-xl border border-[var(--destructive)]/30 bg-[var(--destructive)]/[0.07] px-16 py-3 text-xs text-[var(--destructive)]">
+              <div className="rounded-xl border border-[var(--destructive)]/30 bg-[var(--destructive)]/[0.07] px-4 py-3 text-xs text-[var(--destructive)]">
                 {error.message}
               </div>
             )}
@@ -380,7 +380,7 @@ function ChatThread({
         )}
       </div>
 
-      <div className="shrink-0 border-t border-border/60 px-5 py-16 md:px-6">
+      <div className="shrink-0 border-t border-border/60 px-5 py-4 md:px-6">
         <PromptBar
           months={env.months}
           commands={commandsFor(months)}
@@ -407,7 +407,7 @@ function UserMessage({ message }: { message: UIMessage }) {
     .join("\n");
   return (
     <div className="flex justify-end pl-10" style={{ animation: "fade-up 300ms cubic-bezier(0.22,1,0.36,1) both" }}>
-      <div className="max-w-full whitespace-pre-wrap rounded-2xl bg-secondary px-16 py-2.5 text-sm leading-6 text-foreground">
+      <div className="max-w-full whitespace-pre-wrap rounded-2xl bg-secondary px-4 py-2.5 text-sm leading-6 text-foreground">
         {text}
       </div>
     </div>

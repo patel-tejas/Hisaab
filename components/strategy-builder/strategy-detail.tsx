@@ -155,7 +155,7 @@ export function StrategyDetail({ id }: { id: string }) {
       <Card className="panel-p text-sm">
         <p className="font-medium">Could not load this strategy</p>
         <p className="mt-1 text-muted-foreground">{error}</p>
-        <Link href="/dashboard/strategies" className="mt-12 inline-block text-xs underline underline-offset-4">
+        <Link href="/dashboard/strategies" className="mt-3 inline-block text-xs underline underline-offset-4">
           Back to strategies
         </Link>
       </Card>
@@ -163,7 +163,7 @@ export function StrategyDetail({ id }: { id: string }) {
   }
   if (!data) {
     return (
-      <div className="space-y-16">
+      <div className="space-y-4">
         <Skeleton className="h-[6rem] rounded-xl" />
         <Skeleton className="h-[14rem] rounded-xl" />
       </div>
@@ -207,12 +207,12 @@ export function StrategyDetail({ id }: { id: string }) {
             />
             {!archived && (
               <>
-                <Button asChild variant="outline" className="h-32 rounded-lg px-3 text-xs gap-1.5">
+                <Button asChild variant="outline" className="h-8 rounded-lg px-3 text-xs gap-1.5">
                   <Link href={`/dashboard/strategies/${id}/edit`}>
                     <Pencil className="size-3.5" /> Edit
                   </Link>
                 </Button>
-                <Button variant="outline" className="h-32 rounded-lg px-3 text-xs gap-1.5" disabled={busy !== null} onClick={() => void archive()}>
+                <Button variant="outline" className="h-8 rounded-lg px-3 text-xs gap-1.5" disabled={busy !== null} onClick={() => void archive()}>
                   {busy === "archive" ? <Loader2 className="size-3.5 animate-spin" /> : <Archive className="size-3.5" />}
                   Archive
                 </Button>
@@ -222,10 +222,10 @@ export function StrategyDetail({ id }: { id: string }) {
         }
       />
 
-      <div className="grid gap-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-        <div className="min-w-0 space-y-24">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <div className="min-w-0 space-y-6">
           {latestHoldout && (
-            <Card className="space-y-12 p-20">
+            <Card className="space-y-3 p-5">
               <p className="label-mono">Honest check · v{version.version}</p>
               <VerdictCard
                 verdict={latestHoldout.verdict as unknown as Verdict}
@@ -235,21 +235,21 @@ export function StrategyDetail({ id }: { id: string }) {
             </Card>
           )}
 
-          <Card className="space-y-12 p-20">
+          <Card className="space-y-3 p-5">
             <p className="label-mono">Rules · v{version.version}</p>
             <p className="text-sm leading-relaxed">{version.summary}</p>
             <IssueList title="Warnings" issues={version.validation?.warnings ?? []} tone="warning" />
             <IssueList title="Errors" issues={version.validation?.errors ?? []} tone="error" />
           </Card>
 
-          <Card className="space-y-12 p-20">
+          <Card className="space-y-3 p-5">
             <p className="label-mono">Backtests on this version</p>
             {backtests.length === 0 ? (
               <p className="text-sm text-muted-foreground">None yet. Run one from the panel on the right.</p>
             ) : (
-              <div className="space-y-16">
+              <div className="space-y-4">
                 {backtests.map((b) => (
-                  <div key={b.id} className="space-y-8 border-b border-border/60 pb-16 last:border-b-0 last:pb-0">
+                  <div key={b.id} className="space-y-2 border-b border-border/60 pb-4 last:border-b-0 last:pb-0">
                     <p className="text-xs text-muted-foreground">
                       {b.params?.month} · {b.params?.timeframe} ·{" "}
                       {b.kind === "in_sample" ? "in-sample" : b.kind === "holdout" ? `holdout: ${String(b.verdict?.headline ?? "")}` : b.kind} ·{" "}
@@ -263,11 +263,11 @@ export function StrategyDetail({ id }: { id: string }) {
             )}
           </Card>
 
-          <Card className="space-y-12 p-20">
+          <Card className="space-y-3 p-5">
             <p className="label-mono">Versions</p>
-            <ol className="space-y-16">
+            <ol className="space-y-4">
               {[...versions].reverse().map((v) => (
-                <li key={v.id} className={cn("space-y-1.5 border-l-2 pl-12", v.id === version.id ? "border-foreground" : "border-border/60")}>
+                <li key={v.id} className={cn("space-y-1.5 border-l-2 pl-3", v.id === version.id ? "border-foreground" : "border-border/60")}>
                   <p className="text-xs">
                     <span className="font-medium">v{v.version}</span>{" "}
                     <span className="text-muted-foreground">{new Date(v.created_at).toLocaleString("en-IN")}</span>
@@ -280,8 +280,8 @@ export function StrategyDetail({ id }: { id: string }) {
           </Card>
         </div>
 
-        <aside className="space-y-16 lg:sticky lg:top-24 lg:self-start">
-          <Card className="space-y-12 p-20">
+        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <Card className="space-y-3 p-5">
             <p className="label-mono">Backtest the current version</p>
             <Choice
               ariaLabel="Month"
@@ -290,7 +290,7 @@ export function StrategyDetail({ id }: { id: string }) {
               labels={{ none: "No data yet" }}
               onChange={setMonth}
             />
-            <Button className="h-32 w-full gap-1.5 rounded-lg px-3 text-xs" disabled={!month || busy !== null || archived} onClick={() => void backtest()}>
+            <Button className="h-8 w-full gap-1.5 rounded-lg px-3 text-xs" disabled={!month || busy !== null || archived} onClick={() => void backtest()}>
               {busy === "backtest" ? <Loader2 className="size-3.5 animate-spin" /> : <Play className="size-3.5" />}
               Run and record
             </Button>
@@ -300,7 +300,7 @@ export function StrategyDetail({ id }: { id: string }) {
             </p>
           </Card>
 
-          <Card className="space-y-12 p-20">
+          <Card className="space-y-3 p-5">
             <p className="label-mono flex items-center gap-1.5">
               <FlaskConical className="size-3.5" /> Paper trading
             </p>
@@ -319,10 +319,10 @@ export function StrategyDetail({ id }: { id: string }) {
                     className="sm:grid-cols-3"
                   />
                 )}
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant="outline"
-                    className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                    className="h-8 gap-1.5 rounded-lg px-3 text-xs"
                     disabled={busy !== null}
                     onClick={() => void paperAction("refresh")}
                   >
@@ -331,7 +331,7 @@ export function StrategyDetail({ id }: { id: string }) {
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-32 gap-1.5 rounded-lg px-3 text-xs"
+                    className="h-8 gap-1.5 rounded-lg px-3 text-xs"
                     disabled={busy !== null}
                     onClick={() => void paperAction("stop")}
                   >
@@ -351,7 +351,7 @@ export function StrategyDetail({ id }: { id: string }) {
                   <p className="text-xs">Run the honest check first, so the verdict is on record.</p>
                 ) : null}
                 <Button
-                  className="h-32 w-full gap-1.5 rounded-lg px-3 text-xs"
+                  className="h-8 w-full gap-1.5 rounded-lg px-3 text-xs"
                   disabled={busy !== null || archived || !latestHoldout || !!controls?.engaged}
                   onClick={() => void paperAction("start")}
                 >
@@ -361,7 +361,7 @@ export function StrategyDetail({ id }: { id: string }) {
             )}
           </Card>
 
-          <Card className="space-y-12 p-20">
+          <Card className="space-y-3 p-5">
             <p className="label-mono flex items-center gap-1.5">
               <Scale className="size-3.5" /> Honest check
             </p>
@@ -382,7 +382,7 @@ export function StrategyDetail({ id }: { id: string }) {
                 <Choice ariaLabel="Holdout month" value={holdoutMonth} options={holdoutChoices} onChange={setHoldout} />
                 <Button
                   variant="outline"
-                  className="h-32 w-full gap-1.5 rounded-lg px-3 text-xs"
+                  className="h-8 w-full gap-1.5 rounded-lg px-3 text-xs"
                   disabled={busy !== null || archived}
                   onClick={() => void evaluate(holdoutMonth)}
                 >

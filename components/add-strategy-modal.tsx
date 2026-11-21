@@ -26,22 +26,29 @@ export function AddStrategyModal({ open, onOpenChange, onAdded }: any) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Strategy</DialogTitle>
         </DialogHeader>
 
-        <Label>Name</Label>
-        <Input
-          className="mt-2"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Breakout, Pullback..."
-        />
+        <div className="space-y-4 pt-1">
+          <div className="space-y-2">
+            <Label htmlFor="strategy-name" className="label-mono text-muted-foreground">
+              Name
+            </Label>
+            <Input
+              id="strategy-name"
+              className="h-10 rounded-lg bg-secondary/30 border-border"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Breakout, Pullback..."
+            />
+          </div>
 
-        <Button className="w-full mt-4" onClick={handleAdd}>
-          Save Strategy
-        </Button>
+          <Button className="w-full" onClick={handleAdd} disabled={!name.trim()}>
+            Save Strategy
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

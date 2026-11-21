@@ -40,8 +40,8 @@ export function SpecCard({
   }
 
   return (
-    <div className="panel-inset space-y-16 px-16 py-16">
-      <div className="flex items-start justify-between gap-12">
+    <div className="panel-inset space-y-4 px-4 py-4">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
           <p className="label-mono flex items-center gap-1.5">
             <StatusIcon status={out.status} />
@@ -57,7 +57,7 @@ export function SpecCard({
           <Button
             variant={isLoaded ? "outline" : "default"}
             onClick={open}
-            className="h-32 shrink-0 gap-1.5 rounded-lg px-3 text-xs"
+            className="h-8 shrink-0 gap-1.5 rounded-lg px-3 text-xs"
           >
             {isLoaded ? (
               <>
@@ -170,7 +170,7 @@ export function ClarifyCard({
   onAnswer: (text: string) => void;
 }) {
   return (
-    <div className="panel-inset space-y-12 px-16 py-16">
+    <div className="panel-inset space-y-3 p-4">
       <p className="label-mono flex items-center gap-1.5">
         <CircleHelp className="size-3.5" /> Eve needs one answer
       </p>
@@ -183,7 +183,7 @@ export function ClarifyCard({
             variant="outline"
             disabled={disabled}
             onClick={() => onAnswer(option)}
-            className="h-32 rounded-lg px-3 text-xs"
+            className="h-8 rounded-lg px-3 text-xs"
           >
             {option}
           </Button>

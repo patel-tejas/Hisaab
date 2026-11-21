@@ -239,7 +239,7 @@ export function AddTradeModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] sm:max-w-[90vw] max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="w-[95vw] max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-y-auto p-0 gap-0">
         {/* Header */}
         <DialogHeader className="px-6 pt-6 pb-0">
           <DialogTitle className="text-xl font-bold text-foreground">
@@ -248,27 +248,29 @@ export function AddTradeModal({
         </DialogHeader>
 
         {/* Tabs */}
-        <div className="flex gap-1 px-6 pt-2">
+        <div className="flex gap-1.5 px-6 pt-3">
           <button
+            type="button"
             onClick={() => setActiveTab("general")}
-            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
               activeTab === "general"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <Info className="h-5 w-5" />
+            <Info className="size-4" />
             General
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("psychology")}
-            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            className={cn("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
               activeTab === "psychology"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
             )}
           >
-            <Brain className="h-5 w-5" />
+            <Brain className="size-4" />
             Psychology
           </button>
         </div>
@@ -279,8 +281,8 @@ export function AddTradeModal({
             <div className="space-y-5 pt-4">
 
               {/* Row 1: Symbol + Direction + Date */}
-              <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-4">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div className="sm:col-span-4">
                   <FieldGroup label="Symbol" required>
                     <Select
                       value={symbol}
@@ -289,7 +291,7 @@ export function AddTradeModal({
                         if (defaultQuantities[v]) setQuantity(String(defaultQuantities[v]));
                       }}
                     >
-                      <SelectTrigger className="rounded-lg bg-secondary/30 border-border h-10">
+                      <SelectTrigger className="w-full rounded-lg bg-secondary/30 border-border data-[size=default]:h-10">
                         <SelectValue placeholder="Select symbol" />
                       </SelectTrigger>
                       <SelectContent>
@@ -307,36 +309,36 @@ export function AddTradeModal({
                   </FieldGroup>
                 </div>
 
-                <div className="col-span-4">
+                <div className="sm:col-span-4">
                   <FieldGroup label="Direction" required>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => setDirection("long")}
-                        className={cn("flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
+                        className={cn("flex-1 flex items-center justify-center gap-1.5 h-10 rounded-lg text-sm font-semibold transition-colors border",
                           direction === "long"
-                            ? "bg-[var(--primary)]/15 border-[var(--primary)]/40 text-[var(--primary)] dark:text-[var(--primary)]"
+                            ? "bg-[var(--success)]/15 border-[var(--success)]/40 text-[var(--success)]"
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
-                        <ArrowUpRight className="h-5 w-5" /> Long
+                        <ArrowUpRight className="size-4" /> Long
                       </button>
                       <button
                         type="button"
                         onClick={() => setDirection("short")}
-                        className={cn("flex-1 flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold transition-all border",
+                        className={cn("flex-1 flex items-center justify-center gap-1.5 h-10 rounded-lg text-sm font-semibold transition-colors border",
                           direction === "short"
-                            ? "bg-[var(--warning)]/15 border-[var(--warning)]/40 text-[var(--warning)] dark:text-[var(--warning)]"
+                            ? "bg-[var(--destructive)]/15 border-[var(--destructive)]/40 text-[var(--destructive)]"
                             : "bg-secondary/30 border-border text-muted-foreground hover:text-foreground"
                         )}
                       >
-                        <ArrowDownRight className="h-5 w-5" /> Short
+                        <ArrowDownRight className="size-4" /> Short
                       </button>
                     </div>
                   </FieldGroup>
                 </div>
 
-                <div className="col-span-4">
+                <div className="sm:col-span-4">
                   <FieldGroup label="Date" required>
                     <Input value={date} type="date" onChange={(e) => setDate(e.target.value)} className="rounded-lg bg-secondary/30 border-border h-10" />
                   </FieldGroup>
@@ -344,7 +346,7 @@ export function AddTradeModal({
               </div>
 
               {/* Row 2: Entry Price, Exit Price, Quantity, Entry Time, Exit Time */}
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <FieldGroup label="Entry Price" required>
                   <Input value={entryPrice} type="number" onChange={(e) => setEntryPrice(e.target.value)} className="rounded-lg bg-secondary/30 border-border h-10" placeholder="0.00" />
                 </FieldGroup>
@@ -363,7 +365,7 @@ export function AddTradeModal({
               </div>
 
               {/* Row 3: Stop Loss, Target, Strategy, Outcome */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <FieldGroup label="Stop Loss">
                   <Input value={stopLoss} type="number" onChange={(e) => setStopLoss(e.target.value)} className="rounded-lg bg-secondary/30 border-border h-10" placeholder="0.00" />
                 </FieldGroup>
@@ -378,7 +380,7 @@ export function AddTradeModal({
                       setSelectedStrategy(v);
                     }}
                   >
-                    <SelectTrigger className="rounded-lg bg-secondary/30 border-border h-10">
+                    <SelectTrigger className="w-full rounded-lg bg-secondary/30 border-border data-[size=default]:h-10">
                       <SelectValue placeholder="Choose strategy" />
                     </SelectTrigger>
                     <SelectContent>
@@ -386,13 +388,13 @@ export function AddTradeModal({
                         <SelectItem key={s} value={s}>{s}</SelectItem>
                       ))}
                       <div className="border-t my-1" />
-                      <SelectItem value="__add__">➕ Add New Strategy</SelectItem>
+                      <SelectItem value="__add__">+ Add New Strategy</SelectItem>
                     </SelectContent>
                   </Select>
                 </FieldGroup>
                 <FieldGroup label="Outcome" required>
                   <Select value={selectedOutcome} onValueChange={setSelectedOutcome}>
-                    <SelectTrigger className="rounded-lg bg-secondary/30 border-border h-10">
+                    <SelectTrigger className="w-full rounded-lg bg-secondary/30 border-border data-[size=default]:h-10">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -405,22 +407,23 @@ export function AddTradeModal({
               </div>
 
               {/* Row 4: Screenshots + Trade Analysis side by side */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FieldGroup label="Chart Screenshots">
                   <div className="flex flex-wrap gap-3 mt-1">
                     {images.map((img, index) => (
                       <div key={index} className="relative w-20 h-20 border border-border rounded-lg overflow-hidden group">
                         <img src={img} alt={`Screenshot ${index + 1}`} className="w-full h-full object-cover" />
                         <button
+                          type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="size-3.5" />
                         </button>
                       </div>
                     ))}
-                    <label className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-all">
-                      <Upload className="h-5 w-5 text-muted-foreground mb-0.5" />
+                    <label className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/30 hover:border-primary/40 transition-colors">
+                      <Upload className="size-4 text-muted-foreground mb-1" />
                       <span className="text-[10px] text-muted-foreground font-medium">{uploading ? "Uploading..." : "Upload"}</span>
                       <input
                         type="file"
@@ -443,26 +446,26 @@ export function AddTradeModal({
           {/* ──────── PSYCHOLOGY TAB ──────── */}
           {activeTab === "psychology" && (
             <div className="pt-4">
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-6">
                   <FieldGroup label="Entry Confidence">
                     <div className="flex items-center gap-4">
                       <Slider value={entryConfidence} onValueChange={setEntryConfidence} max={10} min={1} className="flex-1" />
-                      <span className="text-xl font-bold text-foreground w-8 text-center">{entryConfidence[0]}</span>
+                      <span className="text-xl font-bold tabular-nums text-foreground w-8 text-center">{entryConfidence[0]}</span>
                     </div>
                   </FieldGroup>
 
                   <FieldGroup label="Satisfaction">
                     <div className="flex items-center gap-4">
                       <Slider value={satisfaction} onValueChange={setSatisfaction} max={10} min={1} className="flex-1" />
-                      <span className="text-xl font-bold text-foreground w-8 text-center">{satisfaction[0]}</span>
+                      <span className="text-xl font-bold tabular-nums text-foreground w-8 text-center">{satisfaction[0]}</span>
                     </div>
                   </FieldGroup>
 
                   <FieldGroup label="Emotional State" required>
                     <Select value={selectedEmotional} onValueChange={setSelectedEmotional}>
-                      <SelectTrigger className="rounded-lg bg-secondary/30 border-border h-10">
+                      <SelectTrigger className="w-full rounded-lg bg-secondary/30 border-border data-[size=default]:h-10">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -477,7 +480,7 @@ export function AddTradeModal({
                 {/* Right Column */}
                 <div className="space-y-6">
                   <FieldGroup label="Mistakes" required>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2.5">
                       {mistakeOptions.map((m) => (
                         <label key={m} className="flex items-center gap-2 text-sm text-foreground cursor-pointer hover:text-primary transition-colors">
                           <Checkbox
@@ -504,18 +507,20 @@ export function AddTradeModal({
           )}
 
           {/* ──────── FOOTER ──────── */}
-          <div className="flex items-center justify-between pt-5 mt-5 border-t border-border">
+          <div className="flex items-center justify-between pt-5 mt-6 border-t border-border/60">
             <Button
+              type="button"
               variant="ghost"
               onClick={handleReset}
               disabled={saving}
               className="text-muted-foreground hover:text-foreground rounded-lg"
             >
-              <RotateCcw className="mr-2 h-5 w-5" /> Reset
+              <RotateCcw /> Reset
             </Button>
 
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2.5">
               <Button
+                type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={saving}
@@ -524,14 +529,15 @@ export function AddTradeModal({
                 Cancel
               </Button>
               <Button
+                type="button"
                 onClick={handleSaveTrade}
                 disabled={saving}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-primary/20 px-6 transition-all hover:scale-[1.02]"
+                className="rounded-lg px-5"
               >
                 {saving ? (
-                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Saving…</>
+                  <><Loader2 className="animate-spin" /> Saving…</>
                 ) : (
-                  <><Save className="mr-2 h-5 w-5" /> {tradeToEdit ? "Update Trade" : "Save Trade"}</>
+                  <><Save /> {tradeToEdit ? "Update Trade" : "Save Trade"}</>
                 )}
               </Button>
             </div>
