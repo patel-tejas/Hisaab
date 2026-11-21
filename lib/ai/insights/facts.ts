@@ -170,6 +170,15 @@ export function buildInsightFacts(m: InsightsMetrics, recent: InsightTrade[] = [
     f.count(s.minBucketTrades, "min trades per bucket")
   }
 
+  const d = m.discipline
+  if (d?.ready && d.score !== null) {
+    f.count(d.score, "discipline score")
+    f.count(d.revengeCount, "revenge entries")
+    for (const c of d.components) {
+      if (c.value !== null) f.percent(c.value, `discipline: ${c.label}`)
+    }
+  }
+
   for (const c of buildComparisons(m)) {
     if (c.unit === "Rs") f.money(c.value, c.label)
     else if (c.unit === "x") f.decimal(c.value, c.label)

@@ -1,55 +1,45 @@
-import { Calculator, TrendingUp, Target, DollarSign } from "lucide-react"
-import { Card } from "@/components/ui/card"
+"use client"
 
-const tools = [
-  {
-    icon: Calculator,
-    title: "Position Size Calculator",
-    description: "Calculate optimal position size based on your risk tolerance and account size.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Risk/Reward Calculator",
-    description: "Determine potential profit and loss ratios before entering a trade.",
-  },
-  {
-    icon: Target,
-    title: "Stop Loss Calculator",
-    description: "Find the ideal stop loss level based on volatility and position size.",
-  },
-  {
-    icon: DollarSign,
-    title: "Profit Target Calculator",
-    description: "Set realistic profit targets based on historical price movements.",
-  },
-]
+import { Calculator } from "lucide-react"
+
+import { PageHeader } from "@/components/page-header"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CompoundingCalculator } from "@/components/tools/compounding"
+import { LotCalculator } from "@/components/tools/lot-calculator"
+import { PositionSizeCalculator } from "@/components/tools/position-size"
+import { RiskRewardCalculator } from "@/components/tools/risk-reward"
 
 export default function ToolsPage() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-4xl leading-[1.02] tracking-tight md:text-[2.75rem]">Trading Tools</h1>
-        <p className="mt-3 text-muted-foreground mt-1">Calculators and utilities to help with your trading decisions.</p>
-      </div>
+      <PageHeader
+        icon={<Calculator />}
+        eyebrow="Tools"
+        title="Trading calculators"
+        description="Size a trade before you take it. Everything runs in your browser and nothing is saved."
+      />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {tools.map((tool) => (
-          <Card
-            key={tool.title}
-            className="p-6 cursor-pointer transition-all hover: hover:border-primary/20 group"
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <tool.icon className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground">{tool.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{tool.description}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <Tabs defaultValue="position" className="gap-6">
+        <TabsList className="h-auto flex-wrap justify-start">
+          <TabsTrigger value="position">Position size</TabsTrigger>
+          <TabsTrigger value="rr">Risk to reward</TabsTrigger>
+          <TabsTrigger value="lots">F&O lots</TabsTrigger>
+          <TabsTrigger value="compounding">Compounding</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="position">
+          <PositionSizeCalculator />
+        </TabsContent>
+        <TabsContent value="rr">
+          <RiskRewardCalculator />
+        </TabsContent>
+        <TabsContent value="lots">
+          <LotCalculator />
+        </TabsContent>
+        <TabsContent value="compounding">
+          <CompoundingCalculator />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

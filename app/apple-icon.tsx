@@ -1,7 +1,5 @@
 import { ImageResponse } from "next/og"
 
-export const runtime = "edge"
-
 export const size = {
   width: 180,
   height: 180,
@@ -79,7 +77,7 @@ export default function AppleIcon() {
           }}
         />
 
-        <span style={{ position: "relative", zIndex: 10 }}>H</span>
+        <span style={{ position: "relative" }}>H</span>
       </div>
     ),
     {

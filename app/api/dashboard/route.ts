@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { detectRevengeTrades, disciplineScore } from "@/lib/journal/discipline";
 
 export async function GET() {
   try {
@@ -12,7 +13,7 @@ export async function GET() {
 
     const { data: rawTrades, error } = await supabase
       .from("trades")
-      .select("*")
+      .select("*, trade_mistakes(mistake)")
       .eq("user_id", user.id);
 
     if (error) {
@@ -54,6 +55,7 @@ export async function GET() {
         weeklyPnl: [],
         monthlyComparison: null,
         revengeTrades: [],
+        discipline: null,
         monthlyPnl: 0,
       });
     }
@@ -108,33 +110,30 @@ export async function GET() {
       pnlChange,
     };
 
-    // Revenge Trade Detection
-    const sortedByDateTime = [...trades]
-      .filter((t) => t.entryTime)
-      .map((t) => {
-        const d = new Date(t.date);
-        const [h, m] = (t.entryTime || "00:00").split(":").map(Number);
-        d.setHours(h, m, 0, 0);
-        return { ...t, entryDateTime: d.getTime() };
-      })
-      .sort((a, b) => a.entryDateTime - b.entryDateTime);
+    // Revenge trades and the discipline score share one detector (lib/journal/discipline),
+    // so the card, the score and the AI insights can never disagree about what counts.
+    const revengeHits = detectRevengeTrades(trades);
+    // Newest first, and not capped here: the card's count and impact need the full set.
+    const revengeTrades = revengeHits
+      .map((h) => ({
+        trade: { symbol: h.trade.symbol, date: h.trade.date, pnl: h.trade.pnl, entryTime: h.trade.entryTime },
+        afterLoss: { symbol: h.afterLoss.symbol, pnl: h.afterLoss.pnl },
+        gapMinutes: h.gapMinutes,
+        severity: h.severity,
+      }))
+      .reverse();
 
-    const revengeTrades: any[] = [];
-    for (let i = 1; i < sortedByDateTime.length; i++) {
-      const prev = sortedByDateTime[i - 1];
-      const curr = sortedByDateTime[i];
-      if (prev.pnl < 0) {
-        const gapMin = (curr.entryDateTime - prev.entryDateTime) / 60000;
-        if (gapMin <= 30 && gapMin >= 0) {
-          revengeTrades.push({
-            trade: { symbol: curr.symbol, date: curr.date, pnl: curr.pnl, entryTime: curr.entryTime },
-            afterLoss: { symbol: prev.symbol, pnl: prev.pnl },
-            gapMinutes: Math.round(gapMin),
-            severity: gapMin <= 5 ? "high" : gapMin <= 15 ? "medium" : "low",
-          });
-        }
-      }
-    }
+    const discipline = disciplineScore(
+      trades.map((t) => ({
+        date: t.date,
+        entryTime: t.entryTime,
+        pnl: t.pnl,
+        stopLoss: t.stop_loss == null ? null : Number(t.stop_loss),
+        mistakes: Array.isArray(t.trade_mistakes)
+          ? t.trade_mistakes.map((m: { mistake: string }) => m.mistake)
+          : [],
+      }))
+    );
 
     // Confidence Index
     const avgConfidence =
@@ -275,7 +274,8 @@ export async function GET() {
         hourStats,
       },
       monthlyComparison,
-      revengeTrades: revengeTrades.slice(0, 10),
+      revengeTrades,
+      discipline,
       monthlyPnl: Math.round(thisMonthPnl),
     });
   } catch (error: any) {

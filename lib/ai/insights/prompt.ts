@@ -118,6 +118,17 @@ export function buildPromptContext(metrics: InsightsMetrics, recent: InsightTrad
   lines.push(`Sharpe (per trade): ${metrics.sharpeRatio} (below 0.5 poor, below 1.0 below optimal, above 1.0 good, above 2.0 excellent)`)
   lines.push("")
 
+  const d = metrics.discipline
+  if (d?.ready && d.score !== null) {
+    lines.push("=== DISCIPLINE (0-100, computed in code) ===")
+    lines.push(`Discipline score: ${d.score} (${d.band})`)
+    for (const c of d.components) {
+      if (c.value !== null) lines.push(`- ${c.label}: ${c.value}%`)
+    }
+    lines.push(`Revenge entries (a trade within 30 minutes of a loss): ${d.revengeCount}`)
+    lines.push("")
+  }
+
   lines.push("=== MISTAKES (most costly first) ===")
   if (metrics.mistakes.length === 0) {
     lines.push("- None tagged")

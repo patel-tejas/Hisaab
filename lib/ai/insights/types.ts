@@ -1,5 +1,6 @@
 import { z } from "zod"
 import type { GuardrailReport } from "../guardrail/types"
+import type { DisciplineScore } from "../../journal/discipline"
 
 export const ANALYSIS_WINDOW_DAYS = 365
 export const TRADE_HARD_CAP = 500
@@ -27,6 +28,8 @@ export interface InsightTrade {
   emotionalState: string | null
   quantity: number
   mistakes: string[]
+  /** Stop-loss price when one was set; used for the discipline score. */
+  stopLoss?: number | null
   createdAt: string | null
 }
 
@@ -177,6 +180,8 @@ export interface InsightsMetrics {
   timeOfDay?: BucketStat[]
   symbols?: BucketStat[]
   signals?: InsightSignals
+  /** Deterministic discipline score (lib/journal/discipline). Rows saved before it was added lack it. */
+  discipline?: DisciplineScore
 }
 
 const riskLevel = z.enum(["low", "medium", "high"]).catch("medium")

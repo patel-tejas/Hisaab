@@ -11,6 +11,7 @@
   },
   "files": [
     "scripts/verify-ai-guardrail.ts",
-    "scripts/verify-strategy-spec.ts"
+    "scripts/verify-strategy-spec.ts",
+    "scripts/verify-journal.ts"
   ]
 }

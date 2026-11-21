@@ -1,40 +1,22 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { Moon, Plus, Sun } from "lucide-react"
+import { Moon, Plus, Search, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { pageTitle } from "@/lib/nav"
 
 interface HeaderProps {
   onNewTrade?: () => void
+  onOpenCommand?: () => void
 }
 
-const PAGE_TITLES: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/dashboard/trades": "Trades",
-  "/dashboard/calendar": "Calendar",
-  "/dashboard/reports": "Analytics",
-  "/dashboard/ai-insights": "AI Insights",
-  "/dashboard/broker": "Brokers",
-  "/dashboard/planner": "Daily Planner",
-  "/dashboard/backtester": "Backtester",
-  "/dashboard/settings": "Settings",
-}
-
-function getPageTitle(pathname: string) {
-  if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname]
-  const match = Object.entries(PAGE_TITLES).find(
-    ([path]) => path !== "/dashboard" && pathname.startsWith(path)
-  )
-  return match?.[1] ?? "Dashboard"
-}
-
-export function Header({ onNewTrade }: HeaderProps) {
+export function Header({ onNewTrade, onOpenCommand }: HeaderProps) {
   const pathname = usePathname()
   const { setTheme, theme } = useTheme()
-  const title = getPageTitle(pathname)
+  const title = pageTitle(pathname)
 
   return (
     <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border/50 bg-background px-4 md:px-6">
@@ -44,6 +26,16 @@ export function Header({ onNewTrade }: HeaderProps) {
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={onOpenCommand}
+          aria-label="Search pages and actions"
+          className="hidden h-9 items-center gap-2 rounded-xl border border-border/60 bg-secondary/30 px-3 text-[13px] text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground md:inline-flex"
+        >
+          <Search className="size-4" />
+          <span>Search</span>
+          <kbd className="label-mono rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] tracking-normal">Ctrl K</kbd>
+        </button>
         <Button
           variant="ghost"
           size="icon"

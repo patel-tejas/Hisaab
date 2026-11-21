@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TradeSummaryModal } from "@/components/trade-summary-modal";
 import { Trade } from "@/lib/types";
+import { summarizeR, tradeR } from "@/lib/journal/r-multiple";
+import { formatR } from "@/lib/journal/format";
 
 // Types
 interface DayData {
@@ -62,7 +64,9 @@ export default function CalendarPage() {
       totalPnl,
       winRate,
       totalTrades: monthTrades.length,
-      avgRR: "1:2.4", // Simplified placeholder
+      // Real R from entry, exit and stop. Trades without a usable stop are
+      // left out and counted, so the average is never padded.
+      r: summarizeR(monthTrades),
     };
   }, [currentDate, trades]);
 
@@ -279,8 +283,21 @@ export default function CalendarPage() {
         </Card>
 
         <Card className="fade-in gap-1 px-5 py-5">
-          <p className="text-xs text-muted-foreground">AVG. R:R</p>
-          <h2 className="mt-1 text-2xl font-bold">{monthlyStats.avgRR}</h2>
+          <p className="text-xs text-muted-foreground">AVG. R</p>
+          <h2
+            className={cn("mt-1 text-2xl font-bold",
+              monthlyStats.r.measured > 0 && (monthlyStats.r.avgR >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")
+            )}
+          >
+            {monthlyStats.r.measured > 0 ? formatR(monthlyStats.r.avgR) : "N/A"}
+          </h2>
+          <p className="text-[10px] text-muted-foreground">
+            {monthlyStats.r.measured > 0
+              ? `Per trade, from ${monthlyStats.r.measured} of ${monthlyStats.totalTrades} with a valid stop loss`
+              : monthlyStats.totalTrades > 0
+                ? "Add a stop loss to your trades to see R"
+                : "No trades this month"}
+          </p>
         </Card>
       </div>
 
@@ -547,6 +564,14 @@ export default function CalendarPage() {
                           <span>Entry: <span className="text-foreground font-medium">{trade.entryPrice || "—"}</span></span>
                           <span>Exit: <span className="text-foreground font-medium">{trade.exitPrice || "—"}</span></span>
                           <span>Qty: <span className="text-foreground font-medium">{trade.quantity || "—"}</span></span>
+                          {(() => {
+                            const r = tradeR(trade);
+                            return r === null ? null : (
+                              <span>
+                                R: <span className={cn("font-medium", r >= 0 ? "text-[var(--success)]" : "text-[var(--destructive)]")}>{formatR(r)}</span>
+                              </span>
+                            );
+                          })()}
                           {trade.entryTime && (
                             <span className="flex items-center gap-1">
                               <Clock className="h-4 w-4" />
