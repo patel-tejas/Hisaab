@@ -203,21 +203,6 @@
   --text-display-sm: 80px;
   --text-display: 96px;
 
-  --spacing-4: 4px;
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-20: 20px;
-  --spacing-24: 24px;
-  --spacing-32: 32px;
-  --spacing-40: 40px;
-  --spacing-48: 48px;
-  --spacing-60: 60px;
-  --spacing-68: 68px;
-  --spacing-100: 100px;
-  --spacing-120: 120px;
-  --spacing-140: 140px;
-
   --radius-origin-lg: 8px;
   --radius-origin-xl: 12px;
   --radius-origin-2xl: 16px;
@@ -406,16 +391,14 @@
     @apply rounded-xl border border-border/50 bg-muted/40;
   }
 
-  /* Card padding is 32px in the system; 20px on small screens so dense
-     dashboards stay usable. Written as the px-named spacing tokens below
-     (`p-32` = 32px): `@theme` redefines `--spacing-8` as 8px, so the stock
-     `md:p-8` rendered 8px, not 32. */
+  /* Card padding is 32px (p-8) in the system; 20px (p-5) on small screens so
+     dense dashboards stay usable. */
   .panel-p {
-    @apply p-5 md:p-32;
+    @apply p-5 md:p-8;
   }
 
-  .panel-px { @apply px-5 md:px-32; }
-  .panel-py { @apply py-5 md:py-32; }
+  .panel-px { @apply px-5 md:px-8; }
+  .panel-py { @apply py-5 md:py-8; }
 
   /*
    * The system's label voice: Roboto Mono, uppercase, 10-12px, tracked
@@ -585,29 +568,6 @@
   }
 }
 
-/* Custom Scrollbar — slim & unobtrusive */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
-}
-
-*::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.25);
-  border-radius: 9999px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(128, 128, 128, 0.45);
-}
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }

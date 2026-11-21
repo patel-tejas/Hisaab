@@ -75,13 +75,13 @@ export function SpecForm({
   return (
     <div>
       <Section title="Basics">
-        <div className="grid gap-12 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           <Field label="Name" error={errorAt("/name")} className="sm:col-span-3">
             <Input
               value={spec.name}
               maxLength={80}
               onChange={(e) => set({ ...spec, name: e.target.value }, "/name")}
-              className="h-32 text-sm"
+              className="h-8 text-sm"
             />
           </Field>
           <Field label="Bars" defaulted={isDefault("/timeframe")}>
@@ -96,7 +96,7 @@ export function SpecForm({
             <Choice value={spec.direction} options={DIRECTIONS} labels={DIRECTION_LABELS} onChange={setDirection} />
           </Field>
           <Field label="Instrument" hint="One position at a time">
-            <div className="flex h-32 items-center rounded-md border border-border/60 px-2.5 text-xs text-muted-foreground">
+            <div className="flex h-8 items-center rounded-md border border-border/60 px-2.5 text-xs text-muted-foreground">
               NIFTY near-month futures
             </div>
           </Field>
@@ -146,7 +146,7 @@ export function SpecForm({
       ))}
 
       <Section title="Risk" description="Checked on every bar while a trade is open.">
-        <div className="grid gap-12 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Stop-loss" defaulted={isDefault("/risk/stop")} error={errorAt("/risk/stop/value")}>
             <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] gap-1.5">
               <Choice
@@ -223,7 +223,7 @@ export function SpecForm({
       </Section>
 
       <Section title="Session" description="NSE hours are 09:15 to 15:30.">
-        <div className="grid gap-12 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           <Field label="First entry" defaulted={isDefault("/session/entry_start")} error={errorAt("/session")}>
             <TimeInput value={s.entry_start} onChange={(entry_start) => set({ ...spec, session: { ...s, entry_start } }, "/session/entry_start")} />
           </Field>
@@ -235,13 +235,13 @@ export function SpecForm({
             defaulted={isDefault("/session/squareoff_time") || isDefault("/session/eod_squareoff")}
             hint={s.eod_squareoff ? undefined : "Off: positions are held overnight"}
           >
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 aria-label="Square off at end of day"
                 checked={s.eod_squareoff}
                 onChange={(e) => set({ ...spec, session: { ...s, eod_squareoff: e.target.checked } }, "/session/eod_squareoff")}
-                className="h-16 w-16 shrink-0 accent-[var(--foreground)]"
+                className="h-4 w-4 shrink-0 accent-[var(--foreground)]"
               />
               <TimeInput
                 value={s.squareoff_time}
@@ -253,7 +253,7 @@ export function SpecForm({
       </Section>
 
       <Section title="Size and costs">
-        <div className="grid gap-12 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Lots" hint="NIFTY lot = 65 units" defaulted={isDefault("/sizing")}>
             <NumberInput
               ariaLabel="Lots"

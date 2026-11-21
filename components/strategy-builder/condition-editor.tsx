@@ -57,7 +57,7 @@ export function GroupEditor({
   onChange: (g: ConditionGroup) => void;
 }) {
   return (
-    <div className="space-y-16">
+    <div className="space-y-4">
       <ConditionList
         title="All of these"
         hint="every one must be true"
@@ -99,7 +99,7 @@ function ConditionList({
 }) {
   const full = list.length >= MAX_CONDITIONS_PER_LIST;
   return (
-    <div className="space-y-8">
+    <div className="space-y-2">
       <p className="text-xs text-muted-foreground">
         <span className="font-medium text-foreground">{title}</span> · {hint}
       </p>
@@ -118,7 +118,7 @@ function ConditionList({
         type="button"
         disabled={full}
         onClick={() => onChange([...list, defaultCondition()])}
-        className="interactive flex h-32 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50"
+        className="interactive flex h-8 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50"
       >
         <Plus className="size-3.5" /> {full ? `Up to ${MAX_CONDITIONS_PER_LIST} conditions` : "Add condition"}
       </button>
@@ -157,12 +157,12 @@ function ConditionRow({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-secondary/20 p-12",
+        "rounded-lg border bg-secondary/20 p-3",
         errors.length ? "border-[var(--destructive)]/50" : defaulted ? "border-[var(--warning)]/50" : "border-border/60",
       )}
     >
-      <div className="flex items-start gap-8">
-        <div className="grid min-w-0 flex-1 gap-8 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)]">
+      <div className="flex items-start gap-2">
+        <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1fr)_9.5rem_minmax(0,1fr)]">
           <OperandPicker operand={condition.lhs} onChange={(lhs) => onChange({ ...condition, lhs })} />
           <Choice
             ariaLabel="Comparison"
@@ -172,7 +172,7 @@ function ConditionRow({
             onChange={setCmp}
           />
           {trend ? (
-            <div className="flex items-center gap-8 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="shrink-0">over</span>
               <NumberInput
                 ariaLabel="Bars"
@@ -202,7 +202,7 @@ function ConditionRow({
         </button>
       </div>
       {errors.length > 0 && (
-        <ul className="mt-8 space-y-0.5 text-[11px] text-[var(--destructive)]">
+        <ul className="mt-2 space-y-0.5 text-[11px] text-[var(--destructive)]">
           {errors.map((e, n) => (
             <li key={n}>
               <span className="font-mono opacity-70">{e.path.slice(path.length) || "/"}</span> {e.message}

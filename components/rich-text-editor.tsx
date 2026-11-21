@@ -42,45 +42,50 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       <div className="flex items-center gap-1 rounded-xl border bg-muted/50 p-1.5">
         <Toggle
           size="sm"
+          aria-label="Bold"
           pressed={editor.isActive("bold")}
           onPressedChange={() => editor.chain().focus().toggleBold().run()}
-          className="h-9 w-9 [&_svg]:!size-5"
+          className="h-8 w-8"
         >
-          <Bold className="size-5" />
+          <Bold className="size-4" />
         </Toggle>
         <Toggle
           size="sm"
+          aria-label="Italic"
           pressed={editor.isActive("italic")}
           onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-          className="h-9 w-9 [&_svg]:!size-5"
+          className="h-8 w-8"
         >
-          <Italic className="size-5" />
+          <Italic className="size-4" />
         </Toggle>
         <Toggle
           size="sm"
+          aria-label="Underline"
           pressed={editor.isActive("underline")}
           onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
-          className="h-9 w-9 [&_svg]:!size-5"
+          className="h-8 w-8"
         >
-          <UnderlineIcon className="size-5" />
+          <UnderlineIcon className="size-4" />
         </Toggle>
         <Toggle
           size="sm"
+          aria-label="Bullet list"
           pressed={editor.isActive("bulletList")}
           onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
-          className="h-9 w-9 [&_svg]:!size-5"
+          className="h-8 w-8"
         >
-          <List className="size-5" />
+          <List className="size-4" />
         </Toggle>
         <Toggle
           size="sm"
+          aria-label="Numbered list"
           pressed={editor.isActive("orderedList")}
           onPressedChange={() =>
             editor.chain().focus().toggleOrderedList().run()
           }
-          className="h-9 w-9 [&_svg]:!size-5"
+          className="h-8 w-8"
         >
-          <ListOrdered className="size-5" />
+          <ListOrdered className="size-4" />
         </Toggle>
       </div>
       <EditorContent editor={editor} />

@@ -120,8 +120,8 @@ export default function DailyPlannerPage() {
                             Get a personalized daily trading plan based on your historical patterns —
                             best strategies, optimal trade count, time windows, and emotional guidance.
                         </p>
-                        <Button size="lg" onClick={fetchPlan} className="bg-gradient-to-r from-[var(--warning)] to-[var(--warning)] hover:from-[var(--warning)] hover:to-[var(--warning)] text-white shadow-[var(--warning)]/20 px-8">
-                            <Sparkles className="h-5 w-5 mr-2" /> Generate Today&apos;s Plan
+                        <Button size="lg" onClick={fetchPlan} className="bg-[var(--warning)] hover:bg-[var(--warning)]/90 text-void px-7">
+                            <Sparkles /> Generate Today&apos;s Plan
                         </Button>
                         <p className="text-xs text-muted-foreground mt-4">Cached for the day • Refreshes daily</p>
                     </div>
@@ -167,7 +167,7 @@ export default function DailyPlannerPage() {
                     <AlertTriangle className="h-12 w-12 text-[var(--warning)] mx-auto mb-4" />
                     <p className="text-foreground font-medium mb-2">Failed to generate plan</p>
                     <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">{error}</p>
-                    <Button onClick={fetchPlan} variant="outline"><RefreshCw className="h-5 w-5 mr-2" /> Retry</Button>
+                    <Button onClick={fetchPlan} variant="outline"><RefreshCw /> Retry</Button>
                 </Card>
             </div>
         )

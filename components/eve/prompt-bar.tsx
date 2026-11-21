@@ -169,9 +169,9 @@ export function PromptBar({
               className="relative z-10 flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left"
             >
               {row.kind === "month" ? (
-                <CalendarDays className="size-16 text-muted-foreground" />
+                <CalendarDays className="size-4 text-muted-foreground" />
               ) : (
-                <Wand2 className="size-16 text-muted-foreground" />
+                <Wand2 className="size-4 text-muted-foreground" />
               )}
               <span className={cn("shrink-0 text-[13px] font-medium text-foreground", row.kind === "month" && "font-mono")}>
                 {row.name}
@@ -192,7 +192,7 @@ export function PromptBar({
         </div>
       )}
 
-      {/* ── composer ───────────────────────────────────── */}
+      {/* ── composer ──────────────────────────────────── */}
       <div
         role="presentation"
         onClick={() => inputRef.current?.focus()}
@@ -250,11 +250,11 @@ export function PromptBar({
               inputRef.current?.focus();
             }}
             className={cn(
-              "flex size-32 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground",
+              "flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground",
               plusOpen && "bg-accent/60 text-foreground",
             )}
           >
-            <Plus className="size-16" />
+            <Plus className="size-4" />
           </button>
 
           <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
@@ -264,7 +264,7 @@ export function PromptBar({
 
           <span
             title={modelOk ? "Model ready" : "Model not ready. See the Agent tab."}
-            className="label-mono ml-auto flex h-32 min-w-0 items-center gap-1.5 px-2 !normal-case !tracking-normal"
+            className="label-mono ml-auto flex h-8 min-w-0 items-center gap-1.5 px-2 !normal-case !tracking-normal"
           >
             <span
               className={cn(
@@ -283,7 +283,7 @@ export function PromptBar({
                 event.stopPropagation();
                 onStop();
               }}
-              className="flex size-32 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform active:scale-95"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform active:scale-95"
             >
               <Square className="size-3 fill-current" />
             </button>
@@ -297,11 +297,11 @@ export function PromptBar({
                 send();
               }}
               className={cn(
-                "flex size-32 shrink-0 items-center justify-center rounded-lg transition-[background-color,color,transform] duration-200 enabled:active:scale-95",
+                "flex size-8 shrink-0 items-center justify-center rounded-lg transition-[background-color,color,transform] duration-200 enabled:active:scale-95",
                 canSend ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground",
               )}
             >
-              <ArrowUp className="size-16" />
+              <ArrowUp className="size-4" />
             </button>
           )}
         </div>

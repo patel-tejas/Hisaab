@@ -19,14 +19,14 @@ export function QuickActions({ onNewTrade }: QuickActionsProps) {
             <div className="space-y-3">
                 <Button
                     onClick={onNewTrade}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-primary/20 h-11 transition-all hover:scale-[1.02]"
+                    className="w-full rounded-xl h-11"
                 >
-                    <Plus className="h-5 w-5 mr-2" />
+                    <Plus />
                     Add New Trade
                 </Button>
-                <Button variant="outline" asChild className="w-full rounded-xl h-11 border-border hover:bg-muted">
+                <Button variant="outline" asChild className="w-full rounded-xl h-11">
                     <Link href="/dashboard/reports">
-                        <BarChart3 className="h-5 w-5 mr-2" />
+                        <BarChart3 />
                         View Analytics
                     </Link>
                 </Button>

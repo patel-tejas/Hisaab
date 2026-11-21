@@ -57,7 +57,7 @@ export function StrategyList() {
               reload(); // paper runs may have just stopped
             }}
           />
-          <Button asChild className="h-32 rounded-lg px-3 text-xs gap-1.5">
+          <Button asChild className="h-8 rounded-lg px-3 text-xs gap-1.5">
             <Link href="/dashboard/strategies/new">
               <Plus className="size-3.5" /> New strategy
             </Link>
@@ -66,14 +66,14 @@ export function StrategyList() {
         }
       />
 
-      <div className="mb-16 flex gap-1">
+      <div className="mb-4 flex gap-1">
         {FILTERS.map((f) => (
           <button
             key={f.key}
             type="button"
             onClick={() => setFilter(f.key)}
             className={cn(
-              "interactive h-32 rounded-lg px-3 text-xs font-medium",
+              "interactive h-8 rounded-lg px-3 text-xs font-medium",
               filter === f.key ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -88,7 +88,7 @@ export function StrategyList() {
           <p className="mt-1 text-muted-foreground">{error}</p>
         </Card>
       ) : rows === null ? (
-        <div className="space-y-8">
+        <div className="space-y-2">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-[4.5rem] rounded-xl" />
           ))}
@@ -100,22 +100,22 @@ export function StrategyList() {
             Describe one in plain English, like &ldquo;buy when RSI drops below 30 above the 200 EMA, 1% stop&rdquo;,
             and Eve turns it into rules you can test.
           </p>
-          <Button asChild className="h-32 rounded-lg px-3 text-xs mt-16 gap-1.5">
+          <Button asChild className="h-8 rounded-lg px-3 text-xs mt-4 gap-1.5">
             <Link href="/dashboard/strategies/new">
               <Plus className="size-3.5" /> Build your first strategy
             </Link>
           </Button>
         </Card>
       ) : (
-        <ul className="space-y-8">
+        <ul className="space-y-2">
           {rows.map((s) => (
             <li key={s.id}>
               <Link
                 href={`/dashboard/strategies/${s.id}`}
-                className="interactive block rounded-xl border border-border/60 bg-card px-20 py-16 hover:border-border"
+                className="interactive block rounded-xl border border-border/60 bg-card px-5 py-4 hover:border-border"
               >
-                <div className="flex flex-wrap items-center justify-between gap-12">
-                  <div className="flex min-w-0 items-center gap-12">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <p className="truncate text-sm font-medium">{s.name}</p>
                     <StatusBadge status={s.status} />
                   </div>
@@ -126,7 +126,7 @@ export function StrategyList() {
                 </div>
                 {s.summary && <p className="mt-1.5 line-clamp-2 text-xs text-muted-foreground">{s.summary}</p>}
                 {s.latest_backtest && (
-                  <p className="mt-8 font-mono text-[11px] tabular-nums text-muted-foreground">
+                  <p className="mt-2 font-mono text-[11px] tabular-nums text-muted-foreground">
                     {s.latest_backtest.month} · net {formatMetric("net_pnl", s.latest_backtest.net_pnl ?? null)} · PF{" "}
                     {formatMetric("profit_factor", s.latest_backtest.profit_factor ?? null)} · {formatMetric("total_trades", s.latest_backtest.total_trades ?? null)} trades
                   </p>

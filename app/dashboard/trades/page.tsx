@@ -289,9 +289,9 @@ export default function TradesPage() {
           </Button>
           <Button
             onClick={() => { setTradeToEdit(null); setIsAddTradeOpen(true); }}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-primary/20 h-10 px-5 transition-all hover:scale-[1.02]"
+            className="rounded-xl h-10 px-5"
           >
-            <Plus className="mr-2 h-5 w-5" />
+            <Plus />
             New Trade
           </Button>
         </div>

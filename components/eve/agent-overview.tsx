@@ -66,13 +66,13 @@ export function AgentOverview({
           <button
             type="button"
             onClick={onRefresh}
-            className="interactive flex h-32 items-center gap-1.5 rounded-lg border border-border/70 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+            className="interactive flex h-8 items-center gap-1.5 rounded-lg border border-border/70 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
           >
             <RefreshCw className={cn("size-3.5", loading && "animate-spin")} /> Refresh
           </button>
         }
       >
-        <div className="grid gap-16 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <HealthCard
             label="Quant engine"
             pending={!status}
@@ -128,7 +128,7 @@ export function AgentOverview({
 
       {/* ── defaults ───────────────────────────────────── */}
       <Section title="Strategy defaults" icon={<SlidersHorizontal />} meta={SIGNAL_MODE_META[DEFAULT_PARAMS.signal_mode].label}>
-        <div className="grid grid-cols-2 gap-16 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {NUMERIC.map((key) => (
             <div key={key} className="panel p-5" title={PARAM_META[key].hint}>
               <p className="label-mono">{PARAM_META[key].label}</p>
@@ -158,7 +158,7 @@ export function AgentOverview({
       {/* ── skills ─────────────────────────────────────── */}
       {skills.length > 0 && (
         <Section title="Skills" icon={<BookOpen />} meta={`${skills.length} loaded on demand`}>
-          <div className="grid gap-16 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {skills.map((s) => (
               <div key={s.name} className="panel p-5">
                 <div className="flex items-baseline justify-between gap-3">
@@ -174,7 +174,7 @@ export function AgentOverview({
 
       {/* ── guardrails ─────────────────────────────────── */}
       <Section title="Guardrails" icon={<ShieldCheck />}>
-        <div className="grid gap-16 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {GUARDRAILS.map((g) => (
             <div key={g.title} className="panel p-5">
               <p className="text-sm font-medium text-foreground">{g.title}</p>
@@ -201,9 +201,9 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-16">
-      <div className="flex min-h-32 items-center gap-2">
-        {icon && <span className="text-muted-foreground [&_svg]:size-16">{icon}</span>}
+    <section className="flex flex-col gap-4">
+      <div className="flex min-h-8 items-center gap-2">
+        {icon && <span className="text-muted-foreground [&_svg]:size-4">{icon}</span>}
         <h2 className="text-sm font-medium text-foreground">{title}</h2>
         {meta && <span className="label-mono ml-auto">{meta}</span>}
         {action && <span className={cn(!meta && "ml-auto")}>{action}</span>}
@@ -278,7 +278,7 @@ function FilterList({
   return (
     <div className="panel overflow-hidden">
       <label className="flex h-11 items-center gap-2.5 border-b border-border/60 px-5 text-muted-foreground">
-        <Search className="size-16" />
+        <Search className="size-4" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -289,7 +289,7 @@ function FilterList({
       </label>
       <ul>
         {visible.map((item) => (
-          <li key={item.key} className="border-b border-border/50 px-5 py-16 last:border-b-0">
+          <li key={item.key} className="border-b border-border/50 px-5 py-4 last:border-b-0">
             <div className="flex flex-wrap items-baseline gap-x-2">
               <span className="text-sm font-medium text-foreground">{item.title}</span>
               <span className="font-mono text-[11px] text-muted-foreground">{item.mono}</span>
@@ -300,7 +300,7 @@ function FilterList({
           </li>
         ))}
         {visible.length === 0 && (
-          <li className="px-5 py-16 text-sm text-muted-foreground">No tools match &ldquo;{query}&rdquo;.</li>
+          <li className="px-5 py-4 text-sm text-muted-foreground">No tools match &ldquo;{query}&rdquo;.</li>
         )}
       </ul>
     </div>
@@ -308,5 +308,5 @@ function FilterList({
 }
 
 function Empty({ children }: { children: ReactNode }) {
-  return <div className="panel-quiet px-5 py-16 text-sm text-muted-foreground">{children}</div>;
+  return <div className="panel-quiet px-5 py-4 text-sm text-muted-foreground">{children}</div>;
 }
