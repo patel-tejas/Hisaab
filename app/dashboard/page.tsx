@@ -15,6 +15,7 @@ import { TradingInsights } from "@/components/trading-insights";
 import { MonthlyComparison } from "@/components/monthly-comparison";
 import { GoalTracker } from "@/components/goal-tracker";
 import { RevengeTrades } from "@/components/revenge-trades";
+import { DisciplineScoreCard } from "@/components/discipline-score";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/auth-context";
 import { MarketTicker } from "@/components/market-ticker";
@@ -95,12 +96,17 @@ export default function DashboardPage() {
         <TradingInsights insights={data.insights} />
       )}
 
-      {/* Row 4: Monthly Stats + Goal + Revenge */}
-      <div className="grid gap-6 md:grid-cols-3">
+      {/* Row 4: Monthly Stats + Goal */}
+      <div className="grid gap-6 md:grid-cols-2">
         {data.monthlyComparison && (
           <MonthlyComparison comparison={data.monthlyComparison} />
         )}
         <GoalTracker currentPnl={data.monthlyPnl || 0} />
+      </div>
+
+      {/* Row 4b: Discipline + Revenge */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <DisciplineScoreCard discipline={data.discipline ?? null} />
         <RevengeTrades trades={data.revengeTrades || []} totalTrades={data.totalTrades} />
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, ArrowUpDown, Search, ArrowUpRight, ArrowDownRight, ChevronDown, ImageIcon, CalendarIcon, Loader2, Clock, Link2, Zap } from "lucide-react";
+import { Plus, Pencil, Trash2, ArrowUpDown, Search, ArrowUpRight, ArrowDownRight, ChevronDown, ImageIcon, CalendarIcon, Loader2, Clock, Link2, Zap, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DeleteTradeDialog } from "@/components/delete-trade-dialog";
+import { tradesToCsv } from "@/lib/journal/csv";
+import { downloadTextFile } from "@/lib/journal/download";
 
 export default function TradesPage() {
   const [trades, setTrades] = useState<any[]>([]);
@@ -223,6 +225,13 @@ export default function TradesPage() {
   const winCount = filteredTrades.filter((t) => t.pnl > 0).length;
   const lossCount = filteredTrades.filter((t) => t.pnl <= 0).length;
 
+  // Exports exactly what the filters currently show, so "last month's breakouts" is one click.
+  const handleExportCsv = () => {
+    if (filteredTrades.length === 0) return;
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadTextFile(`hisaab-trades-${stamp}.csv`, tradesToCsv(filteredTrades));
+  };
+
   const outcomeLabels: Record<string, string> = {
     success: "Success",
     mistake: "Mistake",
@@ -259,7 +268,16 @@ export default function TradesPage() {
               Delete ({selectedTrades.length})
             </Button>
           )}
-          {/* ... buttons ... */}
+          <Button
+            onClick={handleExportCsv}
+            disabled={filteredTrades.length === 0}
+            variant="outline"
+            className="rounded-xl h-10 px-4 gap-2"
+            title="Download the trades shown below as a CSV file"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
           <Button
             onClick={handleDhanSync}
             disabled={brokerSyncing}

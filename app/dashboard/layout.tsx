@@ -5,6 +5,7 @@ import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Header } from "@/components/header"
 import { AddTradeModal } from "@/components/add-trade-modal"
+import { CommandPalette } from "@/components/command-palette"
 import { AuthProvider } from "@/lib/auth-context"
 import {
   SidebarInset,
@@ -13,12 +14,13 @@ import {
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const [isAddTradeOpen, setIsAddTradeOpen] = useState(false)
+  const [isCommandOpen, setIsCommandOpen] = useState(false)
 
   return (
     <SidebarProvider className="h-svh max-h-svh min-h-0 overflow-hidden">
       <AppSidebar />
       <SidebarInset className="h-svh max-h-svh min-h-0 overflow-hidden md:h-[calc(100svh-1rem)] md:max-h-[calc(100svh-1rem)]">
-        <Header onNewTrade={() => setIsAddTradeOpen(true)} />
+        <Header onNewTrade={() => setIsAddTradeOpen(true)} onOpenCommand={() => setIsCommandOpen(true)} />
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
           <div className="animate-in fade-in slide-in-from-bottom-4 px-5 py-6 duration-500 md:px-8 md:py-10">
             {children}
@@ -26,6 +28,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </div>
       </SidebarInset>
       <AddTradeModal open={isAddTradeOpen} onOpenChange={setIsAddTradeOpen} />
+      <CommandPalette
+        open={isCommandOpen}
+        onOpenChange={setIsCommandOpen}
+        onNewTrade={() => setIsAddTradeOpen(true)}
+      />
     </SidebarProvider>
   )
 }

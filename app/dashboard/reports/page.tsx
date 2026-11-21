@@ -46,6 +46,8 @@ import {
 } from "recharts";
 import { ChartCard } from "@/components/reports/chart-card";
 import { ChartFilter, PillFilter } from "@/components/reports/chart-filter";
+import { mistakeCosts } from "@/lib/journal/mistakes";
+import { inr } from "@/lib/journal/format";
 
 type Tab = "performance" | "psychology" | "risk" | "journal";
 
@@ -340,11 +342,8 @@ export default function ReportsPage() {
   }, [filteredTrades, emotionDir]);
 
   // ── MISTAKES ──
-  const mistakeCount = useMemo(() => {
-    const map: Record<string, number> = {};
-    filteredTrades.forEach((t) => { t.mistakes?.forEach((m) => { map[m] = (map[m] || 0) + 1; }); });
-    return Object.entries(map).filter(([k]) => k !== "No Mistakes").map(([mistake, count]) => ({ mistake, count })).sort((a, b) => b.count - a.count);
-  }, [filteredTrades]);
+  // Most costly first. Each row is the net P&L of every trade carrying that tag.
+  const mistakeRows = useMemo(() => mistakeCosts(filteredTrades), [filteredTrades]);
 
   // ── CONFIDENCE vs P&L (filtered) ──
   const confidenceVsPnl = useMemo(() => {
@@ -756,17 +755,24 @@ export default function ReportsPage() {
           {/* Mistakes */}
           <Card className="p-5 glass-card">
             <h3 className="font-semibold text-foreground mb-4">Common Mistakes Impact</h3>
-            {mistakeCount.length > 0 ? (
+            {mistakeRows.length > 0 ? (
               <div className="space-y-3">
-                {mistakeCount.map((m) => (
+                {mistakeRows.map((m) => (
                   <div key={m.mistake} className="flex items-center gap-4">
                     <span className="w-40 text-sm text-foreground truncate">{m.mistake}</span>
                     <div className="flex-1 bg-secondary/30 rounded-full h-2.5 overflow-hidden">
                       <div className="bg-[var(--destructive)] h-full rounded-full transition-all" style={{ width: `${(m.count / filteredTrades.length) * 100}%` }} />
                     </div>
-                    <span className="text-sm font-semibold w-12 text-right text-foreground">{m.count}</span>
+                    <span className="text-sm font-semibold w-10 text-right text-foreground">{m.count}x</span>
+                    <span className={`numeric text-sm font-semibold w-28 text-right ${m.totalPnl < 0 ? "text-[var(--destructive)]" : "text-[var(--success)]"}`}>
+                      {m.totalPnl > 0 ? "+" : ""}{inr(m.totalPnl)}
+                    </span>
                   </div>
                 ))}
+                <p className="pt-1 text-xs text-muted-foreground">
+                  The bar is how often the mistake shows up. The amount is the net P&amp;L of the trades tagged with it. A trade with
+                  two mistakes counts toward both, so rows overlap.
+                </p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">No mistakes recorded — great discipline! 🎯</p>

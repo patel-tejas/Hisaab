@@ -34,6 +34,7 @@ export async function fetchInsightTrades(
       satisfaction,
       emotional_state,
       quantity,
+      stop_loss,
       created_at,
       trade_mistakes(mistake)
     `)
@@ -60,6 +61,7 @@ export async function fetchInsightTrades(
     satisfaction: Number(t.satisfaction || 3),
     emotionalState: t.emotional_state,
     quantity: Number(t.quantity || 0),
+    stopLoss: t.stop_loss != null ? Number(t.stop_loss) : null,
     mistakes: Array.isArray(t.trade_mistakes)
       ? t.trade_mistakes.map((m: { mistake: string }) => m.mistake)
       : [],

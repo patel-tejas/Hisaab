@@ -9,6 +9,8 @@ import type {
   SkillScores,
   TraderLevel,
 } from "./types"
+import { disciplineScore } from "../../journal/discipline"
+import { isRealMistake } from "../../journal/mistakes"
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -118,13 +120,18 @@ function deriveSkillScores(m: {
   tiltRiskScore: number
   confCalibration: number
   mistakeRate: number
+  /** The journal-wide discipline score (lib/journal/discipline); the legacy formula is only a fallback. */
+  disciplineScore: number | null
 }): SkillScores {
   return {
     risk: clampScore(40 + m.sharpe * 25 - Math.min(40, m.maxDrawdown / Math.max(1, Math.abs(m.totalPnl)) * 40)),
     psychology: clampScore(70 - m.tiltRiskScore * 20 + m.confCalibration * 0.3),
     consistency: clampScore(m.winRate * 0.7 + Math.min(30, Math.abs(m.sharpe) * 15)),
     edge: clampScore(m.winRate * 0.5 + (m.totalPnl > 0 ? 30 : 10) + Math.min(20, m.sharpe * 10)),
-    discipline: clampScore(80 - m.overtradingGap * 0.4 - m.mistakeRate * 40),
+    discipline:
+      m.disciplineScore !== null
+        ? clampScore(m.disciplineScore)
+        : clampScore(80 - m.overtradingGap * 0.4 - m.mistakeRate * 40),
   }
 }
 
@@ -221,6 +228,9 @@ export function computeMetrics(trades: InsightTrade[], now: Date = new Date()): 
     if (pnl > 0) dateTradeMap[dayKey].wins++
 
     for (const m of t.mistakes) {
+      // "No Mistakes" is the placeholder tag, not a mistake: counting it inflated
+      // mistakeRate and put a bogus row at the top of the cost chart.
+      if (!isRealMistake(m)) continue
       if (!mistakeAgg[m]) mistakeAgg[m] = { count: 0, totalPnl: 0 }
       mistakeAgg[m].count++
       mistakeAgg[m].totalPnl += pnl
@@ -431,6 +441,8 @@ export function computeMetrics(trades: InsightTrade[], now: Date = new Date()): 
       (lossCount / n) * (lossCount > 0 ? grossLoss / lossCount : 0)
   )
 
+  const discipline = disciplineScore(chronological)
+
   const skillScores = deriveSkillScores({
     winRate,
     sharpe,
@@ -440,6 +452,7 @@ export function computeMetrics(trades: InsightTrade[], now: Date = new Date()): 
     tiltRiskScore,
     confCalibration,
     mistakeRate,
+    disciplineScore: discipline.score,
   })
 
   // ── Verdicts computed in code (the model explains them, it does not decide them) ──
@@ -616,6 +629,7 @@ export function computeMetrics(trades: InsightTrade[], now: Date = new Date()): 
     timeOfDay,
     symbols,
     signals,
+    discipline,
   }
 }
 
