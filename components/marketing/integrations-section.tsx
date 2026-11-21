@@ -35,6 +35,17 @@ const ORBIT: OrbitLogo[] = [
     floatDelay: 0,
   },
   {
+    name: "Sahi",
+    src: "/sahi_logo.png",
+    x: 48,
+    y: 16,
+    size: 62,
+    tilt: 6,
+    live: true,
+    floatDur: 4.4,
+    floatDelay: 0.25,
+  },
+  {
     name: "Zerodha",
     src: "/zerodha_logo.png",
     x: 72,
@@ -87,7 +98,7 @@ const ORBIT: OrbitLogo[] = [
   {
     name: "Zerodha",
     src: "/zerodha_logo.png",
-    x: 48,
+    x: 32,
     y: 10,
     size: 40,
     tilt: -5,
@@ -279,7 +290,7 @@ export function IntegrationsSection() {
           Sync from the brokers you already use
         </h2>
         <p className="mx-auto mt-5 max-w-[440px] font-marketing text-[17px] font-light leading-[1.5] text-ash">
-          Dhan is live today. More Indian brokers are on the way — same quiet import, zero
+          Dhan and Sahi are live today. More Indian brokers are on the way — same quiet import, zero
           busywork.
         </p>
       </div>

@@ -1,7 +1,24 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import { decrypt } from "@/lib/encryption";
-import { fetchDhanTrades, pairTrades, mapToAppTrade } from "@/lib/brokers/dhan";
+import { decrypt, encrypt } from "@/lib/encryption";
+import {
+    fetchDhanTrades,
+    pairTrades,
+    mapToAppTrade,
+    type DhanRawTrade,
+    type PairedTrade,
+} from "@/lib/brokers/dhan";
+import {
+    parseSahiCredentials,
+    serializeSahiCredentials,
+    resolveSahiAccessToken,
+    fetchSahiTrades,
+    pairSahiTrades,
+    mapSahiToAppTrade,
+    SahiApiError,
+} from "@/lib/brokers/sahi";
+
+const SUPPORTED_BROKERS = new Set(["dhan", "sahi"]);
 
 /* ── POST: Sync trades from broker ── */
 export async function POST(req: Request) {
@@ -13,66 +30,109 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { broker } = await req.json();
-        if (broker !== "dhan") {
-            return NextResponse.json({ error: "Only 'dhan' broker is supported" }, { status: 400 });
+        const { broker, totp } = await req.json();
+        if (!SUPPORTED_BROKERS.has(broker)) {
+            return NextResponse.json(
+                { error: "Only 'dhan' and 'sahi' brokers are supported" },
+                { status: 400 }
+            );
         }
+
+        const brokerLabel = broker === "sahi" ? "Sahi" : "Dhan";
 
         const { data: connection, error: connError } = await supabase
             .from("broker_connections")
             .select("*")
             .eq("user_id", user.id)
-            .eq("broker", "dhan")
+            .eq("broker", broker)
             .eq("is_active", true)
             .maybeSingle();
 
         if (connError || !connection) {
             return NextResponse.json(
-                { error: "Dhan broker not connected. Please connect from Broker Settings." },
+                { error: `${brokerLabel} broker not connected. Please connect from Broker Settings.` },
                 { status: 400 }
             );
         }
 
-        // Decrypt the stored access token
-        let accessToken: string;
+        // Decrypt stored credentials
+        let decryptedSecret: string;
         try {
-            accessToken = decrypt(connection.access_token);
+            decryptedSecret = decrypt(connection.access_token);
         } catch {
             return NextResponse.json(
-                { error: "Failed to decrypt access token. Please reconnect your Dhan account." },
+                { error: `Failed to decrypt credentials. Please reconnect your ${brokerLabel} account.` },
                 { status: 400 }
             );
         }
 
-        // Fetch trades from Dhan
-        const rawTrades = await fetchDhanTrades(accessToken);
+        let rawTrades: DhanRawTrade[] = [];
+        let updatedEncryptedToken: string | null = null;
+
+        if (broker === "dhan") {
+            rawTrades = await fetchDhanTrades(decryptedSecret);
+        } else {
+            const storedCreds = parseSahiCredentials(decryptedSecret);
+            const totpOverride = typeof totp === "string" && totp.trim() ? totp.trim() : undefined;
+
+            let resolved = await resolveSahiAccessToken(connection.client_id, storedCreds, {
+                totpOverride,
+            });
+
+            try {
+                rawTrades = await fetchSahiTrades(resolved.accessToken, connection.client_id);
+            } catch (err) {
+                // If a cached token was invalidated early, re-mint once and retry
+                if (err instanceof SahiApiError && err.status === 401 && !resolved.minted) {
+                    resolved = await resolveSahiAccessToken(connection.client_id, storedCreds, {
+                        totpOverride,
+                        forceRefresh: true,
+                    });
+                    rawTrades = await fetchSahiTrades(resolved.accessToken, connection.client_id);
+                } else {
+                    throw err;
+                }
+            }
+
+            if (resolved.minted) {
+                updatedEncryptedToken = encrypt(serializeSahiCredentials(resolved.updatedCredentials));
+            }
+        }
 
         const now = new Date().toISOString();
+        const connUpdate: Record<string, unknown> = { last_synced: now };
+        if (updatedEncryptedToken) {
+            connUpdate.access_token = updatedEncryptedToken;
+        }
 
         if (rawTrades.length === 0) {
             await supabase
                 .from("broker_connections")
-                .update({ last_synced: now })
+                .update(connUpdate)
                 .eq("id", connection.id);
 
             return NextResponse.json({
                 success: true,
                 imported: 0,
                 skipped: 0,
-                message: "No trades found for today on Dhan.",
+                message: `No trades found for today on ${brokerLabel}.`,
             });
         }
 
         // Pair BUY+SELL legs
-        const paired = pairTrades(rawTrades);
+        const paired: PairedTrade[] = broker === "sahi"
+            ? pairSahiTrades(rawTrades)
+            : pairTrades(rawTrades);
 
         // Deduplicate: check which broker_order_ids already exist in Supabase
         const orderIds = paired.map((p) => p.orderId);
-        const { data: existingTrades } = await supabase
-            .from("trades")
-            .select("broker_order_id")
-            .eq("user_id", user.id)
-            .in("broker_order_id", orderIds);
+        const { data: existingTrades } = orderIds.length > 0
+            ? await supabase
+                .from("trades")
+                .select("broker_order_id")
+                .eq("user_id", user.id)
+                .in("broker_order_id", orderIds)
+            : { data: [] };
 
         const existingSet = new Set((existingTrades || []).map((t) => t.broker_order_id));
         const newTrades = paired.filter((p) => !existingSet.has(p.orderId));
@@ -81,8 +141,12 @@ export async function POST(req: Request) {
         let imported = 0;
         if (newTrades.length > 0) {
             const dbRows = newTrades.map((p) => {
-                const appTrade = mapToAppTrade(p, user.id);
-                const dateVal = appTrade.date ? new Date(appTrade.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
+                const appTrade = broker === "sahi"
+                    ? mapSahiToAppTrade(p, user.id)
+                    : mapToAppTrade(p, user.id);
+                const dateVal = appTrade.date
+                    ? new Date(appTrade.date).toISOString().split("T")[0]
+                    : new Date().toISOString().split("T")[0];
                 return {
                     user_id: user.id,
                     symbol: appTrade.symbol,
@@ -111,16 +175,16 @@ export async function POST(req: Request) {
 
             const { error: insertError } = await supabase.from("trades").insert(dbRows);
             if (insertError) {
-                console.error("Error inserting synced Dhan trades:", insertError);
+                console.error(`Error inserting synced ${brokerLabel} trades:`, insertError);
             } else {
                 imported = dbRows.length;
             }
         }
 
-        // Update last_synced timestamp
+        // Update last_synced (and refreshed token cache if applicable)
         await supabase
             .from("broker_connections")
-            .update({ last_synced: now })
+            .update(connUpdate)
             .eq("id", connection.id);
 
         return NextResponse.json({
@@ -131,11 +195,14 @@ export async function POST(req: Request) {
             paired: paired.length,
             message:
                 imported > 0
-                    ? `Successfully imported ${imported} trade(s) from Dhan.`
-                    : "All trades already imported. No new trades to sync.",
+                    ? `Successfully imported ${imported} trade(s) from ${brokerLabel}.`
+                    : paired.length === 0
+                        ? `Found ${rawTrades.length} open fill(s) on ${brokerLabel} — waiting for closing leg to pair.`
+                        : "All trades already imported. No new trades to sync.",
         });
     } catch (err: any) {
         console.error("Broker sync error:", err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        const status = err instanceof SahiApiError && err.status >= 400 && err.status < 500 ? err.status : 500;
+        return NextResponse.json({ error: err.message }, { status });
     }
 }

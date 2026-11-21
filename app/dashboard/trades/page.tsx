@@ -33,7 +33,7 @@ export default function TradesPage() {
   const router = useRouter();
 
   // Broker sync state
-  const [brokerConnected, setBrokerConnected] = useState(false);
+  const [connectedBrokers, setConnectedBrokers] = useState<string[]>([]);
   const [brokerSyncing, setBrokerSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -57,35 +57,56 @@ export default function TradesPage() {
       .catch(() => setIsLoading(false));
   }, []);
 
-  // Check broker connection on mount
+  // Check broker connections on mount
   useEffect(() => {
     fetch("/api/broker/status").then(r => r.json()).then(d => {
-      const dhan = (d.brokers || []).find((b: any) => b.broker === "dhan" && b.isActive);
-      setBrokerConnected(!!dhan);
+      const active = (d.brokers || [])
+        .filter((b: any) => (b.broker === "dhan" || b.broker === "sahi") && b.isActive)
+        .map((b: any) => b.broker as string);
+      setConnectedBrokers(active);
     }).catch(() => { });
   }, []);
 
-  const handleDhanSync = async () => {
-    if (!brokerConnected) {
+  const handleBrokerSync = async () => {
+    if (connectedBrokers.length === 0) {
       router.push("/dashboard/broker");
       return;
     }
     setBrokerSyncing(true);
     setSyncMessage(null);
     try {
-      const res = await fetch("/api/broker/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ broker: "dhan" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setSyncMessage({ type: "success", text: data.message });
-      if (data.imported > 0) {
-        // Refresh trades list
+      const messages: string[] = [];
+      let totalImported = 0;
+      const errors: string[] = [];
+
+      for (const broker of connectedBrokers) {
+        const res = await fetch("/api/broker/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ broker }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errors.push(`${broker === "sahi" ? "Sahi" : "Dhan"}: ${data.error}`);
+        } else {
+          totalImported += data.imported || 0;
+          messages.push(data.message);
+        }
+      }
+
+      if (totalImported > 0) {
         const tradesRes = await fetch("/api/trades");
         if (tradesRes.ok) setTrades(await tradesRes.json());
       }
+
+      if (errors.length > 0 && messages.length === 0) {
+        throw new Error(errors.join(" • "));
+      }
+
+      setSyncMessage({
+        type: errors.length > 0 ? "error" : "success",
+        text: [...messages, ...errors].join(" • "),
+      });
       setTimeout(() => setSyncMessage(null), 5000);
     } catch (err: any) {
       setSyncMessage({ type: "error", text: err.message });
@@ -279,13 +300,17 @@ export default function TradesPage() {
             Export CSV
           </Button>
           <Button
-            onClick={handleDhanSync}
+            onClick={handleBrokerSync}
             disabled={brokerSyncing}
             variant="outline"
             className="rounded-xl h-10 px-4 gap-2 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
           >
             {brokerSyncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-            {brokerConnected ? "Sync Dhan" : "Connect Dhan"}
+            {connectedBrokers.length === 0
+              ? "Connect Broker"
+              : connectedBrokers.length === 1
+                ? `Sync ${connectedBrokers[0] === "sahi" ? "Sahi" : "Dhan"}`
+                : "Sync Brokers"}
           </Button>
           <Button
             onClick={() => { setTradeToEdit(null); setIsAddTradeOpen(true); }}
